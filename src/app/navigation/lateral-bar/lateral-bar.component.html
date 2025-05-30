@@ -1,0 +1,68 @@
+<div class="h-screen flex flex-col" [class.w-64]="!isCollapsed" [class.w-16]="isCollapsed">
+  <!-- En-tête avec bouton de repli -->
+  <div class="bg-gray-800 text-white p-4 flex items-center justify-between">
+    <h2 [class.hidden]="isCollapsed">MENU</h2>
+    <button (click)="toggleCollapse()" class="p-1 hover:bg-gray-700 rounded">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path *ngIf="!isCollapsed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+        <path *ngIf="isCollapsed" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- Contenu de la barre latérale -->
+  <div class="bg-gray-800 text-white flex-grow overflow-y-auto">
+    <!-- Section ACTIVITES -->
+    <div class="p-4">
+      <h3 [class.text-xs]="isCollapsed" [class.text-center]="isCollapsed" class="text-gray-400 font-bold mb-2">
+        {{ isCollapsed ? 'ACT' : 'ACTIVITES' }}
+      </h3>
+      <nav>
+        <a routerLink="/aujourd-hui" routerLinkActive="bg-gray-700"
+           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+          </svg>
+          <span [class.hidden]="isCollapsed" class="ml-2">Aujourd'hui</span>
+        </a>
+        <a routerLink="/calendrier" routerLinkActive="bg-gray-700"
+           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+          <span [class.hidden]="isCollapsed" class="ml-2">Calendrier</span>
+        </a>
+        <a routerLink="/saisir-activite" routerLinkActive="bg-gray-700"
+           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+          </svg>
+          <span [class.hidden]="isCollapsed" class="ml-2">Saisir une activité</span>
+        </a>
+      </nav>
+    </div>
+
+    <!-- Section TABLEAU DE BORD -->
+    <div class="p-4">
+      <h3 [class.text-xs]="isCollapsed" [class.text-center]="isCollapsed" class="text-gray-400 font-bold mb-2">
+        {{ isCollapsed ? 'TDB' : 'TABLEAU DE BORD' }}
+      </h3>
+      <nav>
+        <a routerLink="/general" routerLinkActive="bg-gray-700"
+           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          <span [class.hidden]="isCollapsed" class="ml-2">Général</span>
+        </a>
+        <a routerLink="/par-legume" routerLinkActive="bg-gray-700"
+           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span [class.hidden]="isCollapsed" class="ml-2">Par légume</span>
+        </a>
+      </nav>
+    </div>
+  </div>
+</div>

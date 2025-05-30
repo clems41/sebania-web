@@ -1,6 +1,6 @@
 <div class="h-screen flex flex-col" [class.w-64]="!isCollapsed" [class.w-16]="isCollapsed">
   <!-- En-tête avec bouton de repli -->
-  <div class="bg-gray-800 text-white p-4 grid grid-cols-3 items-center">
+  <div class="bg-grisAnthra text-grey200 p-4 grid grid-cols-3 items-center">
     <div></div>
     <h2 [class.hidden]="isCollapsed" class="text-center">MENU</h2>
     <div class="flex justify-end">
@@ -14,25 +14,25 @@
 
 
   <!-- Contenu de la barre latérale -->
-  <div class="bg-gray-800 text-white flex-grow overflow-y-auto">
+  <div class="bg-grisAnthra text-grey200 flex-grow overflow-y-auto">
     <!-- Section ACTIVITES -->
     <div class="p-4">
-      <h3 [class.text-xs]="isCollapsed" [class.text-center]="isCollapsed" class="text-gray-400 font-bold mb-2">
+      <h3 [class.text-xs]="isCollapsed" [class.text-center]="isCollapsed" class="text-grey600 font-bold mb-2">
         {{ isCollapsed ? 'ACT' : 'ACTIVITES' }}
       </h3>
       <nav>
-        <a routerLink="/accueil" routerLinkActive="bg-gray-700"
-           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1 transition-all duration-200 ease-in-out group">
+        <a routerLink="/accueil" routerLinkActive="bg-grey600"
+           class="flex items-center p-2 rounded hover:bg-grey600 mb-1 transition-all duration-200 ease-in-out group">
           <i class="bi bi-house-door-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
           <span [class.hidden]="isCollapsed" class="ml-2">Aujourd'hui</span>
         </a>
-        <a routerLink="/calendrier" routerLinkActive="bg-gray-700"
-           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1 transition-all duration-200 ease-in-out group">
+        <a routerLink="/calendrier" routerLinkActive="bg-grey600"
+           class="flex items-center p-2 rounded hover:bg-grey600 mb-1 transition-all duration-200 ease-in-out group">
           <i class="bi bi-calendar3 h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
           <span [class.hidden]="isCollapsed" class="ml-2">Calendrier</span>
         </a>
-        <a routerLink="/activite" routerLinkActive="bg-gray-700"
-           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1 transition-all duration-200 ease-in-out group">
+        <a routerLink="/activite" routerLinkActive="bg-grey600"
+           class="flex items-center p-2 rounded hover:bg-grey600 mb-1 transition-all duration-200 ease-in-out group">
           <i class="bi bi-pencil-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
           <span [class.hidden]="isCollapsed" class="ml-2">Saisir une activité</span>
         </a>
@@ -45,13 +45,13 @@
         {{ isCollapsed ? 'TDB' : 'TABLEAU DE BORD' }}
       </h3>
       <nav>
-        <a routerLink="/general" routerLinkActive="bg-gray-700"
-           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1 transition-all duration-200 ease-in-out group">
+        <a routerLink="/general" routerLinkActive="bg-grey600"
+           class="flex items-center p-2 rounded hover:bg-grey600 mb-1 transition-all duration-200 ease-in-out group">
           <i class="bi bi-basket-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
           <span [class.hidden]="isCollapsed" class="ml-2">Général</span>
         </a>
-        <a routerLink="/legume" routerLinkActive="bg-gray-700"
-           class="flex items-center p-2 rounded hover:bg-gray-700 mb-1 transition-all duration-200 ease-in-out group">
+        <a routerLink="/legume" routerLinkActive="bg-grey600"
+           class="flex items-center p-2 rounded hover:bg-grey600 mb-1 transition-all duration-200 ease-in-out group">
           <i class="bi bi-clock-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
           <span [class.hidden]="isCollapsed" class="ml-2">Par légume</span>
         </a>

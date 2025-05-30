@@ -1,10 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+/* You can add global styles to this file; and also import other style files */
 /* styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 
-body {
-  font-family: 'Roboto', sans-serif;
-  font-weight: lighter;
+@theme {
+  --font-display: "Roboto", "sans-serif";
+  --color-toto: #123113;
+  --color-brun300: #F2E2D2;
+  --color-brun400: #DBB48D;
+  --color-brunTerre: #8D6E63;
+  --color-brunFonce: #774635;
+  --color-vertFeuille: #4CAF50;
+  --color-vertFonce: #2E7D32;
+  --color-jauneSoleil: #FBC02D;
+  --color-suppression: #F15D55;
+  --color-intermediaire: #3581E5;
+  --color-grisAnthra: #424242;
+  --color-grey800: #241B18;
+  --color-grey600: #888888;
+  --color-grey400: #E7E7E7;
+  --color-grey200: #FAFAFA;
 }
 

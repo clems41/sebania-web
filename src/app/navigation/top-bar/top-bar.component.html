@@ -1,10 +1,10 @@
 <div class="sticky top-0 z-50 w-full">
-  <div class="bg-gray-800 text-white h-16 flex items-center justify-between px-4 shadow-lg">
+  <div class="bg-brunTerre text-grey200 h-16 flex items-center justify-between px-4 shadow-lg">
     <!-- Logo à gauche -->
     <div class="flex items-center">
       <a href="/" class="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200">
-        <img ngSrc="assets/images/logo.png" alt="Logo" height="5" width="50">
-        <span class="text-2xl font-semibold">Sebania</span>
+        <img ngSrc="assets/images/logo.png" alt="Logo" height="50" width="50">
+        <span class="text-2xl font-semibold text-vertFeuille">Sebania</span>
       </a>
     </div>
 
@@ -13,8 +13,8 @@
     <div class="flex items-center space-x-1">
       <!-- Paramètres -->
       <a routerLink="/parametres"
-         routerLinkActive="bg-gray-700"
-         class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-700 active:bg-gray-600
+         routerLinkActive="bg-grisAnthra"
+         class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-grisAnthra active:bg-grisAnthra
                     transition-all duration-200 ease-in-out group">
         <i class="bi bi-gear-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
         <span class="font-light text-sm group-hover:text-gray-200">Paramètres</span>
@@ -22,8 +22,8 @@
 
       <!-- Mon profil -->
       <a routerLink="/profil"
-         routerLinkActive="bg-gray-700"
-         class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-700 active:bg-gray-600
+         routerLinkActive="bg-grisAnthra"
+         class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-grisAnthra active:bg-grisAnthra
                     transition-all duration-200 ease-in-out group">
         <i class="bi bi-person-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
         <span class="font-light text-sm group-hover:text-gray-200">Mon profil</span>
@@ -31,7 +31,7 @@
 
       <!-- Se déconnetecer -->
       <button (click)="logout()"
-         class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-gray-700 active:bg-gray-600
+         class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-grisAnthra active:bg-grisAnthra
                     transition-all duration-200 ease-in-out group">
         <i class="bi bi-box-arrow-left h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
         <span class="font-light text-sm group-hover:text-gray-200">Se déconnecter</span>

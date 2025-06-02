@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import {ErrorCode} from '@angular/compiler-cli';
 
 @Injectable({
   providedIn: 'root'
@@ -6,6 +7,7 @@ import { Injectable } from '@angular/core';
 export class CacheService {
   private accessTokenKey = 'access_token';
   private refreshTokenKey = 'refresh_token';
+  private errorCodesKey = 'error_codes';
 
   constructor() { }
 
@@ -20,6 +22,14 @@ export class CacheService {
 
   storeRefreshToken(token: string) {
     this.store(this.refreshTokenKey, token);
+  }
+
+  storeErrorCodes(errorCodes: ErrorCode[]) {
+    this.store(this.errorCodesKey, errorCodes);
+  }
+
+  getErrorCodes() {
+    return this.retrieve(this.errorCodesKey);
   }
 
   getAccessToken() {

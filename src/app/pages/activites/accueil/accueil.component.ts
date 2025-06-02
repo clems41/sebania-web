@@ -16,7 +16,6 @@ export class AccueilComponent implements OnInit {
   ngOnInit(): void {
     this.authService.me().subscribe(data => {
       this.data = data;
-      console.log(data);
     })
   }
 

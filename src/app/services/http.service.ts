@@ -5,7 +5,10 @@ import {catchError, retry} from 'rxjs/operators';
 import {environment} from '../../environments/environment';
 import {Router} from '@angular/router';
 import {CacheService} from './cache.service';
-import {AccessResponse} from '../models/auth/access-response.interface';
+import {AccessResponse} from '../models/auth/access-response';
+import {MessageService} from 'primeng/api';
+import {ErrorResponse} from '../models/errors/error-response';
+import {ErrorCodes} from '../models/errors/error-code';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +20,8 @@ export class HttpService {
   private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
   private authPrefix = '/auth';
 
-  constructor(private http: HttpClient, private router: Router, private cacheService: CacheService) {
+  constructor(private http: HttpClient, private router: Router, private cacheService: CacheService,
+              private messageService: MessageService) {
   }
 
   refreshToken(): Observable<string> {
@@ -156,8 +160,18 @@ export class HttpService {
           return throwError(() => refreshError);
         })
       );
+    } else {
+      this.messageService.add({severity: 'error', summary: 'Erreur', detail: this.getErrorMessage(error), closable: true});
     }
     return throwError(() => error);
+  }
+
+  private getErrorMessage(error: HttpErrorResponse): string {
+    const errorResponse = error.error as ErrorResponse;
+    if (errorResponse) {
+      return ErrorCodes[errorResponse.code] || ErrorCodes['DEFAULT'];
+    }
+    return ErrorCodes['DEFAULT'];
   }
 
 

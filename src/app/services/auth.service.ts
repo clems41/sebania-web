@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HttpService} from './http.service';
-import {AccessResponse} from '../models/auth/access-response.interface';
+import {AccessResponse} from '../models/auth/access-response';
 import {CacheService} from './cache.service';
 import {Observable} from 'rxjs';
 import {User} from '../models/user';
@@ -39,5 +39,13 @@ export class AuthService {
 
   me(): Observable<User> {
     return this.httpService.get<User>(`${this.authPrefix}/me/`);
+  }
+
+  changePassword(oldPassword: string, newPassword: string): Observable<null> {
+    const request = {
+      old_password: oldPassword,
+      new_password: newPassword,
+    }
+    return this.httpService.put(`${this.authPrefix}/change-password/`, request);
   }
 }

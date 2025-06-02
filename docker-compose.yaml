@@ -1,0 +1,15 @@
+services:
+  web:
+    image: sebania/sebania-web:${SEBANIA_VERSION:-0.1.0}
+    build:
+      dockerfile: Dockerfile
+    container_name: sebania-web
+    ports:
+      - "80:80"
+    networks:
+      - sebania-network
+
+networks:
+  sebania-network:
+    name: sebania-network
+    external: true

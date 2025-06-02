@@ -1,4 +1,3 @@
-// services/auth.service.ts
 import {Injectable} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {HttpService} from './http.service';
@@ -13,22 +12,21 @@ import {User} from '../models/user';
 export class AuthService {
   private authPrefix = '/auth';
 
+
   constructor(private router: Router, private httpService: HttpService, private cacheService: CacheService,
               private activatedRoute: ActivatedRoute) {
   }
 
+  isLoggedIn(): boolean {
+    return this.cacheService.getAccessToken() !== null;
+  }
+
   logout() {
-    this.httpService.put(`${this.authPrefix}/logout/`, null, true, 0).subscribe();
-    this.cacheService.removeTokens();
-    this.router.navigate(['/connexion']);
+    this.httpService.logout(true);
   }
 
   login(email: string, password: string) {
-    const request = {
-      email: email,
-      password: password,
-    };
-    this.httpService.post<AccessResponse>(`${this.authPrefix}/token/access/`, request, false, 0)
+    this.httpService.login(email, password)
       .subscribe(
         (response: AccessResponse) => {
           this.cacheService.storeAccessToken(response.access);
@@ -40,10 +38,6 @@ export class AuthService {
   }
 
   me(): Observable<User> {
-    return this.httpService.get<User>(`${this.authPrefix}/me`);
-  }
-
-  isLoggedIn(): boolean {
-    return this.cacheService.getAccessToken() !== null;
+    return this.httpService.get<User>(`${this.authPrefix}/me/`);
   }
 }

@@ -1,7 +1,7 @@
-// guards/auth.guard.ts
 import { Injectable } from '@angular/core';
 import {Router, CanActivate, RouterStateSnapshot, ActivatedRouteSnapshot} from '@angular/router';
 import {AuthService} from '../services/auth.service';
+import {Observable, of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -13,19 +13,18 @@ export class AuthGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
 
-  ): boolean {
-    if (this.authService.isLoggedIn()) {
-      return true;
+  ): Observable<boolean> {
+    if (!this.authService.isLoggedIn()) {
+      this.redirectToLogin(state.url);
+      return of(false);
     }
-
-    // Si l'utilisateur n'est pas connecté, stocke l'URL tentée
-    // pour y retourner après la connexion
-    // Redirige vers la page de connexion
-    this.router.navigate(['/connexion'], {
-      queryParams: { returnUrl: state.url }
-    });
-
-    return false;
-
+    return of(true);
   }
+
+  private redirectToLogin(returnUrl: string): void {
+    this.router.navigate(['/auth/connexion'], {
+      queryParams: { returnUrl }
+    });
+  }
+
 }

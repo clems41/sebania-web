@@ -1,9 +1,9 @@
 // app.routes.ts
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
-import {MainLayoutComponent} from './layouts/main-layout/main-layout.component';
-import {AuthLayoutComponent} from './layouts/auth-layout/auth-layout.component';
-import {NoAuthGuard} from './guards/no-auth.guard';
+import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
+import { AuthLayoutComponent } from './layouts/auth-layout/auth-layout.component';
+import { NoAuthGuard } from './guards/no-auth.guard';
 
 export const routes: Routes = [
   {
@@ -13,50 +13,76 @@ export const routes: Routes = [
     children: [
       // Routes pour les activités
       {
-        path: 'accueil',
-        loadComponent: () => import('./pages/activites/accueil/accueil.component')
-          .then(m => m.AccueilComponent)
-      },
-      {
-        path: 'calendrier',
-        loadComponent: () => import('./pages/activites/calendrier/calendrier.component')
-          .then(m => m.CalendrierComponent)
-      },
-      {
-        path: 'activite',
-        loadComponent: () => import('./pages/activites/activite/activite.component')
-          .then(m => m.ActiviteComponent)
+        path: 'activites',
+        children: [
+          {
+            path: '',
+            redirectTo: 'accueil',
+            pathMatch: 'full'
+          },
+          {
+            path: 'accueil',
+            loadComponent: () => import('./pages/activites/accueil/accueil.component')
+              .then(m => m.AccueilComponent),
+            title: 'Accueil'
+          },
+          {
+            path: 'calendrier',
+            loadComponent: () => import('./pages/activites/calendrier/calendrier.component')
+              .then(m => m.CalendrierComponent),
+            title: 'Calendrier'
+          },
+          {
+            path: 'saisie',
+            loadComponent: () => import('./pages/activites/saisie/saisie.component')
+              .then(m => m.SaisieComponent),
+            title: 'Saisir une activité'
+          }
+        ]
       },
 
       // Routes pour le tableau de bord
       {
-        path: 'general',
-        loadComponent: () => import('./pages/tableau-bord/general/general.component')
-          .then(m => m.GeneralComponent)
-      },
-      {
-        path: 'legume',
-        loadComponent: () => import('./pages/tableau-bord/legume/legume.component')
-          .then(m => m.LegumeComponent),
-        canActivate: [AuthGuard]
+        path: 'tableau-bord',
+        children: [
+          {
+            path: '',
+            redirectTo: 'general',
+            pathMatch: 'full'
+          },
+          {
+            path: 'general',
+            loadComponent: () => import('./pages/tableau-bord/general/general.component')
+              .then(m => m.GeneralComponent),
+            title: 'Tableau de bord général'
+          },
+          {
+            path: 'legume',
+            loadComponent: () => import('./pages/tableau-bord/legume/legume.component')
+              .then(m => m.LegumeComponent),
+            title: 'Tableau de bord légumes'
+          }
+        ]
       },
 
       // Routes pour les paramètres et le profil
       {
         path: 'parametres',
         loadComponent: () => import('./pages/parametres/parametres.component')
-          .then(m => m.ParametresComponent)
+          .then(m => m.ParametresComponent),
+        title: 'Paramètres'
       },
       {
         path: 'profil',
         loadComponent: () => import('./pages/profil/profil.component')
-          .then(m => m.ProfilComponent)
+          .then(m => m.ProfilComponent),
+        title: 'Profil'
       },
       {
         path: '',
-        redirectTo: 'accueil',
+        redirectTo: 'activites/accueil',
         pathMatch: 'full'
-      },
+      }
     ]
   },
   {
@@ -64,23 +90,33 @@ export const routes: Routes = [
     component: AuthLayoutComponent,
     canActivate: [NoAuthGuard],
     children: [
-      // Routes pour l'authentification
       {
-        path: 'connexion',
-        loadComponent: () => import('./pages/connexion/connexion.component')
-          .then(m => m.ConnexionComponent),
-      },
-      {
-        path: 'inscription',
-        loadComponent: () => import('./pages/inscription/inscription.component')
-          .then(m => m.InscriptionComponent),
-      },
+        path: 'auth',
+        children: [
+          {
+            path: 'connexion',
+            loadComponent: () => import('./pages/connexion/connexion.component')
+              .then(m => m.ConnexionComponent),
+            title: 'Connexion'
+          },
+          {
+            path: 'inscription',
+            loadComponent: () => import('./pages/inscription/inscription.component')
+              .then(m => m.InscriptionComponent),
+            title: 'Inscription'
+          },
+          {
+            path: '',
+            redirectTo: 'connexion',
+            pathMatch: 'full'
+          }
+        ]
+      }
     ]
   },
-  // Route 404
   {
     path: '**',
-    redirectTo: 'accueil',
+    redirectTo: 'activites/accueil',
     pathMatch: 'full'
   }
 ];

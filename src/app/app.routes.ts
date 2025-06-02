@@ -15,28 +15,24 @@ export const routes: Routes = [
       {
         path: 'accueil',
         loadComponent: () => import('./pages/activites/accueil/accueil.component')
-          .then(m => m.AccueilComponent),
-        canActivate: [AuthGuard]
+          .then(m => m.AccueilComponent)
       },
       {
         path: 'calendrier',
         loadComponent: () => import('./pages/activites/calendrier/calendrier.component')
-          .then(m => m.CalendrierComponent),
-        canActivate: [AuthGuard]
+          .then(m => m.CalendrierComponent)
       },
       {
         path: 'activite',
         loadComponent: () => import('./pages/activites/activite/activite.component')
-          .then(m => m.ActiviteComponent),
-        canActivate: [AuthGuard]
+          .then(m => m.ActiviteComponent)
       },
 
       // Routes pour le tableau de bord
       {
         path: 'general',
         loadComponent: () => import('./pages/tableau-bord/general/general.component')
-          .then(m => m.GeneralComponent),
-        canActivate: [AuthGuard]
+          .then(m => m.GeneralComponent)
       },
       {
         path: 'legume',
@@ -49,14 +45,12 @@ export const routes: Routes = [
       {
         path: 'parametres',
         loadComponent: () => import('./pages/parametres/parametres.component')
-          .then(m => m.ParametresComponent),
-        canActivate: [AuthGuard]
+          .then(m => m.ParametresComponent)
       },
       {
         path: 'profil',
         loadComponent: () => import('./pages/profil/profil.component')
-          .then(m => m.ProfilComponent),
-        canActivate: [AuthGuard]
+          .then(m => m.ProfilComponent)
       },
       {
         path: '',

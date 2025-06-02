@@ -1,29 +1,49 @@
 // services/auth.service.ts
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import {Injectable} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {HttpService} from './http.service';
+import {AccessResponse} from '../models/auth/access-response.interface';
+import {CacheService} from './cache.service';
+import {Observable} from 'rxjs';
+import {User} from '../models/user';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  private isAuthenticated = true; // À des fins de démonstration
-  public redirectUrl: string = '';
+  private authPrefix = '/auth';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private httpService: HttpService, private cacheService: CacheService,
+              private activatedRoute: ActivatedRoute) {
+  }
 
   logout() {
-    this.isAuthenticated = false;
+    this.httpService.put(`${this.authPrefix}/logout/`, null, true, 0).subscribe();
+    this.cacheService.removeTokens();
     this.router.navigate(['/connexion']);
-    console.log("decconexion")
   }
 
   login(email: string, password: string) {
-    this.isAuthenticated = true;
-    this.router.navigate(['']);
-    console.log("connexion")
+    const request = {
+      email: email,
+      password: password,
+    };
+    this.httpService.post<AccessResponse>(`${this.authPrefix}/token/access/`, request, false, 0)
+      .subscribe(
+        (response: AccessResponse) => {
+          this.cacheService.storeAccessToken(response.access);
+          this.cacheService.storeRefreshToken(response.refresh);
+          const returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"] || '';
+          this.router.navigate([returnUrl]);
+        }
+      );
+  }
+
+  me(): Observable<User> {
+    return this.httpService.get<User>(`${this.authPrefix}/me`);
   }
 
   isLoggedIn(): boolean {
-    return this.isAuthenticated;
+    return this.cacheService.getAccessToken() !== null;
   }
 }

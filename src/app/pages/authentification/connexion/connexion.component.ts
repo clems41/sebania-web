@@ -7,6 +7,7 @@ import {ErrorCodes} from '../../../models/errors/error-code';
 import {MessageService} from 'primeng/api';
 import {NgOptimizedImage} from '@angular/common';
 import {FloatLabel} from 'primeng/floatlabel';
+import {Password} from 'primeng/password';
 
 @Component({
   selector: 'app-connexion',
@@ -15,7 +16,8 @@ import {FloatLabel} from 'primeng/floatlabel';
     ReactiveFormsModule,
     NgOptimizedImage,
     FloatLabel,
-    RouterLink
+    RouterLink,
+    Password
   ],
   templateUrl: './connexion.component.html',
   styleUrl: './connexion.component.css'

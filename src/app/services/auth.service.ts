@@ -5,6 +5,7 @@ import {CacheService} from './cache.service';
 import {map, Observable} from 'rxjs';
 import {User} from '../models/user';
 import {HttpParams} from '@angular/common/http';
+import {RegisterRequest} from '../models/auth/register-request';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +43,15 @@ export class AuthService {
 
   me(): Observable<User> {
     return this.httpService.get<User>(`${this.authPrefix}/me/`);
+  }
+
+  register(query: RegisterRequest): Observable<User> {
+    return this.httpService.post(`${this.authPrefix}/register/`, query);
+  }
+
+  emailExists(email: string): Observable<boolean> {
+    const params: HttpParams = new HttpParams().set('email', email);
+    return this.httpService.get<boolean>(`${this.authPrefix}/email/`, params);
   }
 
   changePassword(oldPassword: string, newPassword: string): Observable<null> {

@@ -26,13 +26,10 @@
 
       <div>
         <p-floatlabel variant="on">
-          <label for="password" class="text-grey600!">Mot de passe</label>
-          <input type="password"
-                 id="password"
-                 formControlName="password"
-                 name="password"
-                 class="mt-1 block w-full px-3 py-2 border border-grisAnthra rounded-md shadow-sm focus:outline-none focus:ring-intermediaire focus:border-intermediaire"
-                 required>
+          <p-password formControlName="password" inputId="on_label" [toggleMask]="true" [feedback]="false"
+                      styleClass="w-full! pb-2!"
+                      inputStyleClass="w-full! border-grisAnthra! shadow-sm! focus:outline-none! focus:ring-intermediaire! focus:border-intermediaire!"/>
+          <label for="on_label" class="text-grey600!">Mot de passe</label>
         </p-floatlabel>
       </div>
 

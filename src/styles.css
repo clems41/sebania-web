@@ -2,6 +2,7 @@
 /* styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
+@import "primeicons/primeicons.css";
 @plugin "tailwindcss-primeui";
 
 @theme {
@@ -21,6 +22,7 @@
   --color-intermediaire: #3581E5;
   --color-intermediaire-hover: #1C6ED9;
   --color-grisAnthra: #424242;
+  --color-grisAnthra-hover: #333333;
   --color-grey800: #241B18;
   --color-grey600: #888888;
   --color-grey400: #E7E7E7;

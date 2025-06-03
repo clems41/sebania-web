@@ -4,6 +4,7 @@ import {AccessResponse} from '../models/auth/access-response';
 import {CacheService} from './cache.service';
 import {map, Observable} from 'rxjs';
 import {User} from '../models/user';
+import {HttpParams} from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root'
@@ -32,6 +33,11 @@ export class AuthService {
           return response;
         })
       );
+  }
+
+  resetPassword(email: string): Observable<null> {
+    const params: HttpParams = new HttpParams().set('email', email);
+    return this.httpService.get(`${this.authPrefix}/reset-password/`, params);
   }
 
   me(): Observable<User> {

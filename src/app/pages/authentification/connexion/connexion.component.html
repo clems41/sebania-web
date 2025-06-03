@@ -1,12 +1,11 @@
-<div class="w-full w-max-md bg-grey200 rounded-lg shadow-lg flex flex-col
-">
-  <!-- Conteneur de l'image modifié -->
+<div class="w-full w-max-md bg-grey200 rounded-lg shadow-lg flex flex-col">
   <div class="w-full">
     <img
       ngSrc="assets/images/banner.png"
       alt="Bannière"
       width="393"
       height="144"
+      priority
       class="w-full object-cover rounded-t-lg"
     >
   </div>
@@ -42,11 +41,17 @@
               class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-vertFeuille disabled:opacity-70 hover:bg-vertFeuille-hover">
         CONNEXION
       </button>
+
+      <div class="flex justify-center">
+        <a routerLink="/auth/mot-de-passe-oublie" class="text-intermediaire hover:text-intermediaire-hover text-md underline">
+          Mot de passe oublié ?
+        </a>
+      </div>
+
     </form>
 
-    <!-- Section inscription en bas avec mt-auto -->
     <div class="flex flex-col items-center mt-auto pt-20">
-      <span class="text-l font-normal text-center text-grey600">Pas encore de compte ?</span>
+      <span class="text-l font-normal text-center text-grisAnthra pb-2">Pas encore de compte ?</span>
       <button (click)="toInscription()"
               class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-intermediaire hover:bg-intermediaire-hover">
         INSCRIPTION

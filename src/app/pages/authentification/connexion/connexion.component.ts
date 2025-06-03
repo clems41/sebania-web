@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthService} from '../../services/auth.service';
-import {ActivatedRoute, Router} from '@angular/router';
+import {AuthService} from '../../../services/auth.service';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {ErrorCodes} from '../../models/errors/error-code';
+import {ErrorCodes} from '../../../models/errors/error-code';
 import {MessageService} from 'primeng/api';
 import {NgOptimizedImage} from '@angular/common';
 import {FloatLabel} from 'primeng/floatlabel';
-import {PasswordModule} from 'primeng/password';
 
 @Component({
   selector: 'app-connexion',
@@ -16,7 +15,7 @@ import {PasswordModule} from 'primeng/password';
     ReactiveFormsModule,
     NgOptimizedImage,
     FloatLabel,
-    PasswordModule
+    RouterLink
   ],
   templateUrl: './connexion.component.html',
   styleUrl: './connexion.component.css'

@@ -9,6 +9,7 @@ export const ErrorCodes: { [key: string]: string } =
         USER_EMAIL_ALREADY_EXISTS: "Un utilisateur existe déjà avec l'adresse email.",
         USER_EMPLOYE_CANNOT_POST_FOR_RESPONSABLE: "Les employés ne peuvent pas agir pour les responsables ou les autres employés.",
         USER_NOT_FOUND: "L'utilisateur n'a pas pu être trouvé.",
+        USER_WITH_EMAIL_NOT_FOUND: "Cette adresse email n'est associée à aucun utilisateur.",
         USER_OLD_PASSWORD_INCORRECT: "L'ancien mot de passe ne correspond pas.",
 
         CONTACT_MESSAGE_EMPTY: "Le message ne peut pas être vide.",

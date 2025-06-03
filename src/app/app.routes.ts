@@ -95,14 +95,20 @@ export const routes: Routes = [
         children: [
           {
             path: 'connexion',
-            loadComponent: () => import('./pages/connexion/connexion.component')
+            loadComponent: () => import('./pages/authentification/connexion/connexion.component')
               .then(m => m.ConnexionComponent),
             title: 'Connexion'
           },
           {
             path: 'inscription',
-            loadComponent: () => import('./pages/inscription/inscription.component')
+            loadComponent: () => import('./pages/authentification/inscription/inscription.component')
               .then(m => m.InscriptionComponent),
+            title: 'Inscription'
+          },
+          {
+            path: 'mot-de-passe-oublie',
+            loadComponent: () => import('./pages/authentification/mot-de-passe-oublie/mot-de-passe-oublie.component')
+              .then(m => m.MotDePasseOublieComponent),
             title: 'Inscription'
           },
           {

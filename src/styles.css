@@ -2,6 +2,7 @@
 /* styles.css */
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
+@plugin "tailwindcss-primeui";
 
 @theme {
   --font-display: "Roboto", "sans-serif";
@@ -11,10 +12,14 @@
   --color-brunTerre: #8D6E63;
   --color-brunFonce: #774635;
   --color-vertFeuille: #4CAF50;
+  --color-vertFeuille-hover: #449C47;
   --color-vertFonce: #2E7D32;
   --color-jauneSoleil: #FBC02D;
+  --color-jauneSoleil-hover: #FAB80F;
   --color-suppression: #F15D55;
+  --color-suppression-hover: #EE392F;
   --color-intermediaire: #3581E5;
+  --color-intermediaire-hover: #1C6ED9;
   --color-grisAnthra: #424242;
   --color-grey800: #241B18;
   --color-grey600: #888888;

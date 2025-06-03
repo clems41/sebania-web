@@ -1,35 +1,56 @@
-<div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-  <h2 class="text-2xl font-bold text-center text-gray-800 mb-8">Connexion</h2>
-  <form (ngSubmit)="onSubmit()" #loginForm="ngForm" class="space-y-6">
-    <div>
-      <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
-      <input type="email"
-             id="email"
-             name="email"
-             [(ngModel)]="email"
-             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-             required>
+<div class="w-full w-max-md bg-grey200 rounded-lg shadow-lg flex flex-col
+">
+  <!-- Conteneur de l'image modifié -->
+  <div class="w-full">
+    <img
+      ngSrc="assets/images/banner.png"
+      alt="Bannière"
+      width="393"
+      height="144"
+      class="w-full object-cover rounded-t-lg"
+    >
+  </div>
+  <div class="p-6 flex-grow flex flex-col">
+    <h2 class="text-2xl font-bold text-center text-grisAnthra mb-8">CONNEXION</h2>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
+      <div>
+        <p-floatlabel variant="on" >
+          <label for="email" class="text-grey600!">Email</label>
+          <input type="email"
+                 formControlName="email"
+                 id="email"
+                 name="email"
+                 class="mt-1 block w-full px-3 py-2 border border-grisAnthra rounded-md shadow-sm focus:outline-none focus:ring-intermediaire focus:border-intermediaire"
+                 required>
+        </p-floatlabel>
+      </div>
+
+      <div>
+        <p-floatlabel variant="on">
+          <label for="password" class="text-grey600!">Mot de passe</label>
+          <input type="password"
+                 id="password"
+                 formControlName="password"
+                 name="password"
+                 class="mt-1 block w-full px-3 py-2 border border-grisAnthra rounded-md shadow-sm focus:outline-none focus:ring-intermediaire focus:border-intermediaire"
+                 required>
+        </p-floatlabel>
+      </div>
+
+      <button type="submit"
+              [disabled]="loginForm.invalid"
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-vertFeuille disabled:opacity-70 hover:bg-vertFeuille-hover">
+        CONNEXION
+      </button>
+    </form>
+
+    <!-- Section inscription en bas avec mt-auto -->
+    <div class="flex flex-col items-center mt-auto pt-20">
+      <span class="text-l font-normal text-center text-grey600">Pas encore de compte ?</span>
+      <button (click)="toInscription()"
+              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-intermediaire hover:bg-intermediaire-hover">
+        INSCRIPTION
+      </button>
     </div>
-
-    <div>
-      <label for="password" class="block text-sm font-medium text-gray-700">Mot de passe</label>
-      <input type="password"
-             id="password"
-             name="password"
-             [(ngModel)]="password"
-             class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-             required>
-    </div>
-
-    <button type="submit"
-            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-      Se connecter
-    </button>
-  </form>
-
-  <h3 class="text-l font-bold text-center text-gray-800 mb-8">Pas encore de compte ?</h3>
-  <button (click)="toInscription()"
-          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-    Inscription
-  </button>
+  </div>
 </div>

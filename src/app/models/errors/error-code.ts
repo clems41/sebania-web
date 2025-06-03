@@ -2,6 +2,8 @@ export const ErrorCodes: { [key: string]: string } =
     {
         DEFAULT: "Une erreur inconnue est survenue, veuillez réessayer. Si le problème persiste, merci de contacter les administrateurs.",
 
+        AUTH_BAD_CREDENTIALS: "Les identifiants fournis sont incorrects.",
+
         USER_MUST_BE_AUTHENTICATED: "L'utilisateur doit être authentifié.",
         USER_EMAIL_MUST_NOT_BE_EMPTY: "Un utilisateur ne peut pas être créé sans adresse email.",
         USER_EMAIL_ALREADY_EXISTS: "Un utilisateur existe déjà avec l'adresse email.",

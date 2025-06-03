@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
 import {HttpService} from './http.service';
 import {AccessResponse} from '../models/auth/access-response';
 import {CacheService} from './cache.service';
-import {Observable} from 'rxjs';
+import {map, Observable} from 'rxjs';
 import {User} from '../models/user';
 
 @Injectable({
@@ -13,8 +12,7 @@ export class AuthService {
   private authPrefix = '/auth';
 
 
-  constructor(private router: Router, private httpService: HttpService, private cacheService: CacheService,
-              private activatedRoute: ActivatedRoute) {
+  constructor(private httpService: HttpService, private cacheService: CacheService) {
   }
 
   isLoggedIn(): boolean {
@@ -25,15 +23,14 @@ export class AuthService {
     this.httpService.logout(true);
   }
 
-  login(email: string, password: string) {
-    this.httpService.login(email, password)
-      .subscribe(
-        (response: AccessResponse) => {
+  login(email: string, password: string): Observable<AccessResponse> {
+    return this.httpService.login(email, password)
+      .pipe(
+        map((response: AccessResponse) => {
           this.cacheService.storeAccessToken(response.access);
           this.cacheService.storeRefreshToken(response.refresh);
-          const returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"] || '';
-          this.router.navigate([returnUrl]);
-        }
+          return response;
+        })
       );
   }
 

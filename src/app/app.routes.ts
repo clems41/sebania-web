@@ -1,4 +1,3 @@
-// app.routes.ts
 import { Routes } from '@angular/router';
 import { AuthGuard } from './guards/auth.guard';
 import { MainLayoutComponent } from './layouts/main-layout/main-layout.component';
@@ -71,12 +70,6 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/parametres/parametres.component')
           .then(m => m.ParametresComponent),
         title: 'Paramètres'
-      },
-      {
-        path: 'profil',
-        loadComponent: () => import('./pages/profil/profil.component')
-          .then(m => m.ProfilComponent),
-        title: 'Profil'
       },
       {
         path: '',

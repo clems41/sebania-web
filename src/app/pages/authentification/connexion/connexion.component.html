@@ -10,16 +10,16 @@
     >
   </div>
   <div class="p-6 flex-grow flex flex-col">
-    <h2 class="text-2xl font-bold text-center text-grisAnthra mb-8">CONNEXION</h2>
+    <h2 class="text-2xl font-bold text-center mb-8">CONNEXION</h2>
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-6">
       <div>
         <p-floatlabel variant="on" >
-          <label for="email" class="text-grey600!">Email</label>
-          <input type="email"
+          <label for="email">Email</label>
+          <input pInputText type="email"
                  formControlName="email"
                  id="email"
                  name="email"
-                 class="mt-1 block w-full px-3 py-2 border border-grisAnthra rounded-md shadow-sm focus:outline-none focus:ring-intermediaire focus:border-intermediaire"
+                 fluid
                  required>
         </p-floatlabel>
       </div>
@@ -27,19 +27,20 @@
       <div>
         <p-floatlabel variant="on">
           <p-password formControlName="password" inputId="on_label" [toggleMask]="true" [feedback]="false"
-                      styleClass="w-full! pb-2!"
-                      inputStyleClass="w-full! border-grisAnthra! shadow-sm! focus:outline-none! focus:ring-intermediaire! focus:border-intermediaire!"/>
-          <label for="on_label" class="text-grey600!">Mot de passe</label>
+                      fluid
+          />
+          <label for="on_label">Mot de passe</label>
         </p-floatlabel>
       </div>
 
-      <button type="submit"
-              [disabled]="loginForm.invalid"
-              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-vertFeuille disabled:opacity-70 hover:bg-vertFeuille-hover">
-        CONNEXION
-      </button>
+      <p-button label="CONNEXION" type="submit"
+                [disabled]="loginForm.invalid || loading"
+                [raised]="loginForm.invalid || loading"
+                [loading]="loading"
+                fluid
+      />
 
-      <div class="flex justify-center">
+      <div class="flex justify-center pt-4">
         <a routerLink="/auth/mot-de-passe-oublie" class="text-intermediaire hover:text-intermediaire-hover text-md underline">
           Mot de passe oublié ?
         </a>
@@ -48,11 +49,13 @@
     </form>
 
     <div class="flex flex-col items-center mt-auto pt-20">
-      <span class="text-l font-normal text-center text-grisAnthra pb-2">Pas encore de compte ?</span>
-      <button (click)="toInscription()"
-              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-intermediaire hover:bg-intermediaire-hover">
-        INSCRIPTION
-      </button>
+      <span class="text-l font-normal text-center pb-2">Pas encore de compte ?</span>
+      <p-button label="INSCRIPTION"
+                styleClass="bg-intermediaire! border-intermediaire!"
+                [disabled]="loading"
+                fluid
+                (click)="toInscription()"
+      />
     </div>
   </div>
 </div>

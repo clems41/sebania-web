@@ -1,4 +1,4 @@
-<div class="w-full w-max-md bg-grey200 rounded-lg shadow-lg flex flex-col">
+<div class="w-[393px] bg-grey200 rounded-lg shadow-lg flex flex-col">
   <div class="w-full">
     <img
       ngSrc="assets/images/banner.png"
@@ -11,59 +11,119 @@
   </div>
   <div class="p-6 flex-grow flex flex-col">
     <div class="flex items-center justify-center relative mb-8">
-      <button
-        (click)="toConnexion()"
-        class="absolute left-0 text-grey200 hover:text-grey600 w-10 h-10 flex items-center justify-center transition-colors rounded-full bg-grisAnthra"
-        aria-label="Retour">
-        <i class="bi bi-arrow-left-circle text-3xl leading-none flex items-center justify-center"></i>
-      </button>
-      <h2 class="text-2xl font-bold text-grisAnthra">INSCRIPTION</h2>
+      <p-button icon="pi pi-arrow-circle-left"
+                (click)="toConnexion()" [rounded]="true"
+                [raised]="true"
+                styleClass="bg-grisAnthra! border-grisAnthra!"
+                class="absolute left-0"
+      />
+      <h2 class="text-2xl font-bold">INSCRIPTION</h2>
     </div>
-    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
       <div>
         <p-floatlabel variant="on">
-          <label for="email" class="text-grey600!">Email</label>
-          <input type="email"
+          <label for="email">Email<span class="text-suppression"> *</span></label>
+          <input pInputText type="email"
                  formControlName="email"
                  id="email"
                  name="email"
-                 class="mt-1 block w-full px-3 py-2 border border-grisAnthra rounded-md shadow-sm focus:outline-none focus:ring-intermediaire focus:border-intermediaire"
+                 fluid
                  required>
         </p-floatlabel>
       </div>
 
       <div>
-
         <p-floatlabel variant="on">
           <p-password formControlName="password" inputId="on_label" [toggleMask]="true"
                       promptLabel="Choisir un mot de passe"
                       weakLabel="Faible"
                       mediumLabel="Moyen"
                       strongLabel="Fort"
-                      styleClass="w-full! pb-2!"
-                      inputStyleClass="w-full! border-grisAnthra! shadow-sm! focus:outline-none! focus:ring-intermediaire! focus:border-intermediaire!"/>
-          <label for="on_label" class="text-grey600!">Mot de passe</label>
+                      fluid
+          />
+          <label for="on_label">Mot de passe<span class="text-suppression"> *</span></label>
         </p-floatlabel>
-
-        <button type="submit"
-                [disabled]="registerForm.invalid || loading"
-                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-vertFeuille disabled:opacity-70 hover:bg-vertFeuille-hover">
-          <div *ngIf="loading"
-               class="w-6 h-6 border-2 border-grey200 border-t-transparent rounded-full animate-spin"></div>
-          <span *ngIf="!loading">INSCRIPTION</span>
-        </button>
       </div>
 
+      <div class="flex items-center justify-center relative space-x-4">
+        <p-floatlabel variant="on">
+          <label for="first_name">Prénom<span class="text-suppression"> *</span></label>
+          <input pInputText type="text"
+                 formControlName="first_name"
+                 id="first_name"
+                 name="first_name"
+                 fluid
+                 required>
+        </p-floatlabel>
+        <p-floatlabel variant="on">
+          <label for="last_name">Nom<span class="text-suppression"> *</span></label>
+          <input pInputText type="text"
+                 formControlName="last_name"
+                 id="last_name"
+                 name="last_name"
+                 fluid
+                 required>
+        </p-floatlabel>
+      </div>
+
+      <div>
+        <p-floatlabel variant="on">
+          <label for="ferme_nom">Nom de la ferme<span class="text-suppression"> *</span></label>
+          <input pInputText type="text"
+                 formControlName="ferme_nom"
+                 id="ferme_nom"
+                 name="ferme_nom"
+                 fluid
+                 required>
+        </p-floatlabel>
+      </div>
+
+      <div class="flex items-center justify-center relative space-x-4">
+        <p-floatlabel variant="on">
+          <p-inputnumber formControlName="ferme_code_postal"
+                         min="0" fluid inputId="integeronly"
+                         format="false"
+                         fluid
+                         required>
+          </p-inputnumber>
+          <label for="ferme_code_postal">Code postal<span
+            class="text-suppression"> *</span></label>
+        </p-floatlabel>
+
+        <p-floatlabel variant="on">
+          <p-inputnumber formControlName="ferme_superficie_cultivee"
+                         min="0" fluid inputId="locale-user"
+                         fluid
+                         required>
+          </p-inputnumber>
+          <label for="ferme_superficie_cultivee">Superficie (m²)</label>
+        </p-floatlabel>
+      </div>
+
+      <div>
+        <p-floatlabel variant="on">
+          <p-multiselect [options]="methodesAgricoles" formControlName="ferme_methodes_agricoles" optionValue="id"
+                         optionLabel="nom"
+                         display="chip"
+                         fluid>
+          </p-multiselect>
+          <label for="ferme_nom">Méthodes agricoles</label>
+        </p-floatlabel>
+      </div>
+
+      <div>
+        <p-button label="INSCRIPTION" type="submit"
+                  [disabled]="registerForm.invalid || loading"
+                  [raised]="registerForm.invalid || loading"
+                  [loading]="loading"
+                  fluid
+        />
+      </div>
 
     </form>
 
-    <div class="flex flex-col items-center mt-auto pt-20">
-      <span class="text-l font-normal text-center text-grisAnthra pb-2">Déjà un compte ?</span>
-      <button (click)="toConnexion()"
-              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-intermediaire hover:bg-intermediaire-hover">
-        Se connecter
-      </button>
-    </div>
   </div>
 </div>
 

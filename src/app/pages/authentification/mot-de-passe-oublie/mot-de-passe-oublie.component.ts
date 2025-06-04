@@ -1,10 +1,12 @@
 import {Component} from '@angular/core';
 import {FloatLabel} from 'primeng/floatlabel';
-import {NgIf, NgOptimizedImage} from '@angular/common';
+import { NgOptimizedImage} from '@angular/common';
 import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthService} from '../../../services/auth.service';
 import {MessageService} from 'primeng/api';
+import {InputText} from 'primeng/inputtext';
+import {Button} from 'primeng/button';
 
 @Component({
   selector: 'app-mot-de-passe-oublie',
@@ -14,7 +16,8 @@ import {MessageService} from 'primeng/api';
     FloatLabel,
     NgOptimizedImage,
     ReactiveFormsModule,
-    NgIf,
+    InputText,
+    Button,
   ],
   templateUrl: './mot-de-passe-oublie.component.html',
   styleUrl: './mot-de-passe-oublie.component.css'

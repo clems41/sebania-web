@@ -29,3 +29,6 @@
   --color-grey200: #FAFAFA;
 }
 
+html {
+  @apply text-grisAnthra;
+}

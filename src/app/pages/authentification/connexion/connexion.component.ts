@@ -8,6 +8,8 @@ import {MessageService} from 'primeng/api';
 import {NgOptimizedImage} from '@angular/common';
 import {FloatLabel} from 'primeng/floatlabel';
 import {Password} from 'primeng/password';
+import {InputText} from 'primeng/inputtext';
+import {Button} from 'primeng/button';
 
 @Component({
   selector: 'app-connexion',
@@ -17,13 +19,16 @@ import {Password} from 'primeng/password';
     NgOptimizedImage,
     FloatLabel,
     RouterLink,
-    Password
+    Password,
+    InputText,
+    Button
   ],
   templateUrl: './connexion.component.html',
   styleUrl: './connexion.component.css'
 })
 export class ConnexionComponent {
   loginForm: FormGroup;
+  loading: boolean = false;
 
   constructor(private authService: AuthService, private router: Router,
               private activatedRoute: ActivatedRoute, private messageService: MessageService,
@@ -39,6 +44,7 @@ export class ConnexionComponent {
     if (this.loginForm.invalid) {
       return;
     }
+    this.loading = true;
     const email = this.loginForm.get('email')?.value;
     const password = this.loginForm.get('password')?.value;
 
@@ -47,6 +53,7 @@ export class ConnexionComponent {
         {
           next: () => {
             const returnUrl = this.activatedRoute.snapshot.queryParams["returnUrl"] || '';
+            this.loading = false;
             this.router.navigate([returnUrl]);
           },
           error: (error: HttpErrorResponse) => {
@@ -56,6 +63,7 @@ export class ConnexionComponent {
             }
             this.messageService.add({severity: 'error', summary: 'Erreur', detail: message});
             this.loginForm.reset();
+            this.loading = false;
           }
         }
       );

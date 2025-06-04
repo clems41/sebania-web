@@ -11,44 +11,45 @@
   </div>
   <div class="p-6 flex-grow flex flex-col">
     <div class="flex items-center justify-center relative mb-8">
-      <button
-        (click)="toConnexion()"
-        class="absolute left-0 text-grey200 hover:text-grey600 w-10 h-10 flex items-center justify-center transition-colors rounded-full bg-grisAnthra"
-        aria-label="Retour">
-        <i class="bi bi-arrow-left-circle text-3xl leading-none flex items-center justify-center"></i>
-      </button>
-      <h2 class="text-2xl font-bold text-grisAnthra">Mot de passe oublié</h2>
+      <p-button icon="pi pi-arrow-circle-left"
+                (click)="toConnexion()" [rounded]="true"
+                [raised]="true"
+                styleClass="bg-grisAnthra! border-grisAnthra!"
+                class="absolute left-0"
+      />
+      <h2 class="text-2xl font-bold">Mot de passe oublié</h2>
     </div>
     <form [formGroup]="resetForm" (ngSubmit)="onSubmit()" class="space-y-6">
       <div>
         <p-floatlabel variant="on">
-          <label for="email" class="text-grey600!">Email</label>
-          <input type="email"
+          <label for="email">Email</label>
+          <input pInputText type="email"
                  formControlName="email"
                  id="email"
                  name="email"
-                 class="mt-1 block w-full px-3 py-2 border border-grisAnthra rounded-md shadow-sm focus:outline-none focus:ring-intermediaire focus:border-intermediaire"
+                 fluid
                  required>
         </p-floatlabel>
       </div>
-
-      <button type="submit"
-              [disabled]="resetForm.invalid || loading"
-              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-vertFeuille disabled:opacity-70 hover:bg-vertFeuille-hover">
-        <div *ngIf="loading"
-             class="w-6 h-6 border-2 border-grey200 border-t-transparent rounded-full animate-spin"></div>
-        <span *ngIf="!loading">Réinitialiser son mot de passe</span>
-      </button>
-
+      <p-button label="Réinitialiser son mot de passe" type="submit"
+                [disabled]="resetForm.invalid || loading"
+                [raised]="resetForm.invalid || loading"
+                [loading]="loading"
+                fluid
+      />
 
     </form>
 
 
-    <div class="flex flex-col items-center mt-auto pt-20">
-      <button (click)="toConnexion()" [disabled]="disableConnexionButton || loading"
-              class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-md text-md font-medium text-grey200 bg-intermediaire disabled:opacity-70 hover:bg-intermediaire-hover">
-        Se connecter
-      </button>
+    <div class="pt-20">
+      <p-button label="Se connecter"
+                styleClass="bg-intermediaire! border-intermediaire!"
+                [disabled]="resetForm.invalid || loading"
+                [raised]="resetForm.invalid || loading"
+                [loading]="loading"
+                fluid
+                (click)="toConnexion()"
+      />
     </div>
   </div>
 </div>

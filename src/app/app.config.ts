@@ -7,7 +7,7 @@ import {provideHttpClient, withFetch} from '@angular/common/http';
 import {MessageService} from 'primeng/api';
 import {provideAnimationsAsync} from '@angular/platform-browser/animations/async';
 import {providePrimeNG} from 'primeng/config';
-import Aura from '@primeng/themes/aura';
+import {MyPreset} from './preset';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,8 +15,8 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
-        preset: Aura,
-      },
+        preset: MyPreset
+      }
     }),
     provideZoneChangeDetection({eventCoalescing: true}),
     provideRouter(routes, withViewTransitions()),

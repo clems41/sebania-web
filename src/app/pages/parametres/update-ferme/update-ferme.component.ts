@@ -90,7 +90,7 @@ export class UpdateFermeComponent {
           this.messageService.add({
             severity: 'success',
             summary: 'Succès',
-            detail: "les informations ont été mises à jour."
+            detail: "Les informations ont été mises à jour."
           });
           this.loading = false;
         },

@@ -3,6 +3,7 @@ import {Ferme} from '../models/ferme';
 import {HttpService} from './http.service';
 import {Observable} from 'rxjs';
 import {FermeRequest} from '../models/ferme/ferme-request';
+import {EmployeRequest} from '../models/ferme/employe-request';
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +15,18 @@ export class FermeService {
   }
 
   getFerme(): Observable<Ferme> {
-    return this.httpService.get<Ferme>(`${this.fermePrefix}/details/`);
+    return this.httpService.get(`${this.fermePrefix}/details/`);
   }
 
   update(query: FermeRequest): Observable<Ferme> {
-    return this.httpService.put<Ferme>(`${this.fermePrefix}/update/`, query);
+    return this.httpService.put(`${this.fermePrefix}/update/`, query);
+  }
+
+  addEmploye(query: EmployeRequest): Observable<Ferme> {
+    return this.httpService.post(`${this.fermePrefix}/employes/`, query);
+  }
+
+  deleteEmploye(employe_id: number): Observable<null> {
+    return this.httpService.delete(`${this.fermePrefix}/employes/${employe_id}/`);
   }
 }

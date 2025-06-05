@@ -45,9 +45,9 @@ export class UpdateFermeComponent {
   }
 
   ngOnInit(): void {
+    this.patchFermeForm(this.ferme);
     this.configurationService.getMethodesAgricoles().subscribe((methodesAgricoles) => {
         this.methodesAgricoles = methodesAgricoles;
-        this.patchFermeForm(this.ferme);
       },
     )
   }

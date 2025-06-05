@@ -1,1 +1,101 @@
-<p>parametres works!</p>
+<ng-template #menuItem
+             let-name="name"
+             let-borderTop="borderTop"
+             let-selection="selection"
+             let-onSelect="onSelect"
+
+>
+  <div class="flex-row border-b w-full flex justify-between items-center p-2 hover:bg-grey400"
+       [ngClass]="{ 'border-t': borderTop, 'bg-grey400': this.selected == selection }"
+       (click)="onSelect(selection)"
+  >
+    <span>{{ name }}</span>
+    <i class="pi pi-angle-right" style="font-size: 2rem"></i>
+  </div>
+</ng-template>
+<div class="flex flex-row h-full">
+  <!--  MENU-->
+  <div class="flex flex-col w-[30%] min-w-3xs h-full">
+    <!--  Profil utilisateur-->
+    <div class="items-center justify-items-center">
+      <h2 class="mb-3 text-xl font-semibold">{{ currentUser?.first_name }} {{ currentUser?.last_name }}</h2>
+      <div *ngTemplateOutlet="menuItem; context: {
+      name: 'Modifier mon mot de passe',
+      borderTop: true,
+      selection: this.changePasswordSelection,
+      onSelect: changeSelection
+      }"></div>
+      <div
+        *ngTemplateOutlet="menuItem; context: {
+      name: 'Modifier mon profil',
+      borderTop: false,
+      selection: this.updateProfilSelection,
+      onSelect: changeSelection
+        }"></div>
+    </div>
+
+    <!--  Profil ferme-->
+    <div class="mt-8 items-center justify-items-center">
+      <h2 class="mb-3 text-xl font-semibold">{{ currentFerme?.nom }}</h2>
+      <div
+        *ngTemplateOutlet="menuItem; context: {
+      name: 'Modifier les informations',
+      borderTop: true,
+      selection: this.updateFermeSelection,
+      onSelect: changeSelection
+        }"></div>
+      <div
+        *ngTemplateOutlet="menuItem; context: {
+      name: 'Ajouter/Supprimer des employés',
+      borderTop: false,
+      selection: this.employesSelection,
+      onSelect: changeSelection
+        }"></div>
+      <div
+        *ngTemplateOutlet="menuItem; context: {
+      name: 'Ajouter/Supprimer des parcelles',
+      borderTop: false,
+      selection: this.parcellesSelection,
+      onSelect: changeSelection
+        }"></div>
+      <div
+        *ngTemplateOutlet="menuItem; context: {
+      name: 'Modifier mes activités',
+      borderTop: false,
+      selection: this.activitesSelection,
+      onSelect: changeSelection
+        }"></div>
+      <div
+        *ngTemplateOutlet="menuItem; context: {
+      name: 'Modifier mes cultures',
+      borderTop: false,
+      selection: this.culturesSelection,
+      onSelect: changeSelection
+        }"></div>
+    </div>
+
+    <!--  Autre  -->
+    <div class="flex-grow"></div> <!-- Ajout d'un espaceur -->
+    <div class="items-center justify-items-center">
+      <div
+        *ngTemplateOutlet="menuItem; context: {
+      name: 'Nous contacter',
+      borderTop: true,
+      selection: this.contactSelection,
+      onSelect: changeSelection
+        }"></div>
+    </div>
+  </div>
+
+  <!--  COMPOSANT-->
+  <div class="border ml-4 w-full min-w-md h-full">
+    <app-change-password class="h-full w-full" *ngIf="selected == changePasswordSelection"></app-change-password>
+    <app-profil class="h-full w-full" *ngIf="selected == updateProfilSelection"></app-profil>
+    <app-update-ferme class="h-full w-full" *ngIf="selected == updateFermeSelection"></app-update-ferme>
+    <app-employes class="h-full w-full" *ngIf="selected == employesSelection"></app-employes>
+    <app-parcelles class="h-full w-full" *ngIf="selected == parcellesSelection"></app-parcelles>
+    <app-activites class="h-full w-full" *ngIf="selected == activitesSelection"></app-activites>
+    <app-cultures class="h-full w-full" *ngIf="selected == culturesSelection"></app-cultures>
+    <app-contact class="h-full w-full" *ngIf="selected == contactSelection"></app-contact>
+  </div>
+</div>

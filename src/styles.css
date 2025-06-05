@@ -1,6 +1,6 @@
 /* You can add global styles to this file; and also import other style files */
 /* styles.css */
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url(https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap);
 @import "tailwindcss";
 @import "primeicons/primeicons.css";
 @plugin "tailwindcss-primeui";
@@ -22,10 +22,18 @@
   --color-intermediaire-hover: #1C6ED9;
   --color-grisAnthra: #424242;
   --color-grisAnthra-hover: #333333;
-  --color-grey800: #241B18;
-  --color-grey600: #888888;
-  --color-grey400: #E7E7E7;
-  --color-grey200: #FAFAFA;
+  --color-gray0: #ffffff;
+  --color-gray50: #f5f5f5;
+  --color-gray100: #ebebeb;
+  --color-gray200: #d6d6d6;
+  --color-gray300: #c2c2c2;
+  --color-gray400: #a3a3a3;
+  --color-gray500: #7a7a7a;
+  --color-gray600: #666666;
+  --color-gray700: #424242;
+  --color-gray800: #333333;
+  --color-gray900: #1f1f1f;
+  --color-gray950: #141414;
 }
 
 html {

@@ -5,7 +5,6 @@ import {Ferme} from '../../models/ferme';
 import {FermeService} from '../../services/ferme.service';
 import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
 import {ChangePasswordComponent} from './change-password/change-password.component';
-import {ProfilComponent} from './profil/profil.component';
 import {UpdateFermeComponent} from './update-ferme/update-ferme.component';
 import {EmployesComponent} from './employes/employes.component';
 import {ParcellesComponent} from './parcelles/parcelles.component';
@@ -20,7 +19,6 @@ import {ContactComponent} from './contact/contact.component';
     NgClass,
     ChangePasswordComponent,
     NgIf,
-    ProfilComponent,
     UpdateFermeComponent,
     EmployesComponent,
     ParcellesComponent,
@@ -35,7 +33,6 @@ export class ParametresComponent {
   currentUser: User | null = null;
   currentFerme: Ferme | null = null;
   changePasswordSelection = 'changePassword';
-  updateProfilSelection = 'updateProfil';
   updateFermeSelection = 'updateFerme';
   employesSelection = 'employes';
   parcellesSelection = 'parcelles';
@@ -60,6 +57,10 @@ export class ParametresComponent {
 
   changeSelection = (selection: string) => {
     this.selected = selection;
+  }
+
+  updateFerme(event: Ferme){
+    this.currentFerme = event;
   }
 
 

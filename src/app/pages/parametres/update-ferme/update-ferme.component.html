@@ -1,1 +1,73 @@
-<p>update-ferme works!</p>
+<div class="flex flex-col items-center justify-center h-full">
+
+  <form [formGroup]="fermeForm" (ngSubmit)="onSubmit()" class="space-y-4">
+
+    <div>
+      <p-floatlabel variant="on">
+        <label for="ferme_nom">Nom de la ferme</label>
+        <input pInputText type="text"
+               formControlName="ferme_nom"
+               id="ferme_nom"
+               name="ferme_nom"
+               fluid
+               required>
+      </p-floatlabel>
+    </div>
+
+    <div>
+      <p-floatlabel variant="on">
+        <label for="ferme_adresse">Adresse</label>
+        <input pInputText type="text"
+               formControlName="ferme_adresse"
+               id="ferme_adresse"
+               name="ferme_adresse"
+               fluid
+               required>
+      </p-floatlabel>
+    </div>
+
+    <div class="flex items-center relative justify-between">
+      <p-floatlabel variant="on">
+        <p-inputnumber formControlName="ferme_code_postal"
+                       inputId="integeronly"
+                       format="false"
+                       fluid
+                       required>
+        </p-inputnumber>
+        <label for="ferme_code_postal">Code postal</label>
+      </p-floatlabel>
+
+      <p-floatlabel variant="on">
+        <p-inputnumber formControlName="ferme_superficie_cultivee"
+                       inputId="locale-user"
+                       fluid
+                       required>
+        </p-inputnumber>
+        <label for="ferme_superficie_cultivee">Superficie cultivée (m²)</label>
+      </p-floatlabel>
+    </div>
+
+    <div>
+      <p-floatlabel variant="on">
+        <p-multiselect [options]="methodesAgricoles" formControlName="ferme_methodes_agricoles" optionValue="id"
+                       optionLabel="nom"
+                       display="chip"
+                       fluid>
+        </p-multiselect>
+        <label for="ferme_nom">Méthodes agricoles</label>
+      </p-floatlabel>
+    </div>
+
+    <div>
+      <p-button label="VALIDER" type="submit"
+                [disabled]="fermeForm.invalid || loading"
+                [raised]="fermeForm.invalid || loading"
+                [loading]="loading"
+                fluid
+      />
+    </div>
+
+  </form>
+
+</div>
+

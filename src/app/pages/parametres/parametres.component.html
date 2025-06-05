@@ -5,12 +5,17 @@
              let-onSelect="onSelect"
 
 >
-  <div class="flex-row border-b w-full flex justify-between items-center p-2 hover:bg-grey400"
-       [ngClass]="{ 'border-t': borderTop, 'bg-grey400': this.selected == selection }"
+  <div class="flex-row border-b w-full flex justify-between items-center p-2 hover:bg-gray100
+  transition-all duration-200 ease-in-out cursor-pointer select-none active:scale-[0.98] hover:shadow-sm"
+       [ngClass]="{
+       'border-t': borderTop,
+       'bg-gray200': this.selected == selection,
+       'hover:translate-x-1': selected != selection
+       }"
        (click)="onSelect(selection)"
   >
     <span>{{ name }}</span>
-    <i class="pi pi-angle-right" style="font-size: 2rem"></i>
+    <i class="pi pi-angle-right transition-transform duration-200" style="font-size: 2rem"></i>
   </div>
 </ng-template>
 <div class="flex flex-row h-full">
@@ -25,13 +30,6 @@
       selection: this.changePasswordSelection,
       onSelect: changeSelection
       }"></div>
-      <div
-        *ngTemplateOutlet="menuItem; context: {
-      name: 'Modifier mon profil',
-      borderTop: false,
-      selection: this.updateProfilSelection,
-      onSelect: changeSelection
-        }"></div>
     </div>
 
     <!--  Profil ferme-->
@@ -88,10 +86,9 @@
   </div>
 
   <!--  COMPOSANT-->
-  <div class="border ml-4 w-full min-w-md h-full">
+  <div class="ml-4 w-full min-w-md h-full">
     <app-change-password class="h-full w-full" *ngIf="selected == changePasswordSelection"></app-change-password>
-    <app-profil class="h-full w-full" *ngIf="selected == updateProfilSelection"></app-profil>
-    <app-update-ferme class="h-full w-full" *ngIf="selected == updateFermeSelection"></app-update-ferme>
+    <app-update-ferme class="h-full w-full" *ngIf="selected == updateFermeSelection" [ferme]="currentFerme" (fermeUpdated)="updateFerme($event)"></app-update-ferme>
     <app-employes class="h-full w-full" *ngIf="selected == employesSelection"></app-employes>
     <app-parcelles class="h-full w-full" *ngIf="selected == parcellesSelection"></app-parcelles>
     <app-activites class="h-full w-full" *ngIf="selected == activitesSelection"></app-activites>

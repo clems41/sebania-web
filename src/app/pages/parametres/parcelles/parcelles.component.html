@@ -1,1 +1,79 @@
-<p>parcelles works!</p>
+<div class=" flex flex-col items-center justify-center w-full">
+  <p-confirmdialog></p-confirmdialog>
+  <div class="p-5 w-full">
+    <p-table #dt2 [value]="filteredParcelles" size="small" stripedRows
+             [scrollable]="true" scrollHeight="40rem"
+             (sortFunction)="sortParcelles()"
+    >
+      <ng-template #header>
+        <tr>
+          <th pSortableColumn="nom" style="width:25%">
+            Nom <p-sortIcon field="nom" />
+          </th>
+          <th pSortableColumn="type.id" style="width:15%">
+            Type <p-sortIcon field="type.id" />
+          </th>
+          <th pSortableColumn="longueur" style="width:15%">
+            Longueur (m) <p-sortIcon field="type.id" />
+          </th>
+          <th pSortableColumn="largeur" style="width:15%">
+            Largeur (m) <p-sortIcon field="type.id" />
+          </th>
+          <th pSortableColumn="largeur_planche" style="width:15%">
+            Largeur planche (cm) <p-sortIcon field="type.id" />
+          </th>
+          <th pSortableColumn="nombre_planches" style="width:15%">
+            Nb planches <p-sortIcon field="type.id" />
+          </th>
+          <!--        Colonne pour la suppresion-->
+          <th></th>
+        </tr>
+        <tr>
+          <th>
+            <p-columnFilter field="nom" matchMode="contains" [showMenu]="false">
+              <ng-template #filter let-value let-filter="filterCallback">
+                <input pInputText type="text" (input)="filterByNomParcelles($event)" placeholder="Rechercher par nom"
+                       fluid
+                       required />
+              </ng-template>
+            </p-columnFilter>
+          </th>
+          <th>
+          </th>
+          <th>
+          </th>
+          <th>
+          </th>
+          <th>
+          </th>
+          <th>
+          </th>
+          <!--        Colonne pour la suppresion-->
+          <th></th>
+        </tr>
+      </ng-template>
+      <ng-template #body let-parcelle >
+        <tr (click)="showDialog(parcelle)" class="cursor-pointer hover:bg-gray100!">
+          <td>{{ parcelle.nom }}</td>
+          <td>{{ parcelle.type.nom }}</td>
+          <td>{{ parcelle.longueur }}</td>
+          <td>{{ parcelle.largeur }}</td>
+          <td>{{ parcelle.largeur_planche * 100 }}</td>
+          <td>{{ parcelle.nombre_planches }}</td>
+          <td>
+            <p-button icon="pi pi-trash"
+                      (click)="onDelete($event, parcelle); $event.stopPropagation()" [rounded]="true"
+                      [raised]="true"
+                      styleClass="bg-suppression! border-suppression! transition-all! hover:scale-110!"
+            />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <div class="bottom-10 w-full">
+    <p-button label="Ajouter une nouvelle parcelle" icon="pi pi-plus" (onClick)="showDialog(null)"
+              styleClass="transition-all! hover:scale-105! items-center! justify-center! border!"
+    />
+  </div>
+</div>

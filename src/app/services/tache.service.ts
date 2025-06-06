@@ -12,7 +12,7 @@ export class TacheService {
 
   constructor(private httpService: HttpService) { }
 
-  getTaches(user_id: number, date:Date): Observable<Tache[]> {
+  getAll(user_id: number, date:Date): Observable<Tache[]> {
     const params: HttpParams = new HttpParams().set('user_id', user_id).set('date', date.toString());
     return this.httpService.get(`${this.tachePrefix}/`, params);
   }

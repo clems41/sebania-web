@@ -1,6 +1,6 @@
-<div class=" flex flex-col items-center justify-center w-full">
+<div class="flex flex-col items-center justify-center w-full">
   <p-confirmdialog></p-confirmdialog>
-  <div class="p-5 w-full">
+  <div class="w-full">
     <p-table #dt2 [value]="filteredParcelles" size="small" stripedRows
              [scrollable]="true" scrollHeight="40rem"
              (sortFunction)="sortParcelles()"
@@ -71,9 +71,9 @@
       </ng-template>
     </p-table>
   </div>
-  <div class="bottom-10 w-full">
+  <div class=" m-2 bottom-10 w-full">
     <p-button label="Ajouter une nouvelle parcelle" icon="pi pi-plus" (onClick)="showDialog(null)"
-              styleClass="transition-all! hover:scale-105! items-center! justify-center! border!"
+              styleClass="transition-all! hover:scale-105!"
     />
   </div>
 </div>

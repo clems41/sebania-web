@@ -85,7 +85,7 @@
   </div>
 
   <!--  COMPOSANT-->
-  <div class="ml-80 min-w-md h-full w-full">
+  <div class="ml-85 min-w-md h-full w-full">
     <app-change-password class="h-full w-full" *ngIf="selected == changePasswordSelection"></app-change-password>
     <app-update-ferme class="h-full w-full" *ngIf="selected == updateFermeSelection" [ferme]="currentFerme" (fermeUpdated)="updateFerme($event)"></app-update-ferme>
     <app-employes class="h-full w-full" *ngIf="selected == employesSelection"></app-employes>

@@ -1,1 +1,32 @@
-<p>contact works!</p>
+<div class="flex flex-row justify-center space-x-10 w-full p-5">
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-6">
+    <div>
+      <p-floatlabel variant="on">
+        <label for="nom">Sujet<span class="text-suppression"> *</span></label>
+        <input pInputText type="text"
+               formControlName="sujet"
+               id="sujet"
+               name="sujet"
+               fluid
+               required>
+      </p-floatlabel>
+    </div>
+    <div>
+      <p-floatlabel variant="on">
+        <textarea rows="10" cols="50" pTextarea formControlName="message" id="message" style="resize: none" class="h-full"></textarea>
+        <label for="message">Message<span class="text-suppression"> *</span></label>
+      </p-floatlabel>
+    </div>
+
+    <p-button label="ENVOYER" type="submit"
+              [disabled]="contactForm.invalid || loading"
+              [raised]="contactForm.invalid || loading"
+              [loading]="loading"
+              fluid
+    />
+
+  </form>
+</div>
+
+
+

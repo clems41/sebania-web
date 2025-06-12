@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import {Router, RouterLink, RouterLinkActive} from '@angular/router';
-import {AuthService} from '../../services/auth.service';
+import {RouterLink, RouterLinkActive} from '@angular/router';
+import {AuthService} from '../../../services/auth.service';
 import {NgOptimizedImage} from '@angular/common';
 
 @Component({
@@ -14,18 +14,10 @@ import {NgOptimizedImage} from '@angular/common';
   styleUrl: './top-bar.component.css'
 })
 export class TopBarComponent {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService) {}
 
   logout() {
     this.authService.logout();
-  }
-
-  navigateToSettings() {
-    this.router.navigate(['/parametres']);
-  }
-
-  navigateToProfile() {
-    this.router.navigate(['/profil']);
   }
 }
 

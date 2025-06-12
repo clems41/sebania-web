@@ -2,12 +2,11 @@
   <div class="bg-brunTerre text-gray100 h-16 flex items-center justify-between px-4 shadow-lg">
     <!-- Logo à gauche -->
     <div class="flex items-center">
-      <a href="/" class="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200">
+      <a href="/public" class="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200">
         <img ngSrc="assets/images/logo.png" alt="Logo" height="50" width="50">
         <span class="text-2xl font-semibold text-vertFeuille">Sebania</span>
       </a>
     </div>
-
 
     <!-- Menu à droite -->
     <div class="flex items-center space-x-1">
@@ -23,12 +22,12 @@
       <!-- Se déconnetecer -->
       <button (click)="logout()"
          class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-grisAnthra active:bg-grisAnthra
-                    transition-all duration-200 ease-in-out group">
+                    transition-all duration-200 ease-in-out group hover:cursor-pointer">
         <i class="bi bi-box-arrow-left h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
         <span class="font-light text-sm group-hover:text-gray200">Se déconnecter</span>
       </button>
     </div>
   </div>
 </div>
-<div class="h-[64px]"></div> <!-- Ajustez la hauteur selon celle de votre top-bar -->
+<div class="h-[64px]"></div> <!-- Ajustez la hauteur selon celle de la top-bar -->
 

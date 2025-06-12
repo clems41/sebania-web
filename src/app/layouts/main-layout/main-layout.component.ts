@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import {RouterModule} from '@angular/router';
-import {TopBarComponent} from '../../navigation/top-bar/top-bar.component';
-import {LateralBarComponent} from '../../navigation/lateral-bar/lateral-bar.component';
+import {TopBarComponent} from './top-bar/top-bar.component';
+import {LateralBarComponent} from './lateral-bar/lateral-bar.component';
 
 @Component({
   selector: 'app-main-layout',

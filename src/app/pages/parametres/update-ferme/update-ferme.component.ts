@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Ferme} from '../../../models/ferme';
 import {Button} from 'primeng/button';
 import {FloatLabel} from 'primeng/floatlabel';
@@ -25,10 +25,8 @@ import {MessageService} from 'primeng/api';
   templateUrl: './update-ferme.component.html',
   styleUrl: './update-ferme.component.css'
 })
-export class UpdateFermeComponent {
-  @Input() ferme: Ferme | null = null;
-  // @ts-ignore
-  @Output() fermeUpdated = new EventEmitter<Ferme>();
+export class UpdateFermeComponent implements OnInit {
+  ferme: Ferme | null = null;
   fermeForm: FormGroup;
   loading: boolean = false;
   methodesAgricoles: MethodeAgricole[] = [];
@@ -45,7 +43,12 @@ export class UpdateFermeComponent {
   }
 
   ngOnInit(): void {
-    this.patchFermeForm(this.ferme);
+    this.fermeService.getFerme().subscribe(
+      (ferme: Ferme) => {
+        this.ferme = ferme;
+        this.patchFermeForm(this.ferme);
+      }
+    )
     this.configurationService.getMethodesAgricoles().subscribe((methodesAgricoles) => {
         this.methodesAgricoles = methodesAgricoles;
       },
@@ -85,7 +88,6 @@ export class UpdateFermeComponent {
       {
         next: (ferme: Ferme) => {
           this.fermeForm.reset();
-          this.fermeUpdated.emit(ferme);
           this.patchFermeForm(ferme);
           this.messageService.add({
             severity: 'success',

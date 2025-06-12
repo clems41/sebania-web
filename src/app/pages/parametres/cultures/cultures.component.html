@@ -1,7 +1,7 @@
 <p-tabs value="feuille">
   <p-tablist>
     @for (categorie of categories; track categorie) {
-      <p-tab [value]="categorie" class="flex items-center !gap-5 text-inherit">
+      <p-tab [value]="categorie" class="flex items-center! gap-5 text-inherit w-[12%]">
         <span>{{ categorie | uppercase }}</span>
       </p-tab>
     }

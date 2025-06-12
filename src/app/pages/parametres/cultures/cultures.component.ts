@@ -5,7 +5,7 @@ import {Culture} from '../../../models/culture';
 import {TabsModule} from 'primeng/tabs';
 import {UpperCasePipe} from '@angular/common';
 import {PickListModule} from 'primeng/picklist';
-import {UpdateCultureRequest} from '../../../models/ferme/culture-request';
+import {UpdateCultureRequest} from '../../../models/ferme/update-culture-request';
 
 @Component({
   selector: 'app-cultures',

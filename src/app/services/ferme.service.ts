@@ -6,7 +6,8 @@ import {FermeRequest} from '../models/ferme/ferme-request';
 import {EmployeRequest} from '../models/ferme/employe-request';
 import {Activite} from '../models/activite';
 import {Culture} from '../models/culture';
-import {UpdateCultureRequest} from '../models/ferme/culture-request';
+import {UpdateCultureRequest} from '../models/ferme/update-culture-request';
+import {UpdateActiviteRequest} from '../models/ferme/update-activite-request';
 
 @Injectable({
   providedIn: 'root'
@@ -35,6 +36,10 @@ export class FermeService {
 
   getCustomActivites(): Observable<Activite[]> {
     return this.httpService.get(`${this.fermePrefix}/activites/`);
+  }
+
+  updateCustomActivites(request: UpdateActiviteRequest): Observable<Activite[]> {
+    return this.httpService.put(`${this.fermePrefix}/activites/`, request);
   }
 
   getCustomCultures(): Observable<Culture[]> {

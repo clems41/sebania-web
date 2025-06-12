@@ -1,1 +1,40 @@
-<p>activites works!</p>
+<p-tabs value="production">
+  <p-tablist>
+    @for (categorie of categories; track categorie) {
+      <p-tab [value]="categorie" class="flex items-center! gap-5 text-inherit">
+        <span>{{ categorie | uppercase }}</span>
+      </p-tab>
+    }
+  </p-tablist>
+  <p-tabpanels>
+    @for (categorie of categories; track categorie) {
+      <p-tabpanel [value]="categorie">
+        <p-picklist
+          [source]="sourceActivites"
+          [target]="fermeActivites[categorie]"
+          [dragdrop]="true"
+          [responsive]="true"
+          [showSourceControls]="false"
+          [showTargetControls]="false"
+          [showTargetFilter]="false"
+          [responsive]="true"
+          [stripedRows]="true"
+          (onMoveToSource)="onSubmit(categorie)"
+          (onMoveToTarget)="onSubmit(categorie)"
+          [filterLocale]="'fr-FR'"
+          sourceHeader="Activités disponibles"
+          targetHeader="Activités de la ferme pour la catégorie : {{ categorie | uppercase }}"
+          filterBy="nom,mots_cles"
+          sourceFilterPlaceholder="Recherche par nom ou mots-clés"
+          targetFilterPlaceholder="Recherche par nom"
+          breakpoint="1400px"
+          scrollHeight="28rem"
+        >
+          <ng-template let-item #item>
+            {{ item.nom }}
+          </ng-template>
+        </p-picklist>
+      </p-tabpanel>
+    }
+  </p-tabpanels>
+</p-tabs>

@@ -1,24 +1,22 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewEncapsulation} from '@angular/core';
 import {ConfigurationService} from '../../../services/configuration.service';
 import {FermeService} from '../../../services/ferme.service';
 import {Culture} from '../../../models/culture';
 import {TabsModule} from 'primeng/tabs';
 import {UpperCasePipe} from '@angular/common';
 import {PickListModule} from 'primeng/picklist';
-import {Button} from 'primeng/button';
 import {UpdateCultureRequest} from '../../../models/ferme/culture-request';
-import {MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-cultures',
   imports: [
     TabsModule,
     UpperCasePipe,
-    PickListModule,
-    Button
+    PickListModule
   ],
   templateUrl: './cultures.component.html',
-  styleUrl: './cultures.component.css'
+  styleUrl: './cultures.component.css',
+  encapsulation: ViewEncapsulation.None,
 })
 export class CulturesComponent implements OnInit {
   allCultures: Culture[] = [];
@@ -27,8 +25,7 @@ export class CulturesComponent implements OnInit {
   categories: string[] = ["feuille", "fruit", "racine", "autres"];
   loading: boolean = false;
 
-  constructor(private configurationService: ConfigurationService, private fermeService: FermeService,
-              private messageService: MessageService) {
+  constructor(private configurationService: ConfigurationService, private fermeService: FermeService) {
   }
 
   ngOnInit(): void {
@@ -77,11 +74,6 @@ export class CulturesComponent implements OnInit {
       {
         next: (cultures: Culture[]) => {
           this.refreshCultures(cultures);
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Succès',
-            detail: "La liste des cultures a été mise à jour."
-          });
           this.loading = false;
         },
         error: () => {

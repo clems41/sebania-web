@@ -1,0 +1,4 @@
+.p-ripple.p-button.p-button-secondary[data-pc-section="moveAllToTargetButton"],
+.p-ripple.p-button.p-button-secondary[data-pc-section="moveAllToSourceButton"] {
+  display: none;
+}

@@ -1,4 +1,4 @@
-<p-tabs value="0">
+<p-tabs value="feuille">
   <p-tablist>
     @for (categorie of categories; track categorie) {
       <p-tab [value]="categorie" class="flex items-center !gap-5 text-inherit">
@@ -14,11 +14,12 @@
           [target]="fermeCultures[categorie]"
           [dragdrop]="true"
           [responsive]="true"
-          [showTargetFilter]="false"
           [showSourceControls]="false"
           [showTargetControls]="false"
           [responsive]="true"
           [stripedRows]="true"
+          (onMoveToSource)="onSubmit(categorie)"
+          (onMoveToTarget)="onSubmit(categorie)"
           sourceHeader="Cultures disponibles"
           targetHeader="Cultures de la ferme pour la categorie : {{ categorie | uppercase }}"
           filterBy="nom"
@@ -31,15 +32,6 @@
             {{ item.nom }}
           </ng-template>
         </p-picklist>
-
-        <p-button label="ENREGISTRER"
-                  [loading]="loading"
-                  [disabled]="loading"
-                  [raised]="!loading"
-                  fluid
-                  styleClass="mt-5 max-w-[30%]"
-                  (onClick)="onSubmit(categorie)"
-        />
       </p-tabpanel>
     }
   </p-tabpanels>

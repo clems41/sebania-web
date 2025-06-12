@@ -22,6 +22,7 @@ export class AuthService {
   }
 
   logout() {
+    this.cacheService.removeCurentUser();
     this.httpService.logout(true);
   }
 
@@ -31,6 +32,9 @@ export class AuthService {
         map((response: AccessResponse) => {
           this.cacheService.storeAccessToken(response.access);
           this.cacheService.storeRefreshToken(response.refresh);
+          this.me().subscribe(
+            user => this.cacheService.storeCurentUser(user)
+          );
           return response;
         })
       );

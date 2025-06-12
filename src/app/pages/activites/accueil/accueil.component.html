@@ -1,0 +1,71 @@
+<div class="flex flex-col items-center">
+  <h2 class="font-medium text-lg">{{ currentUser?.first_name }} {{ currentUser?.last_name }}</h2>
+  <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 150px)'}">
+    <div class="flex-col">
+      @for (tache of taches; track tache.id) {
+        <div class="flex flex-col rounded-2xl p-4 min-w-md shadow-sm m-2 bg-brun300">
+          <!-- header -->
+          <div class="flex flex-row justify-between items-center">
+            <div class="font-semibold text-xl hover:scale-110 hover:cursor-pointer">{{ tache.activite.nom }}</div>
+
+            <div class="flex flex-row items-center space-x-4">
+
+              <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                @if (tache.commentaire.length > 0) {
+                  <i class="bi bi-chat-left-text-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                }
+                @if (!tache.commentaire || tache.commentaire.length == 0) {
+                  <i class="bi bi-chat-left-text" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                }
+              </div>
+
+              <div
+                class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer">
+                {{ tacheUtils.getDureeFormatted(tache.duree_minutes) }}
+              </div>
+
+            </div>
+          </div>
+          <!-- cultures -->
+          <div class="flex flex-col items-center justify-center space-y-4 mt-4">
+            @for (culture of tache.cultures; track culture.culture.id) {
+              <div class="flex flex-row items-center justify-center space-x-5">
+                <div>
+                  <i class="bi bi-exclamation-triangle-fill"
+                     style="color: var(--color-jauneSoleil);font-size: 2rem"></i>
+                </div>
+                <div
+                  class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer">
+                  {{ culture.culture.nom }}
+                </div>
+                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                  @if (culture.parcelles.length > 0) {
+                    <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                  }
+                  @if (culture.parcelles.length == 0) {
+                    <i class="bi bi-grid-1x2" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                  }
+                </div>
+                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                  @if (culture?.quantite ?? 0 > 0) {
+                    <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                  }
+                  @if (!culture.quantite || culture.quantite == 0) {
+                    <i class="bi bi-plus-circle" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+          <div class="flex flex-row justify-between">
+            <div></div>
+            <div class="bg-suppression rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+              <i class="bi bi-trash-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+            </div>
+          </div>
+        </div>
+      }
+
+    </div>
+  </p-scrollpanel>
+</div>

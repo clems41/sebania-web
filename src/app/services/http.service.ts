@@ -16,6 +16,8 @@ import {ErrorCodes} from '../models/errors/error-code';
 export class HttpService {
   private apiUrl = environment.apiUrl;
   private defaultNumberOfRetries = 0; // Nombre de tentatives de réessai
+  private defaultNeedAuth: boolean = true;
+  private defaultHandleError: boolean = true;
   private refreshTokenInProgress = false;
   private refreshTokenSubject: BehaviorSubject<string | null> = new BehaviorSubject<string | null>(null);
   private authPrefix = '/auth';
@@ -43,7 +45,7 @@ export class HttpService {
 
     return this.post<AccessResponse>(
       `${this.authPrefix}/token/refresh/`,
-      {refresh: refreshToken},
+      {refresh: refreshToken}, {handleError: false, needAuth: false},
     ).pipe(
       switchMap((response: AccessResponse) => {
         this.cacheService.storeAccessToken(response.access);
@@ -65,13 +67,20 @@ export class HttpService {
       email: email,
       password: password,
     };
-    return this.post<AccessResponse>(`${this.authPrefix}/token/access/`, request, false, false, 0);
+    const options = {
+      handleError: false,
+      needAuth: false,
+    };
+    return this.post<AccessResponse>(`${this.authPrefix}/token/access/`, request, options);
   }
 
 
   logout(callApi: boolean = false) {
     if (callApi) {
-      this.put(`${this.authPrefix}/logout/`, null, false, true, 0).subscribe();
+      const options = {
+        handleError: false,
+      };
+      this.put(`${this.authPrefix}/logout/`, null, options).subscribe();
     }
     this.cacheService.removeTokens();
     // Redirige vers la page de connexion
@@ -80,75 +89,75 @@ export class HttpService {
     });
   }
 
-  get<T>(path: string, params?: HttpParams, handleError: boolean = true, needAuth: boolean = true, numberOfRetries: number = this.defaultNumberOfRetries): Observable<T> {
+  get<T>(path: string, options?: {params?: HttpParams, handleError?: boolean, needAuth?: boolean, numberOfRetries?: number}): Observable<T> {
     const makeRequest = () => {
-      const options = {
-        headers: this.getHeaders(needAuth),
-        params: params
+      const requestOptions = {
+        headers: this.getHeaders(options?.needAuth ?? this.defaultNeedAuth),
+        params: options?.params,
       };
-      return this.http.get<T>(`${this.apiUrl}v1${path}`, options);
+      return this.http.get<T>(`${this.apiUrl}v1${path}`, requestOptions);
     };
 
-    if (!handleError) {
+    if (!(options?.handleError ?? this.defaultHandleError)) {
       return makeRequest();
     }
 
     return makeRequest().pipe(
-      retry(numberOfRetries),
+      retry(options?.numberOfRetries ?? this.defaultNumberOfRetries),
       catchError(error => this.handleError(error, () => makeRequest()))
     );
   }
 
-  post<T>(path: string, body: any | null, handleError: boolean = true, needAuth: boolean = true, numberOfRetries: number = this.defaultNumberOfRetries): Observable<T> {
+  post<T>(path: string, body: any | null, options?: {handleError?: boolean, needAuth?: boolean, numberOfRetries?: number}): Observable<T> {
     const makeRequest = () => {
-      const options = {
-        headers: this.getHeaders(needAuth)
+      const requestOptions = {
+        headers: this.getHeaders(options?.needAuth ?? this.defaultNeedAuth),
       };
-      return this.http.post<T>(`${this.apiUrl}v1${path}`, body, options);
+      return this.http.post<T>(`${this.apiUrl}v1${path}`, body, requestOptions);
     };
 
-    if (!handleError) {
+    if (!(options?.handleError ?? this.defaultHandleError)) {
       return makeRequest();
     }
 
     return makeRequest().pipe(
-      retry(numberOfRetries),
+      retry(options?.numberOfRetries ?? this.defaultNumberOfRetries),
       catchError(error => this.handleError(error, () => makeRequest()))
     );
   }
 
-  put<T>(path: string, body: any | null, handleError: boolean = true, needAuth: boolean = true, numberOfRetries: number = this.defaultNumberOfRetries): Observable<T> {
+  put<T>(path: string, body: any | null, options?: {handleError?: boolean, needAuth?: boolean, numberOfRetries?: number}): Observable<T> {
     const makeRequest = () => {
-      const options = {
-        headers: this.getHeaders(needAuth)
+      const requestOptions = {
+        headers: this.getHeaders(options?.needAuth ?? this.defaultNeedAuth),
       };
-      return this.http.put<T>(`${this.apiUrl}v1${path}`, body, options);
+      return this.http.put<T>(`${this.apiUrl}v1${path}`, body, requestOptions);
     };
 
-    if (!handleError) {
+    if (!(options?.handleError ?? this.defaultHandleError)) {
       return makeRequest();
     }
 
     return makeRequest().pipe(
-      retry(numberOfRetries),
+      retry(options?.numberOfRetries ?? this.defaultNumberOfRetries),
       catchError(error => this.handleError(error, () => makeRequest()))
     );
   }
 
-  delete<T>(path: string, handleError: boolean = true, needAuth: boolean = true, numberOfRetries: number = this.defaultNumberOfRetries): Observable<T> {
+  delete<T>(path: string, options?: {handleError?: boolean, needAuth?: boolean, numberOfRetries?: number}): Observable<T> {
     const makeRequest = () => {
-      const options = {
-        headers: this.getHeaders(needAuth)
+      const requestOptions = {
+        headers: this.getHeaders(options?.needAuth ?? this.defaultNeedAuth),
       };
-      return this.http.delete<T>(`${this.apiUrl}v1${path}`, options);
+      return this.http.delete<T>(`${this.apiUrl}v1${path}`, requestOptions);
     };
 
-    if (!handleError) {
+    if (!(options?.handleError ?? this.defaultHandleError)) {
       return makeRequest();
     }
 
     return makeRequest().pipe(
-      retry(numberOfRetries),
+      retry(options?.numberOfRetries ?? this.defaultNumberOfRetries),
       catchError(error => this.handleError(error, () => makeRequest()))
     );
   }

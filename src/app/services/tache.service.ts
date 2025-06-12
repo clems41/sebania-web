@@ -14,6 +14,6 @@ export class TacheService {
 
   getAll(user_id: number, date:Date): Observable<Tache[]> {
     const params: HttpParams = new HttpParams().set('user_id', user_id).set('date', date.toString());
-    return this.httpService.get(`${this.tachePrefix}/`, params);
+    return this.httpService.get(`${this.tachePrefix}/`, {params: params});
   }
 }

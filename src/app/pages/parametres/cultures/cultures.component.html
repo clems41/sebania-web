@@ -1,1 +1,46 @@
-<p>cultures works!</p>
+<p-tabs value="0">
+  <p-tablist>
+    @for (categorie of categories; track categorie) {
+      <p-tab [value]="categorie" class="flex items-center !gap-5 text-inherit">
+        <span>{{ categorie | uppercase }}</span>
+      </p-tab>
+    }
+  </p-tablist>
+  <p-tabpanels>
+    @for (categorie of categories; track categorie) {
+      <p-tabpanel [value]="categorie">
+        <p-picklist
+          [source]="sourceCultures"
+          [target]="fermeCultures[categorie]"
+          [dragdrop]="true"
+          [responsive]="true"
+          [showTargetFilter]="false"
+          [showSourceControls]="false"
+          [showTargetControls]="false"
+          [responsive]="true"
+          [stripedRows]="true"
+          sourceHeader="Cultures disponibles"
+          targetHeader="Cultures de la ferme pour la categorie : {{ categorie | uppercase }}"
+          filterBy="nom"
+          sourceFilterPlaceholder="Recherche par nom"
+          targetFilterPlaceholder="Recherche par nom"
+          breakpoint="1400px"
+          scrollHeight="28rem"
+        >
+          <ng-template let-item #item>
+            {{ item.nom }}
+          </ng-template>
+        </p-picklist>
+
+        <p-button label="ENREGISTRER"
+                  [loading]="loading"
+                  [disabled]="loading"
+                  [raised]="!loading"
+                  fluid
+                  styleClass="mt-5 max-w-[30%]"
+                  (onClick)="onSubmit(categorie)"
+        />
+      </p-tabpanel>
+    }
+  </p-tabpanels>
+</p-tabs>

@@ -38,20 +38,20 @@ export class AuthService {
 
   resetPassword(email: string): Observable<null> {
     const params: HttpParams = new HttpParams().set('email', email);
-    return this.httpService.get(`${this.authPrefix}/reset-password/`, params);
+    return this.httpService.get(`${this.authPrefix}/reset-password/`, {params: params});
   }
 
   me(): Observable<User> {
     return this.httpService.get<User>(`${this.authPrefix}/me/`);
   }
 
-  register(query: RegisterRequest): Observable<User> {
-    return this.httpService.post(`${this.authPrefix}/register/`, query);
+  register(request: RegisterRequest): Observable<User> {
+    return this.httpService.post(`${this.authPrefix}/register/`, request);
   }
 
   emailExists(email: string): Observable<boolean> {
     const params: HttpParams = new HttpParams().set('email', email);
-    return this.httpService.get<boolean>(`${this.authPrefix}/email/`, params);
+    return this.httpService.get<boolean>(`${this.authPrefix}/email/`, {params: params});
   }
 
   changePassword(oldPassword: string, newPassword: string): Observable<null> {

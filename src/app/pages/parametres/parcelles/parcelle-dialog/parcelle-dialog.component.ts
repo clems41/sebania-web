@@ -81,7 +81,6 @@ export class ParcelleDialogComponent implements OnInit {
       largeur_planche: largeur_planche_cm / 100,
       nombre_planches: nombre_planches,
     }
-    console.log(request);
     this.loading = true;
     if (this.parcelle) {
       // update

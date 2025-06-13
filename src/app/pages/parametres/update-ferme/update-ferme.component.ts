@@ -56,7 +56,6 @@ export class UpdateFermeComponent implements OnInit {
   }
 
   patchFermeForm(ferme: Ferme | null) {
-    console.log(ferme);
     this.fermeForm.patchValue({
       ferme_nom: ferme?.nom,
       ferme_code_postal: ferme?.code_postal,

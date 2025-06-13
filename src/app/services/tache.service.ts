@@ -3,8 +3,8 @@ import {HttpService} from './http.service';
 import {map, Observable} from 'rxjs';
 import {Tache} from '../models/tache';
 import {HttpParams} from '@angular/common/http';
-import moment from 'moment';
 import {PatchTacheRequest, TacheRequest} from '../models/tache/tache-request';
+import {DateUtils} from '../utils/date-utils';
 
 @Injectable({
   providedIn: 'root'
@@ -12,13 +12,13 @@ import {PatchTacheRequest, TacheRequest} from '../models/tache/tache-request';
 export class TacheService {
   private tachePrefix = '/taches';
 
-  constructor(private httpService: HttpService) {
+  constructor(private httpService: HttpService, private dateUtils: DateUtils) {
   }
 
   getAll(user_id: number, date: Date): Observable<Tache[]> {
     const params: HttpParams = new HttpParams()
       .set('user_id', user_id)
-      .set('date', (moment(date)).format('DD/MM/YYYY'));
+      .set('date', this.dateUtils.toFrenchFormat(date));
     return this.httpService.get(`${this.tachePrefix}/`, {params: params});
   }
 
@@ -45,7 +45,7 @@ export class TacheService {
   getTotalMinutesDay(user_id: number, date: Date): Observable<number> {
     const params: HttpParams = new HttpParams()
       .set('user_id', user_id)
-      .set('date', (moment(date)).format('DD/MM/YYYY'));
+      .set('date', this.dateUtils.toFrenchFormat(date));
     return this.httpService.get(`${this.tachePrefix}/total/`, {params: params})
       .pipe(
         map((response: any) => {

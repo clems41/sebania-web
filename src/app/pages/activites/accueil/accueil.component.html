@@ -1,7 +1,16 @@
 <p-confirmdialog></p-confirmdialog>
 <div class="flex flex-row w-full">
   <div class="w-[30%] flex flex-col items-center space-y-5">
-    <div class="font-semibold text-xl">{{ dateUtils.toFrenchString(date) }}</div>
+    <div class="flex flex-row justify-center space-x-3 items-center h-10 w-full">
+      <div class="flex items-center h-full" (click)="onMinusOneDay()">
+        <i class="pi pi-chevron-left hover:scale-110 hover:cursor-pointer" style="font-size: 2rem"></i>
+      </div>
+      <div class="flex items-center h-full font-semibold text-2xl">{{ dateUtils.toFrenchString(date) }}</div>
+      <div class="flex items-center h-full" (click)="onAddOneDay()">
+        <i class="pi pi-chevron-right hover:scale-110 hover:cursor-pointer" style="font-size: 2rem"></i>
+      </div>
+    </div>
+
     <div class="flex flex-row items-center justify-between w-56">
       <div class="font-medium text-xl">Total du jour :</div>
       <div class="rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md"
@@ -54,20 +63,31 @@
                [ngClass]="{'bg-brun300': tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles,
                'bg-brun400': tache.activite.niveau_complexite >= NiveauComplexite.cultures}">
             <!-- header -->
-            <div class="flex flex-row h-16 justify-between items-center space-x-4">
-              <div class="font-semibold text-xl hover:scale-110 hover:cursor-pointer">
-                {{ tache.activite.nom }}
+            <div class="flex flex-row h-16 justify-between space-x-4">
+              <div class=" flex flex-row justify-between space-x-4">
+                <p-button icon="pi pi-window-maximize"
+                          (click)="onUpdate($event, tache)" [rounded]="true"
+                          [raised]="true"
+                          styleClass="bg-intermediaire! border-intermediaire!"
+                          class="transition-all hover:scale-110"
+                />
+                <div class="font-semibold text-xl hover:scale-110 hover:cursor-pointer top-0"
+                     (click)="showDialog(tache, 'activite')">
+                  {{ tache.activite.nom }}
+                </div>
               </div>
 
               <div class="flex flex-row items-center space-x-4">
 
-                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+                     (click)="showDialog(tache, 'commentaire')">
                   <i class="bi" style="color: var(--color-gray50);font-size: 1.5rem"
                      [ngClass]="tache.commentaire.length > 0 ? 'bi-chat-left-text-fill' : 'bi-chat-left-text'"></i>
                 </div>
 
                 <div
-                  class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer">
+                  class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer"
+                  (click)="showDialog(tache, 'duree_minutes')">
                   {{ tacheUtils.getDureeFormatted(tache.duree_minutes) }}
                 </div>
 
@@ -75,7 +95,7 @@
             </div>
             <!-- cultures -->
             <div class="flex flex-col items-center justify-center space-y-4">
-              @for (culture of tache.cultures; track culture.culture.id) {
+              @for (culture of tache.cultures; track culture.culture.id; let idx = $index) {
                 <div class="flex flex-row items-center justify-center space-x-5 w-full">
                   <div class="w-1/10">
                     @if (culture.fields_are_missing) {
@@ -84,14 +104,17 @@
                     }
                   </div>
                   <div
-                    class="w-1/2 bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer">
+                    class="w-1/2 bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer"
+                    (click)="showDialog(tache, 'cultures.culture', idx)">
                     {{ culture.culture.nom }}
                   </div>
-                  <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                  <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+                       (click)="showDialog(tache, 'cultures.parcelles', idx)">
                     <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
                        [ngClass]="culture.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
                   </div>
-                  <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                  <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+                       (click)="showDialog(tache, 'cultures.quantite', idx)">
                     <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
                        [ngClass]="culture?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
                   </div>
@@ -106,11 +129,13 @@
                 }
               </div>
               <div class="flex flex-row space-x-5 w-8/10 justify-center items-center">
-                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+                     (click)="showDialog(tache, 'parcelles')">
                   <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
                      [ngClass]="tache.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
                 </div>
-                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+                     (click)="showDialog(tache, 'quantite')">
                   <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
                      [ngClass]="tache?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
                 </div>

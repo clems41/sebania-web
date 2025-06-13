@@ -18,9 +18,11 @@ import {NiveauComplexite} from '../../../models/niveau-complexite';
 import moment from 'moment';
 import {DateUtils} from '../../../utils/date-utils';
 import {StatutJour} from '../../../models/statut-jour';
-import {ConfirmationService, MessageService} from 'primeng/api';
+import {ConfirmationService, Footer, MessageService} from 'primeng/api';
 import {Button} from 'primeng/button';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
+import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
+import {ModificationTacheComponent} from './modification-tache/modification-tache.component';
 
 @Component({
   selector: 'app-accueil',
@@ -48,16 +50,49 @@ export class AccueilComponent implements OnInit, OnDestroy {
   nbVocalInProgress: number = 0;
   refreshVocauxSub: Subscription = new Subscription();
   refreshVocauxDelaySeconds: number = 60;
+  dynamicDialogRef: DynamicDialogRef | undefined;
 
   constructor(private authService: AuthService, private tacheService: TacheService,
               protected tacheUtils: TacheUtils, private fermeService: FermeService,
               private userUtils: UserUtils, private vocalService: VocalService,
               protected dateUtils: DateUtils, private messageService: MessageService,
-              private confirmationService: ConfirmationService) {
+              private confirmationService: ConfirmationService, private dialogService: DialogService) {
   }
 
   ngOnDestroy(): void {
     this.refreshVocauxSub.unsubscribe();
+    if (this.dynamicDialogRef) {
+      this.dynamicDialogRef.close();
+    }
+  }
+
+  showDialog(tache: Tache, field: string, cultureTacheIndex: number | null = null) {
+    this.dynamicDialogRef = this.dialogService.open(ModificationTacheComponent, {
+      inputValues: {
+        tache: tache,
+        field: field,
+        cultureTacheIndex
+      },
+      header: `Modification de la tâche : '${tache.activite.nom}'`,
+      width: '40%',
+      modal: true,
+      contentStyle: {overflow: 'auto'},
+      closable: true,
+      focusOnShow: false,
+      breakpoints: {
+        '960px': '75vw',
+        '640px': '90vw'
+      },
+      templates: {
+        footer: Footer
+      }
+    });
+
+    this.dynamicDialogRef.onClose.subscribe((need_refresh: boolean) => {
+      if (need_refresh) {
+        this.loadTaches();
+      }
+    });
   }
 
   ngOnInit(): void {
@@ -101,6 +136,10 @@ export class AccueilComponent implements OnInit, OnDestroy {
     );
   }
 
+  onUpdate(event: any, tache: Tache) {
+
+  }
+
   onDelete(event: any, tache: Tache) {
     this.confirmationService.confirm({
       target: event.target as EventTarget,
@@ -132,6 +171,18 @@ export class AccueilComponent implements OnInit, OnDestroy {
         );
       }
     });
+  }
+
+  onAddOneDay() {
+    this.date = this.dateUtils.addDays(this.date, 1);
+    this.loadTaches();
+    this.loadVocaux();
+  }
+
+  onMinusOneDay() {
+    this.date = this.dateUtils.addDays(this.date, -1);
+    this.loadTaches();
+    this.loadVocaux();
   }
 
   protected readonly NiveauComplexite = NiveauComplexite;

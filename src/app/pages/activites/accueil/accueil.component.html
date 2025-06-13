@@ -103,12 +103,33 @@
                 </div>
               }
             </div>
-            <div class="flex flex-row justify-center mt-2">
-              <div class="flex flex-row justify-between space-x-2 bg-suppression rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer items-center">
-                <i class="bi bi-trash-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                <div class="text-gray50 font-light">
-                  <span>Supprimer</span>
+            <div class="flex flex-row w-full mt-2">
+              <div class="w-1/10">
+                @if (tache.fields_are_missing) {
+                  <i class="bi bi-exclamation-triangle-fill"
+                     style="color: var(--color-jauneSoleil);font-size: 2rem"></i>
+                }
+              </div>
+              <div class="flex flex-row space-x-5 w-8/10 justify-center items-center">
+                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                  @if (tache.parcelles.length > 0) {
+                    <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                  }
+                  @if (tache.parcelles.length == 0) {
+                    <i class="bi bi-grid-1x2" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                  }
                 </div>
+                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
+                  @if (tache?.quantite ?? 0 > 0) {
+                    <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                  }
+                  @if (!tache.quantite || tache.quantite == 0) {
+                    <i class="bi bi-plus-circle" style="color: var(--color-gray50);font-size: 1.5rem"></i>
+                  }
+                </div>
+              </div>
+              <div class="flex flex-row w-1/10 bg-suppression rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer items-center">
+                <i class="bi bi-trash-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
               </div>
             </div>
           </div>

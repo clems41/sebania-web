@@ -26,4 +26,5 @@ export interface CultureTache {
   quantite: number;
   nature: string;
   unite: Unite;
+  fields_are_missing: boolean;
 }

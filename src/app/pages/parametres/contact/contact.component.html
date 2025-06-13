@@ -1,5 +1,5 @@
 <div class="flex flex-row justify-center space-x-10 w-full p-5">
-  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-6">
+  <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="space-y-6 w-[40%]">
     <div>
       <p-floatlabel variant="on">
         <label for="nom">Sujet<span class="text-suppression"> *</span></label>
@@ -13,7 +13,7 @@
     </div>
     <div>
       <p-floatlabel variant="on">
-        <textarea rows="10" cols="50" pTextarea formControlName="message" id="message" style="resize: none" class="h-full"></textarea>
+        <textarea rows="10" pTextarea formControlName="message" id="message" style="resize: none" class=" w-full"></textarea>
         <label for="message">Message<span class="text-suppression"> *</span></label>
       </p-floatlabel>
     </div>

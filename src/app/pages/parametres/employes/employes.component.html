@@ -1,3 +1,4 @@
+<p-confirmdialog></p-confirmdialog>
 <div class="flex flex-row justify-center space-x-10 w-full">
   <div class="p-6 justify-center w-[40%]">
     <form [formGroup]="employeForm" (ngSubmit)="onSubmit()" class="space-y-3">
@@ -54,7 +55,7 @@
             {{ employe.email }}
           </p>
           <p-button icon="pi pi-trash"
-                    (click)="onDeleteEmploye(employe)" [rounded]="true"
+                    (click)="onDeleteEmploye($event, employe)" [rounded]="true"
                     [raised]="true"
                     styleClass="bg-suppression! border-suppression!"
                     class="transition-all hover:scale-110"

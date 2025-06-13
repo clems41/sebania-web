@@ -1,10 +1,11 @@
+<p-confirmdialog></p-confirmdialog>
 <div class="flex flex-row w-full">
   <div class="w-[30%] flex flex-col items-center space-y-5">
-    <div class="font-semibold text-xl">{{dateUtils.toFrenchString(date)}}</div>
+    <div class="font-semibold text-xl">{{ dateUtils.toFrenchString(date) }}</div>
     <div class="flex flex-row items-center justify-between w-56">
       <div class="font-medium text-xl">Total du jour :</div>
       <div class="rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md"
-      [ngClass]="{'bg-vertFeuille': statutJour == StatutJour.ok, 'bg-jauneSoleil': statutJour == StatutJour.warning, 'bg-suppression': statutJour == StatutJour.danger}">
+           [ngClass]="{'bg-vertFeuille': statutJour == StatutJour.ok, 'bg-jauneSoleil': statutJour == StatutJour.warning, 'bg-suppression': statutJour == StatutJour.danger}">
         {{ tacheUtils.getDureeFormatted(totalMinutes) }}
       </div>
     </div>
@@ -53,8 +54,10 @@
                [ngClass]="{'bg-brun300': tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles,
                'bg-brun400': tache.activite.niveau_complexite >= NiveauComplexite.cultures}">
             <!-- header -->
-            <div class="flex flex-row justify-between items-center">
-              <div class="font-semibold text-xl hover:scale-110 hover:cursor-pointer">{{ tache.activite.nom }}</div>
+            <div class="flex flex-row h-16 justify-between items-center space-x-4">
+              <div class="font-semibold text-xl hover:scale-110 hover:cursor-pointer">
+                {{ tache.activite.nom }}
+              </div>
 
               <div class="flex flex-row items-center space-x-4">
 
@@ -112,10 +115,13 @@
                      [ngClass]="tache?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
                 </div>
               </div>
-              <div
-                class="flex flex-row w-1/10 bg-suppression rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer items-center">
-                <i class="bi bi-trash-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-              </div>
+              <p-button icon="pi pi-trash"
+                        (click)="onDelete($event, tache)" [rounded]="true"
+                        [raised]="true"
+                        size="large"
+                        styleClass="bg-suppression! border-suppression!"
+                        class="transition-all hover:scale-110"
+              />
             </div>
           </div>
         }

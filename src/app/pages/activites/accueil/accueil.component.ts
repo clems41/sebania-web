@@ -18,6 +18,9 @@ import {NiveauComplexite} from '../../../models/niveau-complexite';
 import moment from 'moment';
 import {DateUtils} from '../../../utils/date-utils';
 import {StatutJour} from '../../../models/statut-jour';
+import {ConfirmationService, MessageService} from 'primeng/api';
+import {Button} from 'primeng/button';
+import {ConfirmDialogModule} from 'primeng/confirmdialog';
 
 @Component({
   selector: 'app-accueil',
@@ -28,7 +31,9 @@ import {StatutJour} from '../../../models/statut-jour';
     FloatLabel,
     NgIf,
     DatePickerModule,
-    NgClass
+    NgClass,
+    Button,
+    ConfirmDialogModule
   ],
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
@@ -47,7 +52,8 @@ export class AccueilComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService, private tacheService: TacheService,
               protected tacheUtils: TacheUtils, private fermeService: FermeService,
               private userUtils: UserUtils, private vocalService: VocalService,
-              protected dateUtils: DateUtils) {
+              protected dateUtils: DateUtils, private messageService: MessageService,
+              private confirmationService: ConfirmationService) {
   }
 
   ngOnDestroy(): void {
@@ -93,6 +99,39 @@ export class AccueilComponent implements OnInit, OnDestroy {
         this.statutJour = this.tacheUtils.getStatutJourFromTotalMinutes(totalMinutes);
       }
     );
+  }
+
+  onDelete(event: any, tache: Tache) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: `Êtes vous sûr de vouloir supprimer la tâche '${tache.activite.nom}' ?`,
+      header: 'Suppression',
+      icon: 'pi pi-info-circle',
+      rejectLabel: 'Annuler',
+      rejectButtonProps: {
+        label: 'Annuler',
+        severity: 'secondary',
+        outlined: true,
+      },
+      acceptButtonProps: {
+        label: 'Supprimer',
+        severity: 'danger',
+      },
+      accept: () => {
+        this.tacheService.delete(tache.id).subscribe(
+          {
+            next: () => {
+              this.loadTaches();
+              this.messageService.add({
+                severity: 'success',
+                summary: 'Succès',
+                detail: `La tâche '${tache.activite.nom}' a bien été suprimée.`
+              });
+            }
+          }
+        );
+      }
+    });
   }
 
   protected readonly NiveauComplexite = NiveauComplexite;

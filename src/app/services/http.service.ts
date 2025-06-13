@@ -144,6 +144,24 @@ export class HttpService {
     );
   }
 
+  patch<T>(path: string, body: any | null, options?: {handleError?: boolean, needAuth?: boolean, numberOfRetries?: number}): Observable<T> {
+    const makeRequest = () => {
+      const requestOptions = {
+        headers: this.getHeaders(options?.needAuth ?? this.defaultNeedAuth),
+      };
+      return this.http.patch<T>(`${this.apiUrl}v1${path}`, body, requestOptions);
+    };
+
+    if (!(options?.handleError ?? this.defaultHandleError)) {
+      return makeRequest();
+    }
+
+    return makeRequest().pipe(
+      retry(options?.numberOfRetries ?? this.defaultNumberOfRetries),
+      catchError(error => this.handleError(error, () => makeRequest()))
+    );
+  }
+
   delete<T>(path: string, options?: {handleError?: boolean, needAuth?: boolean, numberOfRetries?: number}): Observable<T> {
     const makeRequest = () => {
       const requestOptions = {

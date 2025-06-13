@@ -10,10 +10,14 @@ import {UserUtils} from '../../../utils/user-utils';
 import {Select} from 'primeng/select';
 import {FormsModule} from '@angular/forms';
 import {FloatLabel} from 'primeng/floatlabel';
-import {NgIf} from '@angular/common';
+import {NgClass, NgIf} from '@angular/common';
 import {DatePickerModule} from 'primeng/datepicker';
 import {VocalService} from '../../../services/vocal.service';
 import {Subscription, timer} from 'rxjs';
+import {NiveauComplexite} from '../../../models/niveau-complexite';
+import moment from 'moment';
+import {DateUtils} from '../../../utils/date-utils';
+import {StatutJour} from '../../../models/statut-jour';
 
 @Component({
   selector: 'app-accueil',
@@ -23,7 +27,8 @@ import {Subscription, timer} from 'rxjs';
     FormsModule,
     FloatLabel,
     NgIf,
-    DatePickerModule
+    DatePickerModule,
+    NgClass
   ],
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
@@ -34,13 +39,15 @@ export class AccueilComponent implements OnInit, OnDestroy {
   taches: Tache[] = [];
   date: Date = new Date();
   totalMinutes: number = 0;
+  statutJour: StatutJour = StatutJour.ok;
   nbVocalInProgress: number = 0;
   refreshVocauxSub: Subscription = new Subscription();
   refreshVocauxDelaySeconds: number = 60;
 
   constructor(private authService: AuthService, private tacheService: TacheService,
               protected tacheUtils: TacheUtils, private fermeService: FermeService,
-              private userUtils: UserUtils, private vocalService: VocalService) {
+              private userUtils: UserUtils, private vocalService: VocalService,
+              protected dateUtils: DateUtils) {
   }
 
   ngOnDestroy(): void {
@@ -83,7 +90,12 @@ export class AccueilComponent implements OnInit, OnDestroy {
     this.tacheService.getTotalMinutesDay(this.currentUser.id, this.date).subscribe(
       (totalMinutes) => {
         this.totalMinutes = totalMinutes;
+        this.statutJour = this.tacheUtils.getStatutJourFromTotalMinutes(totalMinutes);
       }
     );
   }
+
+  protected readonly NiveauComplexite = NiveauComplexite;
+  protected readonly moment = moment;
+  protected readonly StatutJour = StatutJour;
 }

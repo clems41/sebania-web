@@ -4,6 +4,7 @@ import {map, Observable} from 'rxjs';
 import {Tache} from '../models/tache';
 import {HttpParams} from '@angular/common/http';
 import moment from 'moment';
+import {PatchTacheRequest, TacheRequest} from '../models/tache/tache-request';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,26 @@ export class TacheService {
       .set('user_id', user_id)
       .set('date', (moment(date)).format('DD/MM/YYYY'));
     return this.httpService.get(`${this.tachePrefix}/`, {params: params});
+  }
+
+  create(request: TacheRequest): Observable<Tache> {
+    return this.httpService.post(`${this.tachePrefix}/`, request);
+  }
+
+  update(tache_id: number, request: TacheRequest): Observable<Tache> {
+    return this.httpService.put(`${this.tachePrefix}/${tache_id}/`, request);
+  }
+
+  patch(tache_id: number, request: PatchTacheRequest): Observable<Tache> {
+    return this.httpService.patch(`${this.tachePrefix}/${tache_id}/`, request);
+  }
+
+  get(tache_id: number): Observable<Tache> {
+    return this.httpService.get(`${this.tachePrefix}/${tache_id}/`);
+  }
+
+  delete(tache_id: number): Observable<null> {
+    return this.httpService.delete(`${this.tachePrefix}/${tache_id}/`);
   }
 
   getTotalMinutesDay(user_id: number, date: Date): Observable<number> {

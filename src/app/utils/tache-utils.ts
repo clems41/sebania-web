@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {StatutJour} from '../models/statut-jour';
 
 @Injectable({
   providedIn: 'root'
@@ -12,5 +13,16 @@ export class TacheUtils {
       result += `${minutes}`;
     }
     return result;
+  }
+
+  getStatutJourFromTotalMinutes(total_minutes: number): StatutJour {
+    let statut = StatutJour.ok;
+    if (total_minutes > 60*9) {
+      statut = StatutJour.warning;
+    }
+    if (total_minutes > 60*10) {
+      statut = StatutJour.danger;
+    }
+    return statut;
   }
 }

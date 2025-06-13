@@ -1,8 +1,10 @@
 <div class="flex flex-row w-full">
-  <div class="w-[30%] flex flex-col items-center space-y-8">
+  <div class="w-[30%] flex flex-col items-center space-y-5">
+    <div class="font-semibold text-xl">{{dateUtils.toFrenchString(date)}}</div>
     <div class="flex flex-row items-center justify-between w-56">
-      <div class="font-semibold text-xl">Total du jour :</div>
-      <div class="bg-jauneSoleil rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md">
+      <div class="font-medium text-xl">Total du jour :</div>
+      <div class="rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md"
+      [ngClass]="{'bg-vertFeuille': statutJour == StatutJour.ok, 'bg-jauneSoleil': statutJour == StatutJour.warning, 'bg-suppression': statutJour == StatutJour.danger}">
         {{ tacheUtils.getDureeFormatted(totalMinutes) }}
       </div>
     </div>
@@ -47,7 +49,9 @@
     <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 150px)'}">
       <div class="flex-col">
         @for (tache of taches; track tache.id) {
-          <div class="flex flex-col rounded-2xl p-4 min-w-md shadow-sm m-2 bg-brun300 space-y-2">
+          <div class="flex flex-col rounded-2xl p-4 min-w-md shadow-sm m-2 space-y-2"
+               [ngClass]="{'bg-brun300': tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles,
+               'bg-brun400': tache.activite.niveau_complexite >= NiveauComplexite.cultures}">
             <!-- header -->
             <div class="flex flex-row justify-between items-center">
               <div class="font-semibold text-xl hover:scale-110 hover:cursor-pointer">{{ tache.activite.nom }}</div>
@@ -55,12 +59,8 @@
               <div class="flex flex-row items-center space-x-4">
 
                 <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
-                  @if (tache.commentaire.length > 0) {
-                    <i class="bi bi-chat-left-text-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                  }
-                  @if (!tache.commentaire || tache.commentaire.length == 0) {
-                    <i class="bi bi-chat-left-text" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                  }
+                  <i class="bi" style="color: var(--color-gray50);font-size: 1.5rem"
+                     [ngClass]="tache.commentaire.length > 0 ? 'bi-chat-left-text-fill' : 'bi-chat-left-text'"></i>
                 </div>
 
                 <div
@@ -85,20 +85,12 @@
                     {{ culture.culture.nom }}
                   </div>
                   <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
-                    @if (culture.parcelles.length > 0) {
-                      <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                    }
-                    @if (culture.parcelles.length == 0) {
-                      <i class="bi bi-grid-1x2" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                    }
+                    <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+                       [ngClass]="culture.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
                   </div>
                   <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
-                    @if (culture?.quantite ?? 0 > 0) {
-                      <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                    }
-                    @if (!culture.quantite || culture.quantite == 0) {
-                      <i class="bi bi-plus-circle" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                    }
+                    <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+                       [ngClass]="culture?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
                   </div>
                 </div>
               }
@@ -112,23 +104,16 @@
               </div>
               <div class="flex flex-row space-x-5 w-8/10 justify-center items-center">
                 <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
-                  @if (tache.parcelles.length > 0) {
-                    <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                  }
-                  @if (tache.parcelles.length == 0) {
-                    <i class="bi bi-grid-1x2" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                  }
+                  <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+                     [ngClass]="tache.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
                 </div>
                 <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer">
-                  @if (tache?.quantite ?? 0 > 0) {
-                    <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                  }
-                  @if (!tache.quantite || tache.quantite == 0) {
-                    <i class="bi bi-plus-circle" style="color: var(--color-gray50);font-size: 1.5rem"></i>
-                  }
+                  <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+                     [ngClass]="tache?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
                 </div>
               </div>
-              <div class="flex flex-row w-1/10 bg-suppression rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer items-center">
+              <div
+                class="flex flex-row w-1/10 bg-suppression rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer items-center">
                 <i class="bi bi-trash-fill" style="color: var(--color-gray50);font-size: 1.5rem"></i>
               </div>
             </div>

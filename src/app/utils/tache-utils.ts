@@ -5,6 +5,12 @@ import {Injectable} from '@angular/core';
 })
 export class TacheUtils {
   getDureeFormatted(duree_minutes: number): string {
-    return `${Math.floor(duree_minutes/60)}h${duree_minutes%60}`;
+    const hours: number = Math.floor(duree_minutes/60);
+    const minutes: number = duree_minutes%60;
+    let result: string = `${hours}h`
+    if (minutes > 0) {
+      result += `${minutes}`;
+    }
+    return result;
   }
 }

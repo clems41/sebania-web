@@ -1,1 +1,98 @@
-<p>saisie works!</p>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="h-full w-full">
+    <div class="flex flex-col h-full space-y-4 items-center">
+      <div class="flex flex-row space-x-4">
+        <div class="w-60">
+          <p-floatlabel variant="on">
+            <p-calendar [iconDisplay]="'input'" [showIcon]="true" dateFormat="dd/mm/yy" formControlName="date"
+                        inputId="date">
+            </p-calendar>
+            <label for="date">Date</label>
+          </p-floatlabel>
+        </div>
+        <div class="w-60">
+          <p-floatlabel class="w-full" variant="on">
+            <p-select formControlName="user" optionValue="id" inputId="user" [options]="availableUsers"
+                      styleClass="w-full">
+              <ng-template #selectedItem let-selectedOption>
+                <div class="flex items-center gap-2" *ngIf="selectedOption">
+                  <div>{{ selectedOption.first_name + ' ' + selectedOption.last_name }}</div>
+                </div>
+              </ng-template>
+              <ng-template let-option #item>
+                <div class="flex items-center gap-2">
+                  <div>{{ option.first_name + ' ' + option.last_name }}</div>
+                </div>
+              </ng-template>
+            </p-select>
+            <label for="user">Utilisateur</label>
+          </p-floatlabel>
+        </div>
+      </div>
+
+      <div class="flex flex-row space-x-4">
+        <div class="w-80">
+          <p-floatlabel variant="on">
+            <p-iconfield>
+              <p-inputicon styleClass="pi pi-search"/>
+              <label for="recherche">Rechercher une activité</label>
+              <input pInputText type="text"
+                     id="recherche"
+                     name="recherche"
+                     [formControl]="searchControl"
+                     fluid>
+              <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer" (click)="searchControl.setValue('')"/>
+            </p-iconfield>
+          </p-floatlabel>
+        </div>
+        <div class="w-80">
+          <p-floatlabel class="w-full" variant="on">
+            <p-select inputId="categorie" [options]="availableActiviteCategories"
+                      styleClass="w-full" [formControl]="categorieControl">
+            </p-select>
+            <label for="categorie">Catégorie</label>
+          </p-floatlabel>
+        </div>
+      </div>
+      <div class="w-[50%]">
+        <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 300px)'}" class="w-full">
+          <div class="flex flex-col space-y-2 w-full p-2">
+            @for (activite of filteredActivites; track activite.id) {
+              <div class="rounded-2xl p-4 w-full font-semibold shadow-sm hover:cursor-pointer"
+                   (click)="onSelectActivite(activite.id)"
+                   [ngClass]="form.get('activite')?.value != activite.id ? 'bg-brun300 text-grisAnthra' : 'bg-brunTerre text-gray50'">
+                <span>{{ activite.nom }}</span>
+              </div>
+            }
+          </div>
+        </p-scrollpanel>
+      </div>
+
+      <div class="flex flex-row space-x-4 items-center">
+        <div>
+          <p-floatlabel variant="on">
+            <p-inputnumber formControlName="duree_minutes" inputId="duree_minutes" mode="decimal" [min]="1" [max]="1440"
+                           [useGrouping]="false" [showButtons]="true" buttonLayout="horizontal" spinnerMode="horizontal"
+                           [step]="10" size="large">
+              <ng-template #incrementbuttonicon>
+                <span class="pi pi-plus"></span>
+              </ng-template>
+              <ng-template #decrementbuttonicon>
+                <span class="pi pi-minus"></span>
+              </ng-template>
+            </p-inputnumber>
+            <label for="duree_minutes">Durée (minutes)</label>
+          </p-floatlabel>
+        </div>
+
+        <div class="w-70">
+          <p-button label="Suivant"
+                    [disabled]="form.invalid"
+                    [raised]="form.invalid"
+                    fluid
+          />
+        </div>
+
+      </div>
+
+    </div>
+</form>

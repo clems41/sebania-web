@@ -66,7 +66,7 @@
             <div class="flex flex-row h-16 justify-between space-x-4">
               <div class=" flex flex-row justify-between space-x-4">
                 <p-button icon="pi pi-window-maximize"
-                          (click)="onUpdate($event, tache)" [rounded]="true"
+                          [rounded]="true"
                           [raised]="true"
                           styleClass="bg-intermediaire! border-intermediaire!"
                           class="transition-all hover:scale-110"
@@ -82,7 +82,7 @@
                 <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
                      (click)="showDialog(tache, 'commentaire')">
                   <i class="bi" style="color: var(--color-gray50);font-size: 1.5rem"
-                     [ngClass]="tache.commentaire.length > 0 ? 'bi-chat-left-text-fill' : 'bi-chat-left-text'"></i>
+                     [ngClass]="tache.commentaire && tache.commentaire.length > 0 ? 'bi-chat-left-text-fill' : 'bi-chat-left-text'"></i>
                 </div>
 
                 <div

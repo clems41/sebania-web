@@ -1,5 +1,5 @@
 export interface TacheRequest {
-  date: Date;
+  date: string;
   activite_id: number;
   user_id: number;
   duree_minutes: number;

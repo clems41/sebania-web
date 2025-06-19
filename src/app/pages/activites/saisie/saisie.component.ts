@@ -8,7 +8,7 @@ import {MessageService} from 'primeng/api';
 import {Router} from '@angular/router';
 import {FloatLabel} from 'primeng/floatlabel';
 import {Calendar} from 'primeng/calendar';
-import {NgClass, NgIf} from '@angular/common';
+import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
 import {Select} from 'primeng/select';
 import {UserUtils} from '../../../utils/user-utils';
 import {FermeService} from '../../../services/ferme.service';
@@ -18,8 +18,16 @@ import {InputIcon} from 'primeng/inputicon';
 import {Activite} from '../../../models/activite';
 import {debounceTime} from 'rxjs';
 import {ScrollPanelModule} from 'primeng/scrollpanel';
-import { InputNumberModule } from 'primeng/inputnumber';
 import {Button} from 'primeng/button';
+import {TacheUtils} from '../../../utils/tache-utils';
+import {DateUtils} from '../../../utils/date-utils';
+import { DatePickerModule } from 'primeng/datepicker';
+import {NiveauComplexite} from '../../../models/niveau-complexite';
+import {Textarea} from 'primeng/textarea';
+import { InputNumberModule } from 'primeng/inputnumber';
+import {MultiSelect} from 'primeng/multiselect';
+import {Parcelle} from '../../../models/parcelle';
+import {ParcelleService} from '../../../services/parcelle.service';
 
 @Component({
   selector: 'app-saisie',
@@ -36,7 +44,11 @@ import {Button} from 'primeng/button';
     ScrollPanelModule,
     NgClass,
     InputNumberModule,
-    Button
+    Button,
+    NgTemplateOutlet,
+    DatePickerModule,
+    Textarea,
+    MultiSelect
   ],
   templateUrl: './saisie.component.html',
   styleUrl: './saisie.component.css'
@@ -48,26 +60,30 @@ export class SaisieComponent implements OnInit {
   availableUsers: User[] = [];
   availableActivites: Activite[] = [];
   filteredActivites: Activite[] = [];
-  selectedCategorie: string = 'Production';
   searchControl: FormControl;
   categorieControl: FormControl;
   availableActiviteCategories: string[] = [];
   allCategoriesKey = 'Toutes les catégories';
+  currentPage: number = 1;
+  availableParcelles: Parcelle[] = [];
+  selectedActivite: Activite | undefined = undefined;
 
   constructor(private formBuilder: FormBuilder, private cacheService: CacheService,
               private tacheService: TacheService, private messageService: MessageService,
-              private router: Router, private userUtils: UserUtils, private fermeService: FermeService) {
+              private router: Router, private userUtils: UserUtils, private fermeService: FermeService,
+              protected tacheUtils: TacheUtils, protected dateUtils: DateUtils,
+              private parcelleService: ParcelleService) {
     if (!this.user) {
       this.user = this.cacheService.getCurentUser();
     }
     this.form = this.formBuilder.group({
-      activite: [null, [Validators.required]],
+      activite_id: [null, [Validators.required]],
       date: [this.date, [Validators.required]],
-      user: [this.user.id, [Validators.required]],
-      duree_minutes: [null, [Validators.required, Validators.min(1), Validators.max(1440)]],
-      parcelles: [[], []],
+      user_id: [this.user.id, [Validators.required]],
+      duree: [new Date(1900, 1, 1, 0, 10), [Validators.required, Validators.min(1), Validators.max(1440)]],
+      parcelle_ids: [[], []],
       quantite: [null, []],
-      unite: [null, []],
+      unite_id: [null, []],
       commentaire: [null, []],
     });
 
@@ -97,6 +113,39 @@ export class SaisieComponent implements OnInit {
       this.filteredActivites = activites;
       this.availableActiviteCategories = [this.allCategoriesKey, ...new Set(activites.map(activite => String(activite.categorie).charAt(0).toUpperCase() + String(activite.categorie).slice(1)))];
     });
+    this.parcelleService.getAll().subscribe(parcelles => {
+      this.availableParcelles = parcelles;
+    });
+  }
+
+  getSelectedUser(): User | undefined {
+    const user_id = this.form.get('user_id')?.value;
+    if (user_id && user_id != 0) {
+      return this.availableUsers.find((user) => user.id == user_id)
+    }
+    return undefined;
+  }
+
+  getSelectedDureeMinutes(): number | undefined {
+    const duree = this.form.get('duree')?.value;
+    if (duree) {
+      return duree.getHours() * 60 + duree.getMinutes();
+    }
+    return undefined;
+  }
+
+  onSuivant() {
+    this.currentPage++;
+    if (this.selectedActivite && this.selectedActivite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles) {
+      this.currentPage++;
+    }
+  }
+
+  onPrecedent() {
+    this.currentPage--;
+    if (this.selectedActivite && this.selectedActivite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles) {
+      this.currentPage--;
+    }
   }
 
   filterByCategorie(categorie: string) {
@@ -119,27 +168,29 @@ export class SaisieComponent implements OnInit {
     }
     const categorie: string = this.categorieControl.value;
     this.filterByCategorie(categorie);
-    this.form.get('activite')?.reset();
+    this.form.get('activite_id')?.reset();
   }
 
-  onSelectActivite(activite_id: number) {
-    this.form.get('activite')?.setValue(activite_id);
+  onSelectActivite(activite: Activite) {
+    this.form.get('activite_id')?.setValue(activite.id);
+    this.selectedActivite = activite;
   }
 
   onSubmit() {
     if (this.form.invalid) {
       return;
     }
+    const date = this.dateUtils.toFrenchFormat(this.form.get('date')?.value)
     const request: TacheRequest = {
-      activite_id: this.form.get('activite')?.value,
+      activite_id: this.form.get('activite_id')?.value,
       commentaire: this.form.get('commentaire')?.value,
       cultures: [],
-      date: this.form.get('date')?.value,
-      duree_minutes: this.form.get('duree_minutes')?.value,
-      parcelle_ids: this.form.get('parcelles')?.value,
+      date: date,
+      duree_minutes: this.getSelectedDureeMinutes() ?? 0,
+      parcelle_ids: this.form.get('parcelle_ids')?.value,
       quantite: this.form.get('quantite')?.value,
-      unite_id: this.form.get('unite')?.value,
-      user_id: this.form.get('user')?.value
+      unite_id: this.form.get('unite_id')?.value,
+      user_id: this.form.get('user_id')?.value
     }
     this.tacheService.create(request).subscribe(
       {
@@ -150,7 +201,11 @@ export class SaisieComponent implements OnInit {
             summary: 'Succès',
             detail: `La tâche a été créée avec succès.`
           });
-          this.router.navigate(['/activites/accueil']);
+          this.router.navigate(['/activites/accueil'], {
+            queryParams: {
+              date: date
+            }
+          });
         },
         error: () => {
           this.form.reset();
@@ -159,4 +214,5 @@ export class SaisieComponent implements OnInit {
     )
   }
 
+  protected readonly NiveauComplexite = NiveauComplexite;
 }

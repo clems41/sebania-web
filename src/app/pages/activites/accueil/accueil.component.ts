@@ -23,6 +23,7 @@ import {Button} from 'primeng/button';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {ModificationTacheComponent} from './modification-tache/modification-tache.component';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-accueil',
@@ -56,7 +57,8 @@ export class AccueilComponent implements OnInit, OnDestroy {
               protected tacheUtils: TacheUtils, private fermeService: FermeService,
               private userUtils: UserUtils, private vocalService: VocalService,
               protected dateUtils: DateUtils, private messageService: MessageService,
-              private confirmationService: ConfirmationService, private dialogService: DialogService) {
+              private confirmationService: ConfirmationService, private dialogService: DialogService,
+              private activatedRoute: ActivatedRoute) {
   }
 
   ngOnDestroy(): void {
@@ -96,6 +98,12 @@ export class AccueilComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.activatedRoute.queryParams.subscribe(val => {
+      const date = val['date'];
+      if (date) {
+        this.date = this.dateUtils.fromFrenchFormat(val['date']);
+      }
+    });
     this.authService.me().subscribe(user => {
       this.currentUser = user;
       this.loadTaches();
@@ -134,10 +142,6 @@ export class AccueilComponent implements OnInit, OnDestroy {
         this.statutJour = this.tacheUtils.getStatutJourFromTotalMinutes(totalMinutes);
       }
     );
-  }
-
-  onUpdate(event: any, tache: Tache) {
-
   }
 
   onDelete(event: any, tache: Tache) {

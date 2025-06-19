@@ -14,6 +14,10 @@ export class DateUtils {
     return (moment(date)).format('DD/MM/YYYY');
   }
 
+  fromFrenchFormat(date: string): Date {
+    return moment(date, 'DD/MM/YYYY').toDate();
+  }
+
   addDays(date: Date, days: number): Date {
     return moment(date).add(days, 'days').toDate();
   }

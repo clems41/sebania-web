@@ -1,5 +1,12 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  FormsModule,
+  ReactiveFormsModule,
+  Validators
+} from '@angular/forms';
 import {TacheRequest} from '../../../models/tache/tache-request';
 import {User} from '../../../models/user';
 import {CacheService} from '../../../services/cache.service';
@@ -28,6 +35,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import {MultiSelect} from 'primeng/multiselect';
 import {Parcelle} from '../../../models/parcelle';
 import {ParcelleService} from '../../../services/parcelle.service';
+import {Culture} from '../../../models/culture';
+import {Chip} from 'primeng/chip';
 
 @Component({
   selector: 'app-saisie',
@@ -48,7 +57,8 @@ import {ParcelleService} from '../../../services/parcelle.service';
     NgTemplateOutlet,
     DatePickerModule,
     Textarea,
-    MultiSelect
+    MultiSelect,
+    Chip
   ],
   templateUrl: './saisie.component.html',
   styleUrl: './saisie.component.css'
@@ -59,10 +69,16 @@ export class SaisieComponent implements OnInit {
   @Input() user: User | null = null;
   availableUsers: User[] = [];
   availableActivites: Activite[] = [];
+  availableCultures: Culture[] = [];
   filteredActivites: Activite[] = [];
-  searchControl: FormControl;
-  categorieControl: FormControl;
+  filteredCultures: Culture[] = [];
+  selectedCultures: Culture[] = [];
+  searchActiviteControl: FormControl;
+  categorieActiviteControl: FormControl;
+  searchCultureControl: FormControl;
+  categorieCultureControl: FormControl;
   availableActiviteCategories: string[] = [];
+  availableCultureCategories: string[] = [];
   allCategoriesKey = 'Toutes les catégories';
   currentPage: number = 1;
   availableParcelles: Parcelle[] = [];
@@ -85,17 +101,36 @@ export class SaisieComponent implements OnInit {
       quantite: [null, []],
       unite_id: [null, []],
       commentaire: [null, []],
+      cultures: [this.formBuilder.array([
+        this.formBuilder.group({
+          culture_id: [null, [Validators.required]],
+          parcelle_ids: [[], []],
+          quantite: [null, []],
+          unite_id: [null, []],
+        })
+      ])]
     });
 
-    this.searchControl = new FormControl();
-    this.searchControl.valueChanges.pipe(debounceTime(500)).subscribe(res => {
+    this.searchActiviteControl = new FormControl();
+    this.searchActiviteControl.valueChanges.pipe(debounceTime(500)).subscribe(res => {
       this.filterActivites(res);
     });
 
-    this.categorieControl = new FormControl();
-    this.categorieControl.setValue(this.allCategoriesKey);
-    this.categorieControl.valueChanges.subscribe(() => {
-      this.filterActivites(this.searchControl.value);
+    this.searchCultureControl = new FormControl();
+    this.searchCultureControl.valueChanges.pipe(debounceTime(500)).subscribe(res => {
+      this.filterCultures(res);
+    });
+
+    this.categorieActiviteControl = new FormControl();
+    this.categorieActiviteControl.setValue(this.allCategoriesKey);
+    this.categorieActiviteControl.valueChanges.subscribe(() => {
+      this.filterActivites(this.searchActiviteControl.value);
+    });
+
+    this.categorieCultureControl = new FormControl();
+    this.categorieCultureControl.setValue(this.allCategoriesKey);
+    this.categorieCultureControl.valueChanges.subscribe(() => {
+      this.filterCultures(this.searchCultureControl.value);
     });
   }
 
@@ -116,6 +151,11 @@ export class SaisieComponent implements OnInit {
     this.parcelleService.getAll().subscribe(parcelles => {
       this.availableParcelles = parcelles;
     });
+    this.fermeService.getCustomCultures().subscribe(cultures => {
+      this.availableCultures = cultures;
+      this.filteredCultures = cultures;
+      this.availableCultureCategories = [this.allCategoriesKey, ...new Set(cultures.map(culture => String(culture.categorie).charAt(0).toUpperCase() + String(culture.categorie).slice(1)))];
+    })
   }
 
   getSelectedUser(): User | undefined {
@@ -148,7 +188,7 @@ export class SaisieComponent implements OnInit {
     }
   }
 
-  filterByCategorie(categorie: string) {
+  filterActiviteByCategorie(categorie: string) {
     if (categorie == "" || categorie == this.allCategoriesKey) {
       return;
     }
@@ -158,22 +198,61 @@ export class SaisieComponent implements OnInit {
   }
 
   filterActivites(query: string) {
-    if (!query || query === "") {
-      this.filteredActivites = this.availableActivites;
-    } else {
+    this.filteredActivites = this.availableActivites;
+    if (query) {
       this.filteredActivites = this.availableActivites.filter(activite => {
         return activite.nom.toLowerCase().includes(query.toLowerCase()) ||
           activite.mots_cles.toLowerCase().includes(query.toLowerCase());
       });
     }
-    const categorie: string = this.categorieControl.value;
-    this.filterByCategorie(categorie);
+    const categorie: string = this.categorieActiviteControl.value;
+    this.filterActiviteByCategorie(categorie);
     this.form.get('activite_id')?.reset();
   }
 
   onSelectActivite(activite: Activite) {
     this.form.get('activite_id')?.setValue(activite.id);
     this.selectedActivite = activite;
+  }
+
+  filterCultureByCategorie(categorie: string) {
+    if (categorie == "" || categorie == this.allCategoriesKey) {
+      return;
+    }
+    this.filteredCultures = this.filteredCultures.filter(culture => {
+      return culture.categorie.toLowerCase() == categorie.toLowerCase();
+    });
+    console.log("this.filteredCultures", this.filteredCultures)
+  }
+
+  filterCultures(query: string) {
+    console.log("query", query)
+    this.filteredCultures = this.availableCultures;
+    if (query) {
+      this.filteredCultures = this.filteredCultures.filter(culture => {
+        return culture.nom.toLowerCase().includes(query.toLowerCase());
+      });
+    }
+    const categorie: string = this.categorieCultureControl.value;
+    this.filterCultureByCategorie(categorie);
+  }
+
+  onSelectCulture(culture: Culture) {
+    const existingIndex = this.selectedCultures.findIndex(item => culture.id == item.id);
+    if (existingIndex == -1) {
+      this.selectedCultures.push(culture)
+    } else {
+      this.selectedCultures.splice(existingIndex, 1);
+    }
+  }
+
+  onRemoveSelectedCulture(culture: Culture) {
+    const existingIndex = this.selectedCultures.findIndex(item => culture.id == item.id);
+    this.selectedCultures.splice(existingIndex, 1);
+  }
+
+  isCultureSelected(culture_id: number) {
+    return this.selectedCultures.findIndex(item => culture_id == item.id) != -1;
   }
 
   onSubmit() {

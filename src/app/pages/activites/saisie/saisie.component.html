@@ -61,16 +61,16 @@
             <input pInputText type="text"
                    id="recherche"
                    name="recherche"
-                   [formControl]="searchControl"
+                   [formControl]="searchActiviteControl"
                    fluid>
-            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer" (click)="searchControl.setValue('')"/>
+            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer" (click)="searchActiviteControl.setValue('')"/>
           </p-iconfield>
         </p-floatlabel>
       </div>
       <div class="w-80">
         <p-floatlabel class="w-full" variant="on">
           <p-select inputId="categorie" [options]="availableActiviteCategories"
-                    styleClass="w-full" [formControl]="categorieControl">
+                    styleClass="w-full" [formControl]="categorieActiviteControl">
           </p-select>
           <label for="categorie">Catégorie</label>
         </p-floatlabel>
@@ -95,7 +95,7 @@
         <p-floatlabel variant="on">
           <p-datepicker inputId="duree_minutes" formControlName="duree" [timeOnly]="true" [stepHour]="1" [stepMinute]="10" hourFormat="24">
           </p-datepicker>
-          <label for="duree_minutes">Durée (minutes)</label>
+          <label for="duree_minutes">Durée (h : min)</label>
         </p-floatlabel>
       </div>
 
@@ -113,7 +113,55 @@
   <ng-template #page2>
     <div *ngTemplateOutlet="recapitulatif"></div>
 
-    <div class="flex flex-row w-1/2 justify-between">
+    <div class="flex flex-row space-x-4">
+      <div class="w-80">
+        <p-floatlabel variant="on">
+          <p-iconfield>
+            <p-inputicon styleClass="pi pi-search"/>
+            <label for="recherche">Rechercher une culture</label>
+            <input pInputText type="text"
+                   id="recherche"
+                   name="recherche"
+                   [formControl]="searchCultureControl"
+                   fluid>
+            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer" (click)="searchCultureControl.setValue('')"/>
+          </p-iconfield>
+        </p-floatlabel>
+      </div>
+      <div class="w-80">
+        <p-floatlabel class="w-full" variant="on">
+          <p-select inputId="culture" [options]="availableCultureCategories"
+                    styleClass="w-full" [formControl]="categorieCultureControl">
+          </p-select>
+          <label for="culture">Cultures</label>
+        </p-floatlabel>
+      </div>
+    </div>
+    <div class="w-[50%]">
+      <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 380px)'}" class="w-full">
+        <div class="flex flex-col space-y-2 w-full p-2">
+          @for (culture of filteredCultures; track culture.id) {
+            <div class="rounded-2xl p-4 w-full font-semibold shadow-sm hover:cursor-pointer"
+                 (click)="onSelectCulture(culture)"
+                 [ngClass]="!isCultureSelected(culture.id) ? 'bg-brun300 text-grisAnthra' : 'bg-brunTerre text-gray50'">
+              <span>{{ culture.nom }}</span>
+            </div>
+          }
+        </div>
+      </p-scrollpanel>
+    </div>
+
+    <div class="flex flex-row space-x-4">
+      @for (selectedCulture of selectedCultures; track selectedCulture.id) {
+        <div>
+          <p-chip [label]="selectedCulture.nom" [removable]="true" (onRemove)="onRemoveSelectedCulture(selectedCulture)"
+                  styleClass="bg-brun400!"/>
+        </div>
+      }
+
+    </div>
+
+    <div class="flex flex-row w-1/2 justify-between space-x-4">
       <div class="w-70">
         <p-button label="Précédent"
                   [raised]="true"
@@ -124,7 +172,7 @@
       </div>
       <div class="w-70">
         <p-button label="Suivant"
-                  [disabled]="form.invalid"
+                  [disabled]="form.invalid || selectedCultures?.length == 0"
                   [raised]="form.invalid"
                   fluid
                   (onClick)="onSuivant()"
@@ -171,7 +219,7 @@
       </p-floatlabel>
     </div>
 
-    <div class="flex flex-row w-1/2 justify-between">
+    <div class="flex flex-row w-1/2 justify-between space-x-4">
       <div class="w-70">
         <p-button label="Précédent"
                   [raised]="true"

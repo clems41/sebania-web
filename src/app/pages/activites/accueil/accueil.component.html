@@ -59,7 +59,7 @@
     <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 150px)'}">
       <div class="flex-col">
         @for (tache of taches; track tache.id) {
-          <div class="flex flex-col rounded-2xl p-4 min-w-md shadow-sm m-2 space-y-2"
+          <div class="flex flex-col rounded-2xl p-4 min-w-xs shadow-sm m-2 space-y-2"
                [ngClass]="{'bg-brun300': tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles,
                'bg-brun400': tache.activite.niveau_complexite >= NiveauComplexite.cultures}">
             <!-- header -->

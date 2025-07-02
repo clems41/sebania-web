@@ -1,6 +1,6 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="h-full w-full">
   <ng-template #recapitulatif>
-    <div class="flex flex-row justify-between w-1/2 border-b border-brun400">
+    <div class="flex flex-row justify-between w-3/4 border-b border-brun400">
       <div class="flex flex-col">
         <div class="italic font-light text-md">Activité</div>
         <div class="font-semibold text-lg">{{ selectedActivite?.nom }}</div>
@@ -16,9 +16,61 @@
       </div>
       <div class="flex flex-col">
         <div class="italic font-light text-md">Date</div>
-        <div class="font-semibold text-lg">{{ dateUtils.toFrenchFormat(form.get('date')?.value) }}</div>
+        <div class="">{{ dateUtils.toFrenchFormat(form.get('date')?.value) }}</div>
       </div>
     </div>
+  </ng-template>
+
+  <ng-template #recapitulatifCultures>
+    <div class="flex flex-col w-3/4">
+      <div class="flex flex-row w-full border-b border-brun400 italic font-light text-md">
+        <div class="w-1/6">Cultures</div>
+        @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesParcelles ||
+        selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
+          <div class="w-3/6">Parcelles</div>
+        }
+        @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantite ||
+        selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
+          <div class="w-2/6">Quantité</div>
+          <div class="w-1/6">Unité</div>
+        }
+      </div>
+      <div formArrayName="cultures">
+        @for (culture of selectedCultures; track $index) {
+          <div class="flex flex-row w-full font-semibold text-lg m-2" [formGroupName]="$index">
+            <div class="w-1/6">{{ culture.nom }}</div>
+            @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesParcelles ||
+            selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
+              <div class="w-3/6">
+                <p-multiselect [options]="availableParcelles" formControlName="parcelle_ids" optionLabel="nom"
+                               optionValue="id" placeholder="Parcelles" styleClass="w-full md:w-80 text-sm">
+                </p-multiselect>
+              </div>
+            }
+            @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantite ||
+            selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
+              <div class="w-2/6">
+                <p-floatlabel class="w-1/3 text-sm" variant="on">
+                  <p-inputnumber formControlName="quantite" inputId="unite" mode="decimal" locale="fr-FR"
+                                 [useGrouping]="false" min="1" styleClass="w-1/3 text-sm">
+                  </p-inputnumber>
+                  <label for="unite">Quantité</label>
+                </p-floatlabel>
+              </div>
+              <div class="w-1/6">
+                <p-floatlabel class="text-sm" variant="on">
+                  <p-select formControlName="unite_id" inputId="unite" [options]="selectedActivite?.unites"
+                            optionLabel="nom" optionValue="id" styleClass="w-full text-sm"/>
+                  <label for="unite">Unité</label>
+                </p-floatlabel>
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+
   </ng-template>
 
   <ng-template #page1>
@@ -63,7 +115,8 @@
                    name="recherche"
                    [formControl]="searchActiviteControl"
                    fluid>
-            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer" (click)="searchActiviteControl.setValue('')"/>
+            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer"
+                         (click)="searchActiviteControl.setValue('')"/>
           </p-iconfield>
         </p-floatlabel>
       </div>
@@ -93,7 +146,8 @@
     <div class="flex flex-row space-x-4 items-center">
       <div>
         <p-floatlabel variant="on">
-          <p-datepicker inputId="duree_minutes" formControlName="duree" [timeOnly]="true" [stepHour]="1" [stepMinute]="10" hourFormat="24">
+          <p-datepicker inputId="duree_minutes" formControlName="duree" [timeOnly]="true" [stepHour]="1"
+                        [stepMinute]="10" hourFormat="24">
           </p-datepicker>
           <label for="duree_minutes">Durée (h : min)</label>
         </p-floatlabel>
@@ -124,7 +178,8 @@
                    name="recherche"
                    [formControl]="searchCultureControl"
                    fluid>
-            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer" (click)="searchCultureControl.setValue('')"/>
+            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer"
+                         (click)="searchCultureControl.setValue('')"/>
           </p-iconfield>
         </p-floatlabel>
       </div>
@@ -172,7 +227,7 @@
       </div>
       <div class="w-70">
         <p-button label="Suivant"
-                  [disabled]="form.invalid || selectedCultures?.length == 0"
+                  [disabled]="form.invalid || selectedCultures.length == 0"
                   [raised]="form.invalid"
                   fluid
                   (onClick)="onSuivant()"
@@ -182,12 +237,21 @@
   </ng-template>
 
   <ng-template #page3>
+    <div>Récapitulatif de l'activité</div>
     <div *ngTemplateOutlet="recapitulatif"></div>
+    <div class="mb-6"></div>
+
+    @if (selectedActivite?.niveau_complexite ?? 0 >= NiveauComplexite.cultures) {
+      <div>Récapitulatif des cultures</div>
+      <div *ngTemplateOutlet="recapitulatifCultures"></div>
+      <div class="mb-6"></div>
+    }
 
     @if (selectedActivite?.niveau_complexite == NiveauComplexite.baseParcelles ||
     selectedActivite?.niveau_complexite == NiveauComplexite.baseQuantiteParcelles) {
       <div class="w-1/3">
-        <p-multiselect [options]="availableParcelles" formControlName="parcelle_ids" optionLabel="nom" optionValue="id" placeholder="Parcelles" styleClass="w-full" >
+        <p-multiselect [options]="availableParcelles" formControlName="parcelle_ids" optionLabel="nom" optionValue="id"
+                       placeholder="Parcelles" styleClass="w-full">
         </p-multiselect>
       </div>
     }
@@ -197,14 +261,16 @@
       <div class="flex flex-row w-1/3 justify-between space-x-4">
         <div>
           <p-floatlabel variant="on">
-            <p-inputnumber formControlName="quantite" inputId="unite" mode="decimal" locale="fr-FR" [useGrouping]="false" min="1">
+            <p-inputnumber formControlName="quantite" inputId="unite" mode="decimal" locale="fr-FR"
+                           [useGrouping]="false" min="1">
             </p-inputnumber>
             <label for="unite">Quantité</label>
           </p-floatlabel>
         </div>
         <div class="w-full">
           <p-floatlabel class="w-full" variant="on">
-            <p-select formControlName="unite_id" inputId="unite" [options]="selectedActivite?.unites" optionLabel="nom" optionValue="id" styleClass="w-full" />
+            <p-select formControlName="unite_id" inputId="unite" [options]="selectedActivite?.unites" optionLabel="nom"
+                      optionValue="id" styleClass="w-full"/>
             <label for="unite">Unité</label>
           </p-floatlabel>
         </div>

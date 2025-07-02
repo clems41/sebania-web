@@ -1,5 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {
+  FormArray,
   FormBuilder,
   FormControl,
   FormGroup,
@@ -7,7 +8,7 @@ import {
   ReactiveFormsModule,
   Validators
 } from '@angular/forms';
-import {TacheRequest} from '../../../models/tache/tache-request';
+import {CultureTacheRequest, TacheRequest} from '../../../models/tache/tache-request';
 import {User} from '../../../models/user';
 import {CacheService} from '../../../services/cache.service';
 import {TacheService} from '../../../services/tache.service';
@@ -101,14 +102,8 @@ export class SaisieComponent implements OnInit {
       quantite: [null, []],
       unite_id: [null, []],
       commentaire: [null, []],
-      cultures: [this.formBuilder.array([
-        this.formBuilder.group({
-          culture_id: [null, [Validators.required]],
-          parcelle_ids: [[], []],
-          quantite: [null, []],
-          unite_id: [null, []],
-        })
-      ])]
+      cultures: this.formBuilder.array([
+      ]),
     });
 
     this.searchActiviteControl = new FormControl();
@@ -222,11 +217,9 @@ export class SaisieComponent implements OnInit {
     this.filteredCultures = this.filteredCultures.filter(culture => {
       return culture.categorie.toLowerCase() == categorie.toLowerCase();
     });
-    console.log("this.filteredCultures", this.filteredCultures)
   }
 
   filterCultures(query: string) {
-    console.log("query", query)
     this.filteredCultures = this.availableCultures;
     if (query) {
       this.filteredCultures = this.filteredCultures.filter(culture => {
@@ -240,19 +233,40 @@ export class SaisieComponent implements OnInit {
   onSelectCulture(culture: Culture) {
     const existingIndex = this.selectedCultures.findIndex(item => culture.id == item.id);
     if (existingIndex == -1) {
-      this.selectedCultures.push(culture)
+      this.selectedCultures.push(culture);
+      this.addCultureToForm(culture);
     } else {
       this.selectedCultures.splice(existingIndex, 1);
+      this.removeCultureToForm(existingIndex);
     }
   }
 
   onRemoveSelectedCulture(culture: Culture) {
     const existingIndex = this.selectedCultures.findIndex(item => culture.id == item.id);
     this.selectedCultures.splice(existingIndex, 1);
+    this.removeCultureToForm(existingIndex);
   }
 
   isCultureSelected(culture_id: number) {
     return this.selectedCultures.findIndex(item => culture_id == item.id) != -1;
+  }
+
+  get cultures() {
+    return this.form.get('cultures') as FormArray;
+  }
+
+  addCultureToForm(culture: Culture) {
+    const cultureForm = this.formBuilder.group({
+      culture_id: [culture.id, []],
+      parcelle_ids: [[], []],
+      quantite: [null, []],
+      unite_id: [null, []],
+    })
+    this.cultures.push(cultureForm);
+  }
+
+  removeCultureToForm(index: number) {
+    this.cultures.removeAt(index);
   }
 
   onSubmit() {
@@ -270,6 +284,15 @@ export class SaisieComponent implements OnInit {
       quantite: this.form.get('quantite')?.value,
       unite_id: this.form.get('unite_id')?.value,
       user_id: this.form.get('user_id')?.value
+    }
+    for (const culture of this.cultures.value) {
+      const cultureRequest: CultureTacheRequest = {
+        culture_id: culture.culture_id,
+        parcelle_ids: culture.parcelle_ids,
+        quantite: culture.quantite,
+        unite_id: culture.unite_id,
+      }
+      request.cultures.push(cultureRequest);
     }
     this.tacheService.create(request).subscribe(
       {

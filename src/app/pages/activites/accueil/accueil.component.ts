@@ -24,6 +24,8 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
 import {ModificationTacheComponent} from './modification-tache/modification-tache.component';
 import {ActivatedRoute} from '@angular/router';
+import {TooltipModule} from 'primeng/tooltip';
+import {Parcelle} from '../../../models/parcelle';
 
 @Component({
   selector: 'app-accueil',
@@ -36,7 +38,8 @@ import {ActivatedRoute} from '@angular/router';
     DatePickerModule,
     NgClass,
     Button,
-    ConfirmDialogModule
+    ConfirmDialogModule,
+    TooltipModule
   ],
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
@@ -187,6 +190,14 @@ export class AccueilComponent implements OnInit, OnDestroy {
     this.date = this.dateUtils.addDays(this.date, -1);
     this.loadTaches();
     this.loadVocaux();
+  }
+
+  getParcelleNoms(parcelles: Parcelle[]) {
+    console.log(parcelles);
+    if (parcelles && parcelles.length > 0) {
+      return parcelles.map(parcelle => parcelle.nom).join(", ")
+    }
+    return null;
   }
 
   protected readonly NiveauComplexite = NiveauComplexite;

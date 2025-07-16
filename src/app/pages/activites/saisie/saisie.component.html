@@ -1,6 +1,14 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="h-full w-full">
   <ng-template #recapitulatif>
-    <div class="flex flex-row justify-between w-3/4 border-b border-brun400">
+    <div>Récapitulatif de l'activité</div>
+    <div class="flex flex-row justify-between w-2/3 border-b border-brun400">
+      <div class="h-full">
+        <p-button icon="pi pi-arrow-circle-left"
+                  (click)="onPrecedent()" [rounded]="true"
+                  [raised]="true"
+                  styleClass="bg-grisAnthra! border-grisAnthra!"
+        />
+      </div>
       <div class="flex flex-col">
         <div class="italic font-light text-md">Activité</div>
         <div class="font-semibold text-lg">{{ selectedActivite?.nom }}</div>
@@ -22,7 +30,7 @@
   </ng-template>
 
   <ng-template #recapitulatifCultures>
-    <div class="flex flex-col w-3/4">
+    <div class="flex flex-col w-2/3">
       <div class="flex flex-row w-full border-b border-brun400 italic font-light text-md">
         <div class="w-1/6">Cultures</div>
         @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesParcelles ||
@@ -218,10 +226,10 @@
 
     <div class="flex flex-row w-1/2 justify-between space-x-4">
       <div class="w-70">
-        <p-button label="Précédent"
+        <p-button label="Annuler"
                   [raised]="true"
                   fluid
-                  (onClick)="onPrecedent()"
+                  (onClick)="onCancel()"
                   styleClass="bg-intermediaire! border-intermediaire! hover:bg-intermediaire-hover!"
         />
       </div>
@@ -237,11 +245,10 @@
   </ng-template>
 
   <ng-template #page3>
-    <div>Récapitulatif de l'activité</div>
     <div *ngTemplateOutlet="recapitulatif"></div>
     <div class="mb-6"></div>
 
-    @if (selectedActivite?.niveau_complexite ?? 0 >= NiveauComplexite.cultures) {
+    @if ((selectedActivite?.niveau_complexite ?? 0) >= NiveauComplexite.cultures) {
       <div>Récapitulatif des cultures</div>
       <div *ngTemplateOutlet="recapitulatifCultures"></div>
       <div class="mb-6"></div>
@@ -287,15 +294,14 @@
 
     <div class="flex flex-row w-1/2 justify-between space-x-4">
       <div class="w-70">
-        <p-button label="Précédent"
-                  [raised]="true"
+        <p-button label="Annuler"
                   fluid
-                  (onClick)="onPrecedent()"
+                  (onClick)="onCancel()"
                   styleClass="bg-intermediaire! border-intermediaire! hover:bg-intermediaire-hover!"
         />
       </div>
       <div class="w-70">
-        <p-button label="VALIDER"
+        <p-button label="Valider"
                   [disabled]="form.invalid"
                   [raised]="form.invalid"
                   fluid

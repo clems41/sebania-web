@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {
   FormArray,
   FormBuilder,
@@ -13,7 +13,7 @@ import {User} from '../../../models/user';
 import {CacheService} from '../../../services/cache.service';
 import {TacheService} from '../../../services/tache.service';
 import {MessageService} from 'primeng/api';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FloatLabel} from 'primeng/floatlabel';
 import {Calendar} from 'primeng/calendar';
 import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
@@ -29,15 +29,16 @@ import {ScrollPanelModule} from 'primeng/scrollpanel';
 import {Button} from 'primeng/button';
 import {TacheUtils} from '../../../utils/tache-utils';
 import {DateUtils} from '../../../utils/date-utils';
-import { DatePickerModule } from 'primeng/datepicker';
+import {DatePickerModule} from 'primeng/datepicker';
 import {NiveauComplexite} from '../../../models/niveau-complexite';
 import {Textarea} from 'primeng/textarea';
-import { InputNumberModule } from 'primeng/inputnumber';
+import {InputNumberModule} from 'primeng/inputnumber';
 import {MultiSelect} from 'primeng/multiselect';
 import {Parcelle} from '../../../models/parcelle';
 import {ParcelleService} from '../../../services/parcelle.service';
 import {Culture} from '../../../models/culture';
 import {Chip} from 'primeng/chip';
+import {Tache} from '../../../models/tache';
 
 @Component({
   selector: 'app-saisie',
@@ -66,44 +67,43 @@ import {Chip} from 'primeng/chip';
 })
 export class SaisieComponent implements OnInit {
   form: FormGroup;
-  @Input() date = new Date();
-  @Input() user: User | null = null;
+
   availableUsers: User[] = [];
   availableActivites: Activite[] = [];
   availableCultures: Culture[] = [];
+  availableParcelles: Parcelle[] = [];
+  availableActiviteCategories: string[] = [];
+  availableCultureCategories: string[] = [];
+
   filteredActivites: Activite[] = [];
   filteredCultures: Culture[] = [];
+
   selectedCultures: Culture[] = [];
+  selectedActivite: Activite | undefined = undefined;
+
   searchActiviteControl: FormControl;
   categorieActiviteControl: FormControl;
   searchCultureControl: FormControl;
   categorieCultureControl: FormControl;
-  availableActiviteCategories: string[] = [];
-  availableCultureCategories: string[] = [];
   allCategoriesKey = 'Toutes les catégories';
   currentPage: number = 1;
-  availableParcelles: Parcelle[] = [];
-  selectedActivite: Activite | undefined = undefined;
+  tache_id: number | null = null;
 
   constructor(private formBuilder: FormBuilder, private cacheService: CacheService,
               private tacheService: TacheService, private messageService: MessageService,
               private router: Router, private userUtils: UserUtils, private fermeService: FermeService,
               protected tacheUtils: TacheUtils, protected dateUtils: DateUtils,
-              private parcelleService: ParcelleService) {
-    if (!this.user) {
-      this.user = this.cacheService.getCurentUser();
-    }
+              private parcelleService: ParcelleService, private activatedRoute: ActivatedRoute) {
     this.form = this.formBuilder.group({
       activite_id: [null, [Validators.required]],
-      date: [this.date, [Validators.required]],
-      user_id: [this.user.id, [Validators.required]],
-      duree: [new Date(1900, 1, 1, 0, 10), [Validators.required, Validators.min(1), Validators.max(1440)]],
+      date: [new Date(), [Validators.required]],
+      user_id: [null, [Validators.required]],
+      duree: [new Date(1900, 1, 1, 1, 0), [Validators.required, Validators.min(1), Validators.max(1440)]],
       parcelle_ids: [[], []],
       quantite: [null, []],
       unite_id: [null, []],
       commentaire: [null, []],
-      cultures: this.formBuilder.array([
-      ]),
+      cultures: this.formBuilder.array([]),
     });
 
     this.searchActiviteControl = new FormControl();
@@ -130,14 +130,38 @@ export class SaisieComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (this.user) {
-      this.availableUsers = [this.user];
-      if (this.userUtils.isResponsable(this.user)) {
-        this.fermeService.getFerme().subscribe(ferme => {
-          this.availableUsers.push(...ferme.employes);
+    this.activatedRoute.queryParams.subscribe(val => {
+      const tache_id = val['tache_id'];
+      const page = val['page'];
+      const user_id = val['user_id'];
+      const date = val['date'];
+      if (date) {
+        this.form.patchValue({
+          date: this.dateUtils.fromFrenchFormat(date),
         });
       }
-    }
+      const currentUser = this.cacheService.getCurentUser();
+      if (currentUser) {
+        this.availableUsers = [currentUser];
+        if (this.userUtils.isResponsable(currentUser)) {
+          this.fermeService.getFerme().subscribe(ferme => {
+            this.availableUsers.push(...ferme.employes);
+            if (user_id) {
+              this.form.patchValue({
+                user_id: +user_id,
+              });
+            } else {
+              this.form.patchValue({
+                user_id: currentUser.id,
+              });
+            }
+          });
+        }
+      }
+      if (tache_id) {
+        this.tacheService.get(tache_id).subscribe(tache => this.patchForm(tache, page));
+      }
+    });
     this.fermeService.getCustomActivites().subscribe(activites => {
       this.availableActivites = activites;
       this.filteredActivites = activites;
@@ -151,6 +175,34 @@ export class SaisieComponent implements OnInit {
       this.filteredCultures = cultures;
       this.availableCultureCategories = [this.allCategoriesKey, ...new Set(cultures.map(culture => String(culture.categorie).charAt(0).toUpperCase() + String(culture.categorie).slice(1)))];
     })
+  }
+
+  patchForm(tache: Tache, page: number | null) {
+    this.tache_id = tache.id;
+    if (page) {
+      this.currentPage = page;
+    }
+    this.form.patchValue({
+      activite_id: tache.activite.id,
+      date: this.dateUtils.fromFrenchFormat(tache.date),
+      user_id: tache.user.id,
+      duree: new Date(1900, 1, 1, Math.floor(tache.duree_minutes / 60), tache.duree_minutes % 60),
+      parcelle_ids: tache.parcelles ? tache.parcelles.map(parcelle => parcelle.id) : [],
+      quantite: tache.quantite,
+      unite_id: tache.unite?.id,
+      commentaire: tache.commentaire,
+    });
+    this.selectedActivite = tache.activite;
+    for (const culture of tache.cultures) {
+      const cultureForm = this.formBuilder.group({
+        culture_id: [culture.culture?.id, [Validators.required]],
+        parcelle_ids: [culture.parcelles ? culture.parcelles.map(parcelle => parcelle.id) : [], []],
+        quantite: [culture.quantite, []],
+        unite_id: [culture.unite?.id, []],
+      })
+      this.cultures.push(cultureForm);
+      this.selectedCultures = tache.cultures.map(culture_tache => culture_tache.culture);
+    }
   }
 
   getSelectedUser(): User | undefined {
@@ -269,6 +321,15 @@ export class SaisieComponent implements OnInit {
     this.cultures.removeAt(index);
   }
 
+  onCancel() {
+    this.router.navigate(['/activites/accueil'], {
+      queryParams: {
+        date: this.dateUtils.toFrenchFormat(this.form.get('date')?.value),
+        user_id: this.form.get('user_id')?.value
+      }
+    });
+  }
+
   onSubmit() {
     if (this.form.invalid) {
       return;
@@ -294,26 +355,51 @@ export class SaisieComponent implements OnInit {
       }
       request.cultures.push(cultureRequest);
     }
-    this.tacheService.create(request).subscribe(
-      {
-        next: () => {
-          this.form.reset();
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Succès',
-            detail: `La tâche a été créée avec succès.`
-          });
-          this.router.navigate(['/activites/accueil'], {
-            queryParams: {
-              date: date
-            }
-          });
-        },
-        error: () => {
-          this.form.reset();
+    if (this.tache_id) {
+      this.tacheService.update(this.tache_id, request).subscribe(
+        {
+          next: () => {
+            this.form.reset();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Succès',
+              detail: `La tâche a été mise à jour avec succès.`
+            });
+            this.router.navigate(['/activites/accueil'], {
+              queryParams: {
+                date: date,
+                user_id: request.user_id
+              }
+            });
+          },
+          error: () => {
+            this.form.reset();
+          }
         }
-      }
-    )
+      )
+    } else {
+      this.tacheService.create(request).subscribe(
+        {
+          next: () => {
+            this.form.reset();
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Succès',
+              detail: `La tâche a été créée avec succès.`
+            });
+            this.router.navigate(['/activites/accueil'], {
+              queryParams: {
+                date: date,
+                user_id: request.user_id
+              }
+            });
+          },
+          error: () => {
+            this.form.reset();
+          }
+        }
+      )
+    }
   }
 
   protected readonly NiveauComplexite = NiveauComplexite;

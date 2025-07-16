@@ -18,12 +18,10 @@ import {NiveauComplexite} from '../../../models/niveau-complexite';
 import moment from 'moment';
 import {DateUtils} from '../../../utils/date-utils';
 import {StatutJour} from '../../../models/statut-jour';
-import {ConfirmationService, Footer, MessageService} from 'primeng/api';
+import {ConfirmationService, MessageService} from 'primeng/api';
 import {Button} from 'primeng/button';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {DialogService, DynamicDialogRef} from 'primeng/dynamicdialog';
-import {ModificationTacheComponent} from './modification-tache/modification-tache.component';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {TooltipModule} from 'primeng/tooltip';
 import {Parcelle} from '../../../models/parcelle';
 
@@ -45,7 +43,7 @@ import {Parcelle} from '../../../models/parcelle';
   styleUrl: './accueil.component.css'
 })
 export class AccueilComponent implements OnInit, OnDestroy {
-  currentUser: User | null = null;
+  currentUser: User | undefined = undefined;
   availableUsers: User[] = [];
   taches: Tache[] = [];
   date: Date = new Date();
@@ -54,72 +52,49 @@ export class AccueilComponent implements OnInit, OnDestroy {
   nbVocalInProgress: number = 0;
   refreshVocauxSub: Subscription = new Subscription();
   refreshVocauxDelaySeconds: number = 60;
-  dynamicDialogRef: DynamicDialogRef | undefined;
+  loading: boolean = false;
 
   constructor(private authService: AuthService, private tacheService: TacheService,
               protected tacheUtils: TacheUtils, private fermeService: FermeService,
               private userUtils: UserUtils, private vocalService: VocalService,
               protected dateUtils: DateUtils, private messageService: MessageService,
-              private confirmationService: ConfirmationService, private dialogService: DialogService,
-              private activatedRoute: ActivatedRoute) {
+              private confirmationService: ConfirmationService,
+              private activatedRoute: ActivatedRoute, private router: Router) {
   }
 
   ngOnDestroy(): void {
     this.refreshVocauxSub.unsubscribe();
-    if (this.dynamicDialogRef) {
-      this.dynamicDialogRef.close();
-    }
-  }
-
-  showDialog(tache: Tache, field: string, cultureTacheIndex: number | null = null) {
-    this.dynamicDialogRef = this.dialogService.open(ModificationTacheComponent, {
-      inputValues: {
-        tache: tache,
-        field: field,
-        cultureTacheIndex
-      },
-      header: `Modification de la tâche : '${tache.activite.nom}'`,
-      width: '40%',
-      modal: true,
-      contentStyle: {overflow: 'auto'},
-      closable: true,
-      focusOnShow: false,
-      breakpoints: {
-        '960px': '75vw',
-        '640px': '90vw'
-      },
-      templates: {
-        footer: Footer
-      }
-    });
-
-    this.dynamicDialogRef.onClose.subscribe((need_refresh: boolean) => {
-      if (need_refresh) {
-        this.loadTaches();
-      }
-    });
   }
 
   ngOnInit(): void {
+    this.loading = true;
     this.activatedRoute.queryParams.subscribe(val => {
       const date = val['date'];
+      const user_id = val['user_id'];
       if (date) {
         this.date = this.dateUtils.fromFrenchFormat(val['date']);
       }
-    });
-    this.authService.me().subscribe(user => {
-      this.currentUser = user;
-      this.loadTaches();
-      this.refreshVocauxSub = timer(0, 1000 * this.refreshVocauxDelaySeconds).subscribe(() => {
-        this.loadVocaux();
-      });
-      this.availableUsers = [user];
-      if (this.userUtils.isResponsable(user)) {
-        this.fermeService.getFerme().subscribe(ferme => {
-          this.availableUsers.push(...ferme.employes);
+      this.authService.me().subscribe(user => {
+        this.currentUser = user;
+        this.availableUsers = [user];
+        if (this.userUtils.isResponsable(user)) {
+          this.fermeService.getFerme().subscribe(ferme => {
+            this.availableUsers.push(...ferme.employes);
+            if (user_id) {
+              this.currentUser = this.availableUsers.find(user => {
+                return user.id == +user_id
+              })
+            }
+            this.loadTaches();
+          });
+        } else {
+          this.loadTaches();
+        }
+        this.refreshVocauxSub = timer(0, 1000 * this.refreshVocauxDelaySeconds).subscribe(() => {
+          this.loadVocaux();
         });
-      }
-    })
+      })
+    });
   }
 
   loadVocaux() {
@@ -131,12 +106,14 @@ export class AccueilComponent implements OnInit, OnDestroy {
   }
 
   loadTaches() {
+    this.loading = true;
     if (!this.currentUser) {
       return;
     }
     this.tacheService.getAll(this.currentUser.id, this.date).subscribe(
       (taches) => {
         this.taches = taches;
+        this.loading = false;
       }
     );
     this.tacheService.getTotalMinutesDay(this.currentUser.id, this.date).subscribe(
@@ -193,11 +170,28 @@ export class AccueilComponent implements OnInit, OnDestroy {
   }
 
   getParcelleNoms(parcelles: Parcelle[]) {
-    console.log(parcelles);
     if (parcelles && parcelles.length > 0) {
       return parcelles.map(parcelle => parcelle.nom).join(", ")
     }
     return null;
+  }
+
+  navigateToSaisie(tache_id: number, page: number) {
+    this.router.navigate(['/activites/saisie'], {
+      queryParams: {
+        tache_id: tache_id,
+        page: page
+      }
+    });
+  }
+
+  navigateToSaisieForCurrentUserAndDate() {
+    this.router.navigate(['/activites/saisie'], {
+      queryParams: {
+        date: this.dateUtils.toFrenchFormat(this.date),
+        user_id: this.currentUser?.id,
+      }
+    });
   }
 
   protected readonly NiveauComplexite = NiveauComplexite;

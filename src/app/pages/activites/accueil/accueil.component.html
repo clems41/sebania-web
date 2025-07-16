@@ -14,7 +14,7 @@
     <div class="flex flex-row items-center justify-between w-56">
       <div class="font-medium text-xl">Total du jour :</div>
       <div class="rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md"
-           [ngClass]="{'bg-vertFeuille': statutJour == StatutJour.ok, 'bg-jauneSoleil': statutJour == StatutJour.warning, 'bg-suppression': statutJour == StatutJour.danger}">
+           [ngClass]="{'bg-vertFonce': statutJour == StatutJour.ok, 'bg-jauneSoleil': statutJour == StatutJour.warning, 'bg-suppression': statutJour == StatutJour.danger}">
         {{ tacheUtils.getDureeFormatted(totalMinutes) }}
       </div>
     </div>
@@ -44,6 +44,14 @@
         <label for="date">Date</label>
       </p-floatlabel>
     </div>
+    <div class="w-full md:w-56">
+      <p-button label="Ajouter une activité"
+                icon="bi-plus-circle-fill"
+                [raised]="true"
+                fluid
+                (onClick)="navigateToSaisieForCurrentUserAndDate()"
+      />
+    </div>
   </div>
   <div class="w-[40%] flex flex-col">
     @if (nbVocalInProgress > 0) {
@@ -56,6 +64,13 @@
         </div>
       </div>
     }
+    @if (loading) {
+      <div class="w-full flex flex-col items-center">
+        <div>
+          <i class="pi pi-spin pi-spinner" style="font-size: 5rem; color: var(--color-grisAnthra)"></i>
+        </div>
+      </div>
+    }
     <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 150px)'}">
       <div class="flex-col">
         @for (tache of taches; track tache.id) {
@@ -65,14 +80,8 @@
             <!-- header -->
             <div class="flex flex-row h-16 justify-between space-x-4">
               <div class=" flex flex-row justify-between space-x-4">
-                <p-button icon="pi pi-pencil"
-                          [rounded]="true"
-                          [raised]="true"
-                          styleClass="bg-intermediaire! border-intermediaire!"
-                          class="transition-all hover:scale-110"
-                />
                 <div class="font-semibold text-xl hover:scale-110 hover:cursor-pointer top-0"
-                     (click)="showDialog(tache, 'activite')">
+                     (click)="navigateToSaisie(tache.id, 1)">
                   {{ tache.activite.nom }}
                 </div>
               </div>
@@ -80,7 +89,7 @@
               <div class="flex flex-row items-center space-x-4">
 
                 <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
-                     (click)="showDialog(tache, 'commentaire')"
+                     (click)="navigateToSaisie(tache.id, 3)"
                      pTooltip="{{tache.commentaire}}" tooltipPosition="bottom">
                   <i class="bi" style="color: var(--color-gray50);font-size: 1.5rem"
                      [ngClass]="tache.commentaire && tache.commentaire.length > 0 ? 'bi-chat-left-text-fill' : 'bi-chat-left-text'"></i>
@@ -88,7 +97,7 @@
 
                 <div
                   class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer"
-                  (click)="showDialog(tache, 'duree_minutes')">
+                  (click)="navigateToSaisie(tache.id, 1)">
                   {{ tacheUtils.getDureeFormatted(tache.duree_minutes) }}
                 </div>
 
@@ -106,18 +115,19 @@
                   </div>
                   <div
                     class="w-1/2 bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer"
-                    (click)="showDialog(tache, 'cultures.culture', idx)">
+                    (click)="navigateToSaisie(tache.id, 2)">
                     {{ culture.culture.nom }}
                   </div>
                   <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
-                       (click)="showDialog(tache, 'cultures.parcelles', idx)"
+                       (click)="navigateToSaisie(tache.id, 3)"
                        pTooltip="{{getParcelleNoms(culture.parcelles)}}" tooltipPosition="bottom">
                     <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
                        [ngClass]="culture.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
                   </div>
                   <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
-                       (click)="showDialog(tache, 'cultures.quantite', idx)"
-                       pTooltip="{{culture.quantite ? culture.quantite + ' ' + culture.unite?.nom : ''}}" tooltipPosition="bottom">
+                       (click)="navigateToSaisie(tache.id, 3)"
+                       pTooltip="{{culture.quantite && culture.unite ? culture.quantite + ' ' + culture.unite.nom : ''}}"
+                       tooltipPosition="bottom">
                     <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
                        [ngClass]="culture?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
                   </div>
@@ -126,24 +136,31 @@
             </div>
             <div class="flex flex-row w-full mt-2">
               <div class="w-1/10">
-                @if (tache.fields_are_missing) {
+                @if (tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles && tache.fields_are_missing) {
                   <i class="bi bi-exclamation-triangle-fill"
                      style="color: var(--color-jauneSoleil);font-size: 2rem"></i>
                 }
               </div>
               <div class="flex flex-row space-x-5 w-8/10 justify-center items-center">
-                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
-                     (click)="showDialog(tache, 'parcelles')"
-                     pTooltip="{{getParcelleNoms(tache.parcelles)}}" tooltipPosition="bottom">
-                  <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
-                     [ngClass]="tache.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
-                </div>
-                <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
-                     (click)="showDialog(tache, 'quantite')"
-                     pTooltip="{{tache.quantite ? tache.quantite + ' ' + tache.unite?.nom : ''}}" tooltipPosition="bottom">
-                  <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
-                     [ngClass]="tache?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
-                </div>
+                @if (tache.activite.niveau_complexite == NiveauComplexite.baseQuantiteParcelles ||
+                tache.activite.niveau_complexite == NiveauComplexite.baseParcelles) {
+                  <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+                       (click)="navigateToSaisie(tache.id, 3)"
+                       pTooltip="{{getParcelleNoms(tache.parcelles)}}" tooltipPosition="bottom">
+                    <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+                       [ngClass]="tache.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
+                  </div>
+                }
+                @if (tache.activite.niveau_complexite == NiveauComplexite.baseQuantiteParcelles ||
+                tache.activite.niveau_complexite == NiveauComplexite.baseQuantite) {
+                  <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+                       (click)="navigateToSaisie(tache.id, 3)"
+                       pTooltip="{{tache.quantite && tache.unite ? tache.quantite + ' ' + tache.unite.nom : ''}}"
+                       tooltipPosition="bottom">
+                    <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+                       [ngClass]="tache?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
+                  </div>
+                }
               </div>
               <p-button icon="pi pi-trash"
                         (click)="onDelete($event, tache)" [rounded]="true"

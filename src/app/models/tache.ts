@@ -7,7 +7,7 @@ import {Unite} from './unite';
 export interface Tache {
   id: number;
   activite: Activite;
-  date: Date;
+  date: string;
   user: User;
   duree_minutes: number;
   cultures: CultureTache[];

@@ -1,4 +1,5 @@
 <p-confirmdialog></p-confirmdialog>
+
 <div class="flex flex-row w-full">
   <div class="w-[30%] flex flex-col items-center space-y-5">
     <div class="flex flex-row justify-center space-x-3 items-center h-10 w-full">
@@ -64,19 +65,17 @@
         </div>
       </div>
     }
-    @if (loading) {
-      <div class="w-full flex flex-col items-center">
-        <div>
-          <i class="pi pi-spin pi-spinner" style="font-size: 5rem; color: var(--color-grisAnthra)"></i>
-        </div>
-      </div>
-    }
     <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 150px)'}">
+      @if (loading) {
+        <div class="w-full h-full flex flex-col items-center justify-center">
+          <div>
+            <i class="pi pi-spin pi-spinner" style="font-size: 5rem; color: var(--color-brun300)"></i>
+          </div>
+        </div>
+      }
       <div class="flex-col">
         @for (tache of taches; track tache.id) {
-          <div class="flex flex-col rounded-2xl p-4 min-w-xs shadow-sm m-2 space-y-2"
-               [ngClass]="{'bg-brun300': tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles,
-               'bg-brun400': tache.activite.niveau_complexite >= NiveauComplexite.cultures}">
+          <div class="flex flex-col rounded-2xl p-4 min-w-xs shadow-sm m-2 space-y-2 bg-brun300">
             <!-- header -->
             <div class="flex flex-row h-16 justify-between space-x-4">
               <div class=" flex flex-row justify-between space-x-4">
@@ -99,6 +98,15 @@
                   class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer"
                   (click)="navigateToSaisie(tache.id, 1)">
                   {{ tacheUtils.getDureeFormatted(tache.duree_minutes) }}
+                </div>
+
+                <div class="transition-all hover:scale-110">
+                  <p-button icon="pi pi-trash"
+                            (click)="onDelete($event, tache)" [rounded]="true"
+                            [raised]="true"
+                            size="large"
+                            styleClass="bg-suppression! border-suppression!"
+                  />
                 </div>
 
               </div>
@@ -162,13 +170,6 @@
                   </div>
                 }
               </div>
-              <p-button icon="pi pi-trash"
-                        (click)="onDelete($event, tache)" [rounded]="true"
-                        [raised]="true"
-                        size="large"
-                        styleClass="bg-suppression! border-suppression!"
-                        class="transition-all hover:scale-110"
-              />
             </div>
           </div>
         }

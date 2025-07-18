@@ -9,6 +9,7 @@ import {provideAnimationsAsync} from '@angular/platform-browser/animations/async
 import {providePrimeNG} from 'primeng/config';
 import {MyPreset} from './preset';
 import {DialogService} from 'primeng/dynamicdialog';
+import { fr } from "primelocale/fr.json"
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
     ConfirmationService,
     provideAnimationsAsync(),
     providePrimeNG({
+      translation: fr,
       theme: {
         preset: MyPreset
       }

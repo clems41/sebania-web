@@ -9,6 +9,10 @@
   <p-tabpanels>
     @for (categorie of categories; track categorie) {
       <p-tabpanel [value]="categorie">
+        <span class="italic text-sm">
+          Pour ajouter une activité à votre ferme, sélectionnez d'abord la catégorie dans laquelle vous souhaitez l'ajouter.<br>
+          Sélectionnez ensuite l'activité dans le tableau de gauche et ajoutez la dans le tableau de droite à l'aide du bouton '>'.
+        </span>
         <p-picklist
           [source]="sourceActivites"
           [target]="fermeActivites[categorie]"
@@ -23,7 +27,7 @@
           (onMoveToTarget)="onSubmit(categorie)"
           [filterLocale]="'fr-FR'"
           sourceHeader="Activités disponibles"
-          targetHeader="Activités de la ferme pour la catégorie : {{ categorie | uppercase }}"
+          targetHeader="Activités pour la catégorie : {{ categorie | uppercase }}"
           filterBy="nom,mots_cles"
           sourceFilterPlaceholder="Recherche par nom ou mots-clés"
           targetFilterPlaceholder="Recherche par nom"

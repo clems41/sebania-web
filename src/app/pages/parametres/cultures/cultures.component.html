@@ -9,6 +9,10 @@
   <p-tabpanels>
     @for (categorie of categories; track categorie) {
       <p-tabpanel [value]="categorie">
+        <span class="italic text-sm">
+          Pour ajouter une culture à votre ferme, sélectionnez d'abord la catégorie dans laquelle vous souhaitez l'ajouter.<br>
+          Sélectionnez ensuite la culture dans le tableau de gauche et ajoutez la dans le tableau de droite à l'aide du bouton '>'.
+        </span>
         <p-picklist
           [source]="sourceCultures"
           [target]="fermeCultures[categorie]"
@@ -21,7 +25,7 @@
           (onMoveToSource)="onSubmit(categorie)"
           (onMoveToTarget)="onSubmit(categorie)"
           sourceHeader="Cultures disponibles"
-          targetHeader="Cultures de la ferme pour la categorie : {{ categorie | uppercase }}"
+          targetHeader="Cultures pour la categorie : {{ categorie | uppercase }}"
           filterBy="nom"
           sourceFilterPlaceholder="Recherche par nom"
           targetFilterPlaceholder="Recherche par nom"

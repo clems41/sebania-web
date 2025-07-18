@@ -1,0 +1,47 @@
+<div class="flex flex-row justify-center space-x-10 w-full p-5">
+  <form [formGroup]="employeForm" (ngSubmit)="onSubmit()" class="space-y-3">
+
+    <div class="flex items-center justify-center relative space-x-2">
+      <p-floatlabel variant="on">
+        <label for="first_name">Prénom<span class="text-suppression"> *</span></label>
+        <input pInputText type="text"
+               formControlName="first_name"
+               id="first_name"
+               name="first_name"
+               fluid
+               required>
+      </p-floatlabel>
+      <p-floatlabel variant="on">
+        <label for="last_name">Nom<span class="text-suppression"> *</span></label>
+        <input pInputText type="text"
+               formControlName="last_name"
+               id="last_name"
+               name="last_name"
+               fluid
+               required>
+      </p-floatlabel>
+    </div>
+
+    <div>
+      <p-floatlabel variant="on">
+        <label for="email">Email<span class="text-suppression"> *</span></label>
+        <input pInputText type="email"
+               formControlName="email"
+               id="email"
+               name="email"
+               fluid
+               required>
+      </p-floatlabel>
+    </div>
+
+    <p-button label="Ajouter un nouvel employé" type="submit"
+              [disabled]="employeForm.invalid || loading"
+              [raised]="employeForm.invalid || loading"
+              [loading]="loading"
+              fluid
+    />
+
+  </form>
+</div>
+
+

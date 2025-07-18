@@ -14,16 +14,13 @@ import {NgClass, NgIf} from '@angular/common';
 import {DatePickerModule} from 'primeng/datepicker';
 import {VocalService} from '../../../services/vocal.service';
 import {Subscription, timer} from 'rxjs';
-import {NiveauComplexite} from '../../../models/niveau-complexite';
 import moment from 'moment';
 import {DateUtils} from '../../../utils/date-utils';
 import {StatutJour} from '../../../models/statut-jour';
-import {ConfirmationService, MessageService} from 'primeng/api';
 import {Button} from 'primeng/button';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TooltipModule} from 'primeng/tooltip';
-import {Parcelle} from '../../../models/parcelle';
+import {CardActiviteComponent} from './card-activite/card-activite.component';
 
 @Component({
   selector: 'app-accueil',
@@ -36,8 +33,8 @@ import {Parcelle} from '../../../models/parcelle';
     DatePickerModule,
     NgClass,
     Button,
-    ConfirmDialogModule,
-    TooltipModule
+    TooltipModule,
+    CardActiviteComponent
   ],
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
@@ -57,8 +54,7 @@ export class AccueilComponent implements OnInit, OnDestroy {
   constructor(private authService: AuthService, private tacheService: TacheService,
               protected tacheUtils: TacheUtils, private fermeService: FermeService,
               private userUtils: UserUtils, private vocalService: VocalService,
-              protected dateUtils: DateUtils, private messageService: MessageService,
-              private confirmationService: ConfirmationService,
+              protected dateUtils: DateUtils,
               private activatedRoute: ActivatedRoute, private router: Router) {
   }
 
@@ -97,6 +93,10 @@ export class AccueilComponent implements OnInit, OnDestroy {
     });
   }
 
+  onDeleteTache() {
+    this.loadTaches();
+  }
+
   loadVocaux() {
     this.vocalService.getInProgressForTache(this.date).subscribe(
       (vocaux) => {
@@ -124,39 +124,6 @@ export class AccueilComponent implements OnInit, OnDestroy {
     );
   }
 
-  onDelete(event: any, tache: Tache) {
-    this.confirmationService.confirm({
-      target: event.target as EventTarget,
-      message: `Êtes vous sûr de vouloir supprimer la tâche '${tache.activite.nom}' ?`,
-      header: 'Suppression',
-      icon: 'pi pi-info-circle',
-      rejectLabel: 'Annuler',
-      rejectButtonProps: {
-        label: 'Annuler',
-        severity: 'secondary',
-        outlined: true,
-      },
-      acceptButtonProps: {
-        label: 'Supprimer',
-        severity: 'danger',
-      },
-      accept: () => {
-        this.tacheService.delete(tache.id).subscribe(
-          {
-            next: () => {
-              this.loadTaches();
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Succès',
-                detail: `La tâche '${tache.activite.nom}' a bien été suprimée.`
-              });
-            }
-          }
-        );
-      }
-    });
-  }
-
   onAddOneDay() {
     this.date = this.dateUtils.addDays(this.date, 1);
     this.loadTaches();
@@ -169,22 +136,6 @@ export class AccueilComponent implements OnInit, OnDestroy {
     this.loadVocaux();
   }
 
-  getParcelleNoms(parcelles: Parcelle[]) {
-    if (parcelles && parcelles.length > 0) {
-      return parcelles.map(parcelle => parcelle.nom).join(", ")
-    }
-    return null;
-  }
-
-  navigateToSaisie(tache_id: number, page: number) {
-    this.router.navigate(['/activites/saisie'], {
-      queryParams: {
-        tache_id: tache_id,
-        page: page
-      }
-    });
-  }
-
   navigateToSaisieForCurrentUserAndDate() {
     this.router.navigate(['/activites/saisie'], {
       queryParams: {
@@ -194,7 +145,6 @@ export class AccueilComponent implements OnInit, OnDestroy {
     });
   }
 
-  protected readonly NiveauComplexite = NiveauComplexite;
   protected readonly moment = moment;
   protected readonly StatutJour = StatutJour;
 }

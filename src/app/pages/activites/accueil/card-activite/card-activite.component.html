@@ -1,0 +1,98 @@
+<p-confirmdialog></p-confirmdialog>
+  <div class="flex flex-col rounded-2xl p-4 min-w-xs shadow-sm m-2 space-y-2 bg-brun300">
+    <!-- header -->
+    <div class="flex flex-row h-16 justify-between space-x-4">
+      <div class=" flex flex-row justify-between space-x-4">
+        <div class="font-semibold text-xl hover:scale-110 hover:cursor-pointer top-0"
+             (click)="navigateToSaisie(tache.id, 1)">
+          {{ tache.activite.nom }}
+        </div>
+      </div>
+
+      <div class="flex flex-row items-center space-x-4">
+
+        <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+             (click)="navigateToSaisie(tache.id, 3)"
+             pTooltip="{{tache.commentaire}}" tooltipPosition="bottom">
+          <i class="bi" style="color: var(--color-gray50);font-size: 1.5rem"
+             [ngClass]="tache.commentaire && tache.commentaire.length > 0 ? 'bi-chat-left-text-fill' : 'bi-chat-left-text'"></i>
+        </div>
+
+        <div
+          class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer"
+          (click)="navigateToSaisie(tache.id, 1)">
+          {{ tacheUtils.getDureeFormatted(tache.duree_minutes) }}
+        </div>
+
+        <div class="transition-all hover:scale-110">
+          <p-button icon="pi pi-trash"
+                    (click)="onDelete($event, tache)" [rounded]="true"
+                    [raised]="true"
+                    size="large"
+                    styleClass="bg-suppression! border-suppression!"
+          />
+        </div>
+
+      </div>
+    </div>
+    <!-- cultures -->
+    <div class="flex flex-col items-center justify-center space-y-4">
+      @for (culture of tache.cultures; track culture.culture.id) {
+        <div class="flex flex-row items-center justify-center space-x-5 w-full">
+          <div class="w-1/10">
+            @if (culture.fields_are_missing) {
+              <i class="bi bi-exclamation-triangle-fill"
+                 style="color: var(--color-jauneSoleil);font-size: 2rem"></i>
+            }
+          </div>
+          <div
+            class="w-1/2 bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md hover:scale-110 hover:cursor-pointer"
+            (click)="navigateToSaisie(tache.id, 2)">
+            {{ culture.culture.nom }}
+          </div>
+          <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+               (click)="navigateToSaisie(tache.id, 3)"
+               pTooltip="{{getParcelleNoms(culture.parcelles)}}" tooltipPosition="bottom">
+            <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+               [ngClass]="culture.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
+          </div>
+          <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+               (click)="navigateToSaisie(tache.id, 3)"
+               pTooltip="{{culture.quantite && culture.unite ? culture.quantite + ' ' + culture.unite.nom : ''}}"
+               tooltipPosition="bottom">
+            <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+               [ngClass]="culture?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
+          </div>
+        </div>
+      }
+    </div>
+    <div class="flex flex-row w-full mt-2">
+      <div class="w-1/10">
+        @if (tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles && tache.fields_are_missing) {
+          <i class="bi bi-exclamation-triangle-fill"
+             style="color: var(--color-jauneSoleil);font-size: 2rem"></i>
+        }
+      </div>
+      <div class="flex flex-row space-x-5 w-8/10 justify-center items-center">
+        @if (tache.activite.niveau_complexite == NiveauComplexite.baseQuantiteParcelles ||
+        tache.activite.niveau_complexite == NiveauComplexite.baseParcelles) {
+          <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+               (click)="navigateToSaisie(tache.id, 3)"
+               pTooltip="{{getParcelleNoms(tache.parcelles)}}" tooltipPosition="bottom">
+            <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+               [ngClass]="tache.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
+          </div>
+        }
+        @if (tache.activite.niveau_complexite == NiveauComplexite.baseQuantiteParcelles ||
+        tache.activite.niveau_complexite == NiveauComplexite.baseQuantite) {
+          <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:scale-110 hover:cursor-pointer"
+               (click)="navigateToSaisie(tache.id, 3)"
+               pTooltip="{{tache.quantite && tache.unite ? tache.quantite + ' ' + tache.unite.nom : ''}}"
+               tooltipPosition="bottom">
+            <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);font-size: 1.5rem"
+               [ngClass]="tache?.quantite ?? 0 > 0 ? 'bi-plus-circle-fill' : 'bi-plus-circle'"></i>
+          </div>
+        }
+      </div>
+    </div>
+  </div>

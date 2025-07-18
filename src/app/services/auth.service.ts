@@ -2,10 +2,11 @@ import {Injectable} from '@angular/core';
 import {HttpService} from './http.service';
 import {AccessResponse} from '../models/auth/access-response';
 import {CacheService} from './cache.service';
-import {map, Observable} from 'rxjs';
+import {map, Observable, of} from 'rxjs';
 import {User} from '../models/user';
 import {HttpParams} from '@angular/common/http';
 import {RegisterRequest} from '../models/auth/register-request';
+import {catchError} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,8 +18,16 @@ export class AuthService {
   constructor(private httpService: HttpService, private cacheService: CacheService) {
   }
 
-  isLoggedIn(): boolean {
-    return this.cacheService.getAccessToken() !== null;
+  isLoggedIn(): Observable<boolean> {
+    return this.me()
+      .pipe(
+        map(_ => {
+          return true;
+        }),
+        catchError(_ => {
+          return of(false);
+        })
+      );
   }
 
   logout() {

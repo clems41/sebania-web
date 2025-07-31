@@ -26,6 +26,7 @@ import {InputText} from 'primeng/inputtext';
 export class ParcellesComponent implements OnInit, OnDestroy {
   parcelles: Parcelle[] = [];
   filteredParcelles: Parcelle[] = [];
+  filterValue: string = '';
 
   ref: DynamicDialogRef | undefined;
 
@@ -34,7 +35,7 @@ export class ParcellesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.refreshParcelles(true);
+    this.refreshParcelles();
   }
 
   ngOnDestroy() {
@@ -73,15 +74,14 @@ export class ParcellesComponent implements OnInit, OnDestroy {
     });
   }
 
-  refreshParcelles(onInit: boolean = false) {
+  refreshParcelles() {
     this.parcelleService.getAll().subscribe(
       {
         next: (parcelles: Parcelle[]) => {
           this.parcelles = parcelles;
           this.sortParcelles();
-          if (onInit) {
-            this.filteredParcelles = this.parcelles;
-          }
+          this.filterValue = '';
+          this.filteredParcelles = this.parcelles;
         },
       }
     )
@@ -96,13 +96,13 @@ export class ParcellesComponent implements OnInit, OnDestroy {
     });
   }
 
-  filterByNomParcelles(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    if (filterValue.length == 0) {
+  filterByNomParcelles() {
+    console.log(this.filterValue);
+    if (this.filterValue.length == 0) {
       this.filteredParcelles = this.parcelles;
       return;
     }
-    this.filteredParcelles = this.parcelles.filter(parcelle => parcelle.nom.toLowerCase().includes(filterValue.toLowerCase()));
+    this.filteredParcelles = this.parcelles.filter(parcelle => parcelle.nom.toLowerCase().includes(this.filterValue.toLowerCase()));
   }
 
   onDelete(event: Event, parcelle: Parcelle) {

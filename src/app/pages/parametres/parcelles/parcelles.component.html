@@ -32,9 +32,8 @@
           <th>
             <p-columnFilter field="nom" matchMode="contains" [showMenu]="false">
               <ng-template #filter let-value let-filter="filterCallback">
-                <input pInputText type="text" (input)="filterByNomParcelles($event)" placeholder="Rechercher par nom"
-                       fluid
-                       required />
+                <input pInputText type="text" (input)="filterByNomParcelles()" placeholder="Rechercher par nom" [(ngModel)]="filterValue"
+                       fluid/>
               </ng-template>
             </p-columnFilter>
           </th>

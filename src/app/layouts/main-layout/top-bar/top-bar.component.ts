@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 import {AuthService} from '../../../services/auth.service';
 import {NgOptimizedImage} from '@angular/common';
@@ -14,6 +14,7 @@ import {NgOptimizedImage} from '@angular/common';
   styleUrl: './top-bar.component.css'
 })
 export class TopBarComponent {
+  @Input() isMobile: boolean = false;
   constructor(private authService: AuthService) {}
 
   logout() {

@@ -1,15 +1,15 @@
 import { Component } from '@angular/core';
-import {RouterOutlet} from '@angular/router';
 import {MessagesModule} from 'primeng/messages';
 import {MessageModule} from 'primeng/message';
 import {Toast, ToastModule} from 'primeng/toast';
+import {RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet,
+  imports: [
     MessagesModule,
     MessageModule, Toast,
-    ToastModule
+    ToastModule, RouterOutlet
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'

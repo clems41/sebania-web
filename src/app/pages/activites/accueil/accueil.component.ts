@@ -21,6 +21,7 @@ import {Button} from 'primeng/button';
 import {ActivatedRoute, Router} from '@angular/router';
 import {TooltipModule} from 'primeng/tooltip';
 import {CardActiviteComponent} from './card-activite/card-activite.component';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-accueil',
@@ -50,12 +51,15 @@ export class AccueilComponent implements OnInit, OnDestroy {
   refreshVocauxSub: Subscription = new Subscription();
   refreshVocauxDelaySeconds: number = 60;
   loading: boolean = false;
+  isMobile: boolean | null = null;
 
   constructor(private authService: AuthService, private tacheService: TacheService,
               protected tacheUtils: TacheUtils, private fermeService: FermeService,
               private userUtils: UserUtils, private vocalService: VocalService,
               protected dateUtils: DateUtils,
-              private activatedRoute: ActivatedRoute, private router: Router) {
+              private activatedRoute: ActivatedRoute, private router: Router,
+              private deviceService: DeviceDetectorService) {
+    this.isMobile = this.deviceService.isMobile();
   }
 
   ngOnDestroy(): void {
@@ -70,27 +74,33 @@ export class AccueilComponent implements OnInit, OnDestroy {
       if (date) {
         this.date = this.dateUtils.fromFrenchFormat(val['date']);
       }
-      this.authService.me().subscribe(user => {
-        this.currentUser = user;
-        this.availableUsers = [user];
-        if (this.userUtils.isResponsable(user)) {
-          this.fermeService.getFerme().subscribe(ferme => {
-            this.availableUsers.push(...ferme.employes);
-            if (user_id) {
-              this.currentUser = this.availableUsers.find(user => {
-                return user.id == +user_id
-              })
-            }
-            this.loadTaches();
-          });
-        } else {
-          this.loadTaches();
-        }
-        this.refreshVocauxSub = timer(0, 1000 * this.refreshVocauxDelaySeconds).subscribe(() => {
-          this.loadVocaux();
-        });
-      })
+      if (!this.isMobile) {
+        this.loadDataOnInit(user_id);
+      }
     });
+  }
+
+  loadDataOnInit(user_id: number) {
+    this.authService.me().subscribe(user => {
+      this.currentUser = user;
+      this.availableUsers = [user];
+      if (this.userUtils.isResponsable(user)) {
+        this.fermeService.getFerme().subscribe(ferme => {
+          this.availableUsers.push(...ferme.employes);
+          if (user_id) {
+            this.currentUser = this.availableUsers.find(user => {
+              return user.id == +user_id
+            })
+          }
+          this.loadTaches();
+        });
+      } else {
+        this.loadTaches();
+      }
+      this.refreshVocauxSub = timer(0, 1000 * this.refreshVocauxDelaySeconds).subscribe(() => {
+        this.loadVocaux();
+      });
+    })
   }
 
   onDeleteTache() {

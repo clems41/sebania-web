@@ -59,4 +59,4 @@
     </div>
   </div>
 </div>
-<div class="w-64"></div> <!-- Ajustez la hauteur selon celle de votre top-bar -->
+<div [class.w-64]="!isCollapsed" [class.w-16]="isCollapsed"></div>

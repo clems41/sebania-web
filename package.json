@@ -28,6 +28,7 @@
     "localstorage-polyfill": "^1.0.1",
     "moment": "^2.30.1",
     "my-workspace": "github:ngx-translate/core",
+    "ngx-device-detector": "^9.0.0",
     "postcss": "^8.5.4",
     "primeflex": "^4.0.0",
     "primeicons": "^7.0.0",

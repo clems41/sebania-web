@@ -16,7 +16,9 @@
          class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-grisAnthra active:bg-grisAnthra
                     transition-all duration-200 ease-in-out group">
         <i class="bi bi-gear-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
-        <span class="font-light text-sm group-hover:text-gray200">Paramètres</span>
+        @if (!isMobile) {
+          <span class="font-light text-sm group-hover:text-gray200">Paramètres</span>
+        }
       </a>
 
       <!-- Se déconnetecer -->
@@ -24,7 +26,9 @@
          class="flex items-center space-x-2 px-3 py-2 rounded-lg hover:bg-grisAnthra active:bg-grisAnthra
                     transition-all duration-200 ease-in-out group hover:cursor-pointer">
         <i class="bi bi-box-arrow-left h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
-        <span class="font-light text-sm group-hover:text-gray200">Se déconnecter</span>
+        @if (!isMobile) {
+          <span class="font-light text-sm group-hover:text-gray200">Se déconnecter</span>
+        }
       </button>
     </div>
   </div>

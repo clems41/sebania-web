@@ -5,6 +5,7 @@ import {Tache} from '../models/tache';
 import {HttpParams} from '@angular/common/http';
 import {PatchTacheRequest, TacheRequest} from '../models/tache/tache-request';
 import {DateUtils} from '../utils/date-utils';
+import {Calendrier} from '../models/calendrier/calendrier-semaine';
 
 @Injectable({
   providedIn: 'root'
@@ -52,5 +53,21 @@ export class TacheService {
           return response.total_minutes;
         })
       );
+  }
+
+  getCalendrierSemaine(annee: number, semaine: number, user_id: number): Observable<Calendrier> {
+    const params: HttpParams = new HttpParams()
+      .set('user_id', user_id)
+      .set('annee', annee)
+      .set('semaine', semaine);
+    return this.httpService.get(`${this.tachePrefix}/calendrier/`, {params: params});
+  }
+
+  getCalendrierMois(annee: number, mois: number, user_id: number): Observable<Calendrier> {
+    const params: HttpParams = new HttpParams()
+      .set('user_id', user_id)
+      .set('annee', annee)
+      .set('mois', mois)
+    return this.httpService.get(`${this.tachePrefix}/calendrier/`, {params: params});
   }
 }

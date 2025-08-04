@@ -1,1 +1,40 @@
-<p>calendrier works!</p>
+<div class="flex flex-col space-y-3">
+
+  <div class="flex flex-row w-full p-4 bg-gray50 shadow-md space-x-5">
+    <div>
+      <p-floatlabel class="w-full md:w-56" variant="on">
+        <p-select [(ngModel)]="calendrierSelector" inputId="selector" [options]="[calendrierSelectorMois, calendrierSelectorSemaine]" styleClass="w-full">
+        </p-select>
+        <label for="selector">Plage de temps</label>
+      </p-floatlabel>
+    </div>
+    <div>
+      <p-floatlabel class="w-full md:w-56" variant="on">
+        <p-select [(ngModel)]="currentUser" inputId="currentUser" [options]="availableUsers" styleClass="w-full">
+          <ng-template #selectedItem let-selectedOption>
+            <div class="flex items-center gap-2" *ngIf="selectedOption">
+              <div>{{ selectedOption.first_name + ' ' + selectedOption.last_name }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-user #item>
+            <div class="flex items-center gap-2">
+              <div>{{ user.first_name + ' ' + user.last_name }}</div>
+            </div>
+          </ng-template>
+        </p-select>
+        <label for="currentUser">Utilisateur</label>
+      </p-floatlabel>
+    </div>
+  </div>
+
+  @if (currentUser) {
+    <div class="p-4 mx-auto w-1/2">
+      @if (calendrierSelector == calendrierSelectorSemaine) {
+        <app-semaine [user]="currentUser" (onClick)="navigateToSaisieForCurrentUserAndDate($event)"></app-semaine>
+      }
+      @if (calendrierSelector == calendrierSelectorMois) {
+        <app-mois [user]="currentUser" (onClick)="navigateToSaisieForCurrentUserAndDate($event)"></app-mois>
+      }
+    </div>
+  }
+</div>

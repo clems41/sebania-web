@@ -21,4 +21,17 @@ export class DateUtils {
   addDays(date: Date, days: number): Date {
     return moment(date).add(days, 'days').toDate();
   }
+
+  getFirstMondayOfMonth(date: moment.Moment): moment.Moment {
+    // Clone pour ne pas muter l'objet original
+    const firstDayOfMonth = date.clone().startOf('month');
+
+    // Si le premier jour du mois est un lundi (1), on le retourne directement
+    if (firstDayOfMonth.isoWeekday() === 1) {
+      return firstDayOfMonth;
+    }
+
+    // Sinon, on avance jusqu'au prochain lundi
+    return firstDayOfMonth.add(8 - firstDayOfMonth.isoWeekday(), 'days');
+  }
 }

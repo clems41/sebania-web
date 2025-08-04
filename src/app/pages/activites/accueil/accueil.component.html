@@ -44,14 +44,16 @@
         <label for="date">Date</label>
       </p-floatlabel>
     </div>
-    <div class="w-full md:w-56">
-      <p-button label="Ajouter une activité"
-                icon="bi-plus-circle-fill"
-                [raised]="true"
-                fluid
-                (onClick)="navigateToSaisieForCurrentUserAndDate()"
-      />
-    </div>
+    @if (taches.length > 0 || nbVocalInProgress > 0) {
+      <div class="w-full md:w-56">
+        <p-button label="Ajouter une tâche"
+                  icon="bi-plus-circle-fill"
+                  [raised]="true"
+                  fluid
+                  (onClick)="navigateToSaisieForCurrentUserAndDate()"
+        />
+      </div>
+    }
   </div>
   <div class="w-[40%] flex flex-col">
     @if (nbVocalInProgress > 0) {
@@ -77,17 +79,17 @@
             <div
               class="w-full flex flex-row items-center justify-center border border-grisAnthra rounded-2xl p-2 text-3xl space-x-3">
               <div>
-                <i class="pi pi-question-circle" style="font-size: 3rem; color: var(--color-grisAnthra)"></i>
+                <i class="pi pi-search" style="font-size: 3rem; color: var(--color-grisAnthra)"></i>
               </div>
               <span>Aucune tâche renseignée</span>
             </div>
             <div class="flex flex-col w-full transition-all hover:scale-110 items-center">
-              <div>
-                <p-button icon="pi pi-plus-circle"
-                          (click)="navigateToSaisieForCurrentUserAndDate()" [rounded]="true"
+              <div class="w-full md:w-56">
+                <p-button label="Ajouter une tâche"
+                          icon="bi-plus-circle-fill"
                           [raised]="true"
-                          size="large"
-                          styleClass="bg-vertFeuille! border-vertFeuille!"
+                          fluid
+                          (onClick)="navigateToSaisieForCurrentUserAndDate()"
                 />
               </div>
             </div>

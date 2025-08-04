@@ -97,7 +97,6 @@ export class ParcellesComponent implements OnInit, OnDestroy {
   }
 
   filterByNomParcelles() {
-    console.log(this.filterValue);
     if (this.filterValue.length == 0) {
       this.filteredParcelles = this.parcelles;
       return;

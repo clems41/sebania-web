@@ -1,0 +1,78 @@
+<div class="flex flex-col space-y-4">
+
+  <div class="flex flex-col text-xl items-center space-y-4">
+    <div class="flex flex-row space-x-4 items-center">
+      <!--      selecteur mois-->
+      <div class="hover:cursor-pointer hover:scale-110" (click)="minusMonth()">
+        <i class="pi pi-chevron-left" style="font-size: 1.5rem"></i>
+      </div>
+      <div class="h-full">
+        {{ monthName }} {{ year }}
+      </div>
+      <div class="hover:cursor-pointer hover:scale-110" (click)="plusMonth()">
+        <i class="pi pi-chevron-right" style="font-size: 1.5rem"></i>
+      </div>
+    </div>
+    <div class="flex flex-row space-x-4">
+      <!--      selecteur semaine-->
+      <div class="hover:cursor-pointer hover:scale-110" (click)="minusWeek()">
+        <i class="pi pi-chevron-left" style="font-size: 1.5rem"></i>
+      </div>
+      <div>
+        Semaine {{ week }}
+      </div>
+      <div class="hover:cursor-pointer hover:scale-110" (click)="plusWeek()">
+        <i class="pi pi-chevron-right" style="font-size: 1.5rem"></i>
+      </div>
+    </div>
+    <div class="hover:scale-105">
+      <p-button icon="pi pi-calendar"
+                (click)="setDateAtToday()" [rounded]="true"
+                [raised]="true"
+                label="Aujourd'hui"
+                styleClass="bg-grisAnthra! border-grisAnthra!"
+      />
+    </div>
+  </div>
+
+  <div class="flex flex-row border-b w-full justify-between items-end p-2 text-lg">
+    <div class="italic">
+      Total de la semaine
+    </div>
+    <div class="rounded-md text-white w-15 py-2 flex items-center justify-center"
+         [ngClass]="{'bg-vertFonce': (calendrier?.total_minutes ?? 0) < 40 * 60,
+         'bg-jauneSoleil': (calendrier?.total_minutes ?? 0) < 45 * 60,
+         'bg-suppression': (calendrier?.total_minutes ?? 0) >= 45 * 60}">
+      {{ tacheUtils.getDureeFormatted(calendrier?.total_minutes ?? 0) }}
+    </div>
+    <!--    Total-->
+  </div>
+
+  <div class="space-y-4">
+    @for (day of daysList; track day.date()) {
+      @let calendrierJour = getCalendrierJour(day);
+      <div class="flex flex-row w-full h-12 rounded-md bg-gray50 shadow-sm justify-between items-center text-md hover:cursor-pointer hover:scale-105"
+           (click)="onClick.emit(day)">
+        <div class="flex flex-row">
+          <div class="p-4 w-60">
+            {{ fullDayName(day) }}
+          </div>
+          <div>
+            @if ((calendrierJour?.nb_taches_with_missing_fields ?? 0) > 0) {
+              <i class="bi bi-exclamation-triangle-fill"
+                 style="color: var(--color-jauneSoleil);font-size: 2rem"></i>
+            }
+          </div>
+        </div>
+        <div class="flex h-full rounded-md rounded-l-none text-white flex items-center justify-center px-2 w-15"
+             [ngClass]="{'bg-vertFonce': calendrierJour?.statut == StatutJour.ok,
+             'bg-jauneSoleil': calendrierJour?.statut == StatutJour.warning,
+             'bg-suppression': calendrierJour?.statut == StatutJour.danger}">
+          {{ tacheUtils.getDureeFormatted(calendrierJour?.total_jour_minutes ?? 0) }}
+        </div>
+      </div>
+    }
+    <!--    Liste des jours-->
+  </div>
+
+</div>

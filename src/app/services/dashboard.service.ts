@@ -18,6 +18,7 @@ export class DashboardService {
   getVueEnsembleCards(): Observable<VueEnsembleCards> {
     const mock: VueEnsembleCards = {
       temps_travail_mois_actuel_en_minutes: 20 * 60 * 8.9,
+      temps_travail_mois_annee_precedente_en_minutes: 20 * 60 * 8.5,
       temps_travail_moyen_par_jour_en_minutes: 60 * 7.4,
       temps_travail_moyen_par_mois_en_minutes: 19 * 60 * 8.3,
       activite_chronophage: {

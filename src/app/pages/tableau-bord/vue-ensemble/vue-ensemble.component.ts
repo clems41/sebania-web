@@ -28,6 +28,18 @@ export class VueEnsembleComponent implements OnInit {
     return moment.months()[moment().month()]
   }
 
+  get previousYear(): number {
+    return moment().subtract(1, 'year').year();
+  }
+
+  get tempsTravailComparaison(): number | undefined {
+    if (!this.dataCards) {
+      return undefined;
+    }
+    return (this.dataCards.temps_travail_mois_actuel_en_minutes - this.dataCards.temps_travail_mois_annee_precedente_en_minutes)/
+      this.dataCards.temps_travail_mois_annee_precedente_en_minutes * 100;
+  }
+
   getFormattedDuree(duree_minutes: number | undefined): string {
     return this.tacheUtils.getDureeFormatted(duree_minutes ?? 0);
   }

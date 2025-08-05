@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { GeneralComponent } from './general.component';
+import { ParcelleComponent } from './parcelle.component';
 
-describe('GeneralComponent', () => {
-  let component: GeneralComponent;
-  let fixture: ComponentFixture<GeneralComponent>;
+describe('ParcelleComponent', () => {
+  let component: ParcelleComponent;
+  let fixture: ComponentFixture<ParcelleComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GeneralComponent]
+      imports: [ParcelleComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(GeneralComponent);
+    fixture = TestBed.createComponent(ParcelleComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

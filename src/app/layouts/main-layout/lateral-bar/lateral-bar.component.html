@@ -44,15 +44,30 @@
           {{ isCollapsed ? 'TDB' : 'TABLEAU DE BORD' }}
         </h3>
         <nav>
-          <a routerLink="/tableau-bord/general" routerLinkActive="bg-gray600"
+          <a routerLink="/tableau-bord/vue-ensemble" routerLinkActive="bg-gray600"
              class="flex items-center p-2 rounded hover:bg-gray600 mb-1 transition-all duration-200 ease-in-out group">
-            <i class="bi bi-basket-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
-            <span [class.hidden]="isCollapsed" class="ml-2">Général</span>
+            <i class="bi bi-eye-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
+            <span [class.hidden]="isCollapsed" class="ml-2">Vue d'ensemble</span>
           </a>
-          <a routerLink="/tableau-bord/legume" routerLinkActive="bg-gray600"
+          <a routerLink="/tableau-bord/temps-travail" routerLinkActive="bg-gray600"
              class="flex items-center p-2 rounded hover:bg-gray600 mb-1 transition-all duration-200 ease-in-out group">
             <i class="bi bi-clock-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
-            <span [class.hidden]="isCollapsed" class="ml-2">Par légume</span>
+            <span [class.hidden]="isCollapsed" class="ml-2">Temps de travail</span>
+          </a>
+          <a routerLink="/tableau-bord/cultures" routerLinkActive="bg-gray600"
+             class="flex items-center p-2 rounded hover:bg-gray600 mb-1 transition-all duration-200 ease-in-out group">
+            <i class="bi bi-basket-fill h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
+            <span [class.hidden]="isCollapsed" class="ml-2">Par culture</span>
+          </a>
+          <a routerLink="/tableau-bord/parcelles" routerLinkActive="bg-gray600"
+             class="flex items-center p-2 rounded hover:bg-gray600 mb-1 transition-all duration-200 ease-in-out group">
+            <i class="bi bi-grid-1x2 h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
+            <span [class.hidden]="isCollapsed" class="ml-2">Par parcelle</span>
+          </a>
+          <a routerLink="/tableau-bord/comparaison" routerLinkActive="bg-gray600"
+             class="flex items-center p-2 rounded hover:bg-gray600 mb-1 transition-all duration-200 ease-in-out group">
+            <i class="bi bi-speedometer h-5 w-5 group-hover:scale-110 transition-transform duration-200"></i>
+            <span [class.hidden]="isCollapsed" class="ml-2">Comparaison</span>
           </a>
         </nav>
       </div>

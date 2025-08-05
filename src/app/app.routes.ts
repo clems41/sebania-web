@@ -45,20 +45,38 @@ export const routes: Routes = [
         children: [
           {
             path: '',
-            redirectTo: 'general',
+            redirectTo: 'vue-ensemble',
             pathMatch: 'full'
           },
           {
-            path: 'general',
-            loadComponent: () => import('./pages/tableau-bord/general/general.component')
-              .then(m => m.GeneralComponent),
-            title: 'Tableau de bord général'
+            path: 'vue-ensemble',
+            loadComponent: () => import('./pages/tableau-bord/vue-ensemble/vue-ensemble.component')
+              .then(m => m.VueEnsembleComponent),
+            title: "Vue d'ensemble"
           },
           {
-            path: 'legume',
-            loadComponent: () => import('./pages/tableau-bord/legume/legume.component')
-              .then(m => m.LegumeComponent),
-            title: 'Tableau de bord légumes'
+            path: 'cultures',
+            loadComponent: () => import('./pages/tableau-bord/culture/culture.component')
+              .then(m => m.CultureComponent),
+            title: 'Cultures'
+          },
+          {
+            path: 'parcelles',
+            loadComponent: () => import('./pages/tableau-bord/parcelle/parcelle.component')
+              .then(m => m.ParcelleComponent),
+            title: 'Parcelles'
+          },
+          {
+            path: 'temps-travail',
+            loadComponent: () => import('./pages/tableau-bord/temps-travail/temps-travail.component')
+              .then(m => m.TempsTravailComponent),
+            title: 'Temps de travail'
+          },
+          {
+            path: 'comparaison',
+            loadComponent: () => import('./pages/tableau-bord/comparaison/comparaison.component')
+              .then(m => m.ComparaisonComponent),
+            title: 'Comparaison'
           }
         ]
       },

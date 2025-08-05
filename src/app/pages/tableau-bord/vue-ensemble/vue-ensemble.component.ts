@@ -120,8 +120,8 @@ export class VueEnsembleComponent implements OnInit {
     const textColor = documentStyle.getPropertyValue('--text-color');
     const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
     this.optionsEvolutionTempsTravail = {
-      maintainAspectRatio: false,
-      aspectRatio: 2,
+      maintainAspectRatio: true,
+      aspectRatio: 5,
       plugins: {
         legend: {
           display: false,

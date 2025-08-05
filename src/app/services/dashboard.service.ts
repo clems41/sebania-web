@@ -33,7 +33,9 @@ export class DashboardService {
         id: 12,
         nom: 'Carotte',
         categorie: 'racine'
-      }
+      },
+      poucentage_activite: 12,
+      poucentage_culture: 35
     };
     return of(mock);
     // return this.httpService.get(`${this.prefix}/`);

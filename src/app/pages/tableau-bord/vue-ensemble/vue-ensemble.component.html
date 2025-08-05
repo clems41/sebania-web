@@ -25,7 +25,7 @@
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md justify-between">
       <div class="flex flex-row justify-between">
-        <div class="text-lg font-semibold italic">Temps moyen par jour</div>
+        <div class="flex text-lg font-semibold italic items-center">Temps moyen par jour</div>
         <div class="flex text-lg font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.temps_travail_moyen_par_jour_en_minutes) }}
@@ -33,7 +33,7 @@
         </div>
       </div>
       <div class="flex flex-row justify-between">
-        <div class="text-lg font-semibold italic">Temps moyen par mois</div>
+        <div class="flex text-lg font-semibold italic items-center">Temps moyen par mois</div>
         <div class="flex text-lg font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.temps_travail_moyen_par_mois_en_minutes) }}
@@ -44,14 +44,16 @@
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md">
       <div class="text-lg font-semibold italic w-full">Activité la plus chronophage</div>
-      <div class="flex text-2xl font-bold w-full items-end justify-end flex-grow-1">
+      <div class="flex flex-row text-2xl font-bold w-full items-end justify-between flex-grow-1">
+        <div class="p-2 text-brunTerre text-lg">{{dataCards?.poucentage_activite}} %</div>
         <div class="p-2 text-gray50 bg-brunTerre rounded-2xl">{{ dataCards?.activite_chronophage?.nom }}</div>
       </div>
     </div>
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md">
       <div class="text-lg font-semibold italic w-full">Culture la plus chronophage</div>
-      <div class="flex text-2xl font-bold w-full items-end justify-end flex-grow-1">
+      <div class="flex flex-row text-2xl font-bold w-full items-end justify-between flex-grow-1">
+        <div class="p-2 text-brunTerre text-lg">{{dataCards?.poucentage_culture}} %</div>
         <div class="p-2 text-gray50 bg-brunTerre rounded-2xl">{{ dataCards?.culture_chronophage?.nom }}</div>
       </div>
     </div>

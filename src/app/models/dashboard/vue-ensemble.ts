@@ -11,3 +11,30 @@ export interface VueEnsembleCards {
   activite_chronophage: Activite;
   culture_chronophage: Culture;
 }
+
+export interface VueEnsembleRepartitionActivite {
+  data: VueEnsembleRepartitionActiviteItem[];
+}
+
+export interface VueEnsembleRepartitionActiviteItem {
+  categorie_nom: string;
+  duree_minutes: number;
+}
+
+export interface VueEnsembleRepartitionCulture {
+  data: VueEnsembleRepartitionCultureItem[];
+}
+
+export interface VueEnsembleRepartitionCultureItem {
+  culture_nom: string;
+  duree_minutes: number;
+}
+
+export interface VueEnsembleRepartitionParcelle {
+  data: VueEnsembleRepartitionParcelleItem[];
+}
+
+export interface VueEnsembleRepartitionParcelleItem {
+  parcelle_nom: string;
+  duree_minutes: number;
+}

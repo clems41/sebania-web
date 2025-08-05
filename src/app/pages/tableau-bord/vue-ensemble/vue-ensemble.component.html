@@ -1,6 +1,8 @@
-<div class="flex flex-col w-full">
+<div class="flex flex-col w-full space-y-2">
 
-  <div class="flex flex-row w-full h-35 justify-between text-brunFonce">
+  <div class="flex text-md italic bg-gray50 font-semibold w-full p-1">Tableau de bord > Vue d'ensemble</div>
+
+  <div class="flex flex-row w-full h-40 justify-between text-brunFonce bg-gray50 p-3">
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md">
       <div class="text-lg font-semibold italic w-full">Temps travaillé en {{ currentMonthName }}</div>
@@ -45,7 +47,7 @@
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md">
       <div class="text-lg font-semibold italic w-full">Activité la plus chronophage</div>
       <div class="flex flex-row text-2xl font-bold w-full items-end justify-between flex-grow-1">
-        <div class="p-2 text-brunTerre text-lg">{{dataCards?.poucentage_activite}} %</div>
+        <div class="p-2 text-brunTerre text-lg">{{ dataCards?.poucentage_activite }} %</div>
         <div class="p-2 text-gray50 bg-brunTerre rounded-2xl">{{ dataCards?.activite_chronophage?.nom }}</div>
       </div>
     </div>
@@ -53,9 +55,40 @@
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md">
       <div class="text-lg font-semibold italic w-full">Culture la plus chronophage</div>
       <div class="flex flex-row text-2xl font-bold w-full items-end justify-between flex-grow-1">
-        <div class="p-2 text-brunTerre text-lg">{{dataCards?.poucentage_culture}} %</div>
+        <div class="p-2 text-brunTerre text-lg">{{ dataCards?.poucentage_culture }} %</div>
         <div class="p-2 text-gray50 bg-brunTerre rounded-2xl">{{ dataCards?.culture_chronophage?.nom }}</div>
       </div>
+    </div>
+
+  </div>
+
+  <div class="flex flex-col bg-gray50">
+    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Nombre d'heures travaillées</div>
+
+
+    <div class="flex flex-row w-full justify-between text-md">
+
+      <div class="flex w-1/4">
+        <div class="flex flex-col space-y-1">
+          <div class="flex text-lg justify-center">Par type d'activité</div>
+          <p-chart type="pie" [data]="dataRepartitionActivite" [options]="optionsRepartitionActivite" class="w-full"/>
+        </div>
+      </div>
+
+      <div class="flex w-1/4">
+        <div class="flex flex-col space-y-1">
+          <div class="flex text-lg justify-center">Par culture</div>
+          <p-chart type="pie" [data]="dataRepartitionCulture" [options]="optionsRepartitionCulture" class="w-full"/>
+        </div>
+      </div>
+
+      <div class="flex w-1/4">
+        <div class="flex flex-col space-y-1">
+          <div class="flex text-lg justify-center">Par parcelle</div>
+          <p-chart type="pie" [data]="dataRepartitionParcelle" [options]="optionsRepartitionParcelle" class="w-full"/>
+        </div>
+      </div>
+
     </div>
 
   </div>

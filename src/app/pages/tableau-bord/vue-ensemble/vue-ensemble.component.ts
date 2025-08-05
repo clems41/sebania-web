@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {
-  VueEnsembleCards,
+  VueEnsembleCards, VueEnsembleEvolutionTempsTravail,
   VueEnsembleRepartitionActivite,
   VueEnsembleRepartitionCulture,
   VueEnsembleRepartitionParcelle
@@ -27,6 +27,8 @@ export class VueEnsembleComponent implements OnInit {
   optionsRepartitionCulture: any;
   dataRepartitionParcelle: any;
   optionsRepartitionParcelle: any;
+  dataEvolutionTempsTravail: any;
+  optionsEvolutionTempsTravail: any;
 
   constructor(private dashboardService: DashboardService, private stringUtils: StringUtils,
               private tacheUtils: TacheUtils, private chartUtils: ChartUtils) {
@@ -39,6 +41,7 @@ export class VueEnsembleComponent implements OnInit {
     this.dashboardService.getVueEnsembleRepartitionActivite().subscribe((data) => this.initRepartitionActivite(documentStyle, data));
     this.dashboardService.getVueEnsembleRepartitionCulture().subscribe((data) => this.initRepartitionCulture(documentStyle, data));
     this.dashboardService.getVueEnsembleRepartitionParcelle().subscribe((data) => this.initRepartitionParcelle(documentStyle, data));
+    this.dashboardService.getVueEnsembleEvolutionTempsTravail().subscribe((data) => this.initEvolutionTempsTravail(documentStyle, data));
   }
 
   initRepartitionActivite(documentStyle: CSSStyleDeclaration, data: VueEnsembleRepartitionActivite) {
@@ -108,6 +111,67 @@ export class VueEnsembleComponent implements OnInit {
         {
           data: data.data.map(item => Math.round(item.duree_minutes / 60)),
           backgroundColor: this.chartUtils.getRandomColors(data.data.length),
+        }
+      ]
+    };
+  }
+
+  initEvolutionTempsTravail(documentStyle: CSSStyleDeclaration, data: VueEnsembleEvolutionTempsTravail) {
+    const textColor = documentStyle.getPropertyValue('--text-color');
+    const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
+    this.optionsEvolutionTempsTravail = {
+      maintainAspectRatio: false,
+      aspectRatio: 2,
+      plugins: {
+        legend: {
+          display: false,
+          labels: {
+            usePointStyle: true,
+            color: textColor
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: {
+            color: textColor,
+            font: {
+              weight: 500
+            }
+          },
+          grid: {
+            color: surfaceBorder,
+            drawBorder: false
+          }
+        },
+        y: {
+          ticks: {
+            color: textColor
+          },
+          grid: {
+            color: surfaceBorder,
+            drawBorder: false
+          }
+        }
+      }
+    };
+    this.dataEvolutionTempsTravail = {
+      labels: data.data.map(item => item.mois),
+      datasets: [
+        {
+          type: 'line',
+          fill: false,
+          label: "Moyenne des utilisateurs",
+          data: data.data.map(item => Math.round(item.moyenne_duree_minutes / 60)),
+          backgroundColor: documentStyle.getPropertyValue('--color-intermediaire'),
+          borderColor: documentStyle.getPropertyValue('--color-intermediaire-hover'),
+        },
+        {
+          type: 'bar',
+          label: "Mes heures de travail",
+          data: data.data.map(item => Math.round(item.duree_minutes / 60)),
+          backgroundColor: documentStyle.getPropertyValue('--color-vertFeuille'),
+          borderColor: documentStyle.getPropertyValue('--color-vertFeuille-hover'),
         }
       ]
     };

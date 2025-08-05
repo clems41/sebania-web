@@ -1,8 +1,8 @@
 <div class="flex flex-col w-full space-y-2">
 
-  <div class="flex text-md italic bg-gray50 font-semibold w-full p-1">Tableau de bord > Vue d'ensemble</div>
+  <div class="flex text-md italic font-semibold w-full">Tableau de bord > Vue d'ensemble</div>
 
-  <div class="flex flex-row w-full h-40 justify-between text-brunFonce bg-gray50 p-3">
+  <div class="flex flex-row w-full h-40 justify-between text-brunFonce">
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md">
       <div class="text-lg font-semibold italic w-full">Temps travaillé en {{ currentMonthName }}</div>
@@ -65,7 +65,6 @@
   <div class="flex flex-col bg-gray50">
     <div class="w-full flex text-2xl font-semibold p-3 justify-center">Nombre d'heures travaillées</div>
 
-
     <div class="flex flex-row w-full justify-between text-md">
 
       <div class="flex w-1/4">
@@ -89,6 +88,14 @@
         </div>
       </div>
 
+    </div>
+
+    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Evolution du temps de travail</div>
+
+    <div class="flex w-full justify-center">
+      <div class="flex flex-col space-y-1 w-4/5">
+        <p-chart type="bar" [data]="dataEvolutionTempsTravail" [options]="optionsEvolutionTempsTravail" class="w-full"/>
+      </div>
     </div>
 
   </div>

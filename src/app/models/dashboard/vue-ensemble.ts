@@ -38,3 +38,13 @@ export interface VueEnsembleRepartitionParcelleItem {
   parcelle_nom: string;
   duree_minutes: number;
 }
+
+export interface VueEnsembleEvolutionTempsTravail {
+  data: VueEnsembleEvolutionTempsTravailItem[];
+}
+
+export interface VueEnsembleEvolutionTempsTravailItem {
+  mois: string;
+  duree_minutes: number;
+  moyenne_duree_minutes: number;
+}

@@ -3,7 +3,7 @@ import {HttpService} from './http.service';
 import {Observable, of} from 'rxjs';
 import {DateUtils} from '../utils/date-utils';
 import {
-  VueEnsembleCards,
+  VueEnsembleCards, VueEnsembleEvolutionTempsTravail,
   VueEnsembleRepartitionActivite,
   VueEnsembleRepartitionCulture, VueEnsembleRepartitionParcelle
 } from '../models/dashboard/vue-ensemble';
@@ -99,6 +99,26 @@ export class DashboardService {
         {parcelle_nom: 'Est 2', duree_minutes: 365},
         {parcelle_nom: 'Est 3', duree_minutes: 456},
         {parcelle_nom: 'Est 4', duree_minutes: 987}
+      ]
+    };
+    return of(mock);
+  }
+
+  getVueEnsembleEvolutionTempsTravail(): Observable<VueEnsembleEvolutionTempsTravail> {
+    const mock: VueEnsembleEvolutionTempsTravail = {
+      data: [
+        {mois: 'Janvier', duree_minutes: 412, moyenne_duree_minutes: 425},
+        {mois: 'Février', duree_minutes: 796, moyenne_duree_minutes: 785},
+        {mois: 'Mars', duree_minutes: 785, moyenne_duree_minutes: 736},
+        {mois: 'Avril', duree_minutes: 45, moyenne_duree_minutes: 42},
+        {mois: 'Mai', duree_minutes: 360, moyenne_duree_minutes: 312},
+        {mois: 'Juin', duree_minutes: 785, moyenne_duree_minutes: 741},
+        {mois: 'Juillet', duree_minutes: 458, moyenne_duree_minutes: 496},
+        {mois: 'Août', duree_minutes: 415, moyenne_duree_minutes: 396},
+        {mois: 'Septembre', duree_minutes: 123, moyenne_duree_minutes: 112},
+        {mois: 'Octobre', duree_minutes: 526, moyenne_duree_minutes: 569},
+        {mois: 'Novembre', duree_minutes: 458, moyenne_duree_minutes: 410},
+        {mois: 'Décembre', duree_minutes: 857, moyenne_duree_minutes: 865}
       ]
     };
     return of(mock);

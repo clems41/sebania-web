@@ -1,1 +1,176 @@
-<p>temps-travail works!</p>
+<div class="flex flex-col w-full space-y-2">
+
+  <div class="flex text-md italic font-semibold w-full">Tableau de bord > Temps de travail</div>
+
+  <div class="flex flex-row w-full space-x-5 my-5">
+    <p-floatlabel class="w-full md:w-56" variant="on">
+      <p-datepicker [(ngModel)]="dateDebutFilter" [iconDisplay]="'input'" [showIcon]="true" inputId="date_debut"
+                    dateFormat="dd/mm/yy"
+                    (onSelect)="loadData()">
+      </p-datepicker>
+      <label for="date_debut">Début de période</label>
+    </p-floatlabel>
+
+    <p-floatlabel class="w-full md:w-56" variant="on">
+      <p-datepicker [(ngModel)]="dateFinFilter" [iconDisplay]="'input'" [showIcon]="true" inputId="date_fin"
+                    dateFormat="dd/mm/yy"
+                    (onSelect)="loadData()">
+      </p-datepicker>
+      <label for="date_fin">Fin de période</label>
+    </p-floatlabel>
+
+    <p-floatlabel class="w-full md:w-56" variant="on">
+      <p-select [options]="availableActivites" [(ngModel)]="activiteFilter" optionLabel="nom" [filter]="true"
+                filterBy="nom"
+                [showClear]="true" class="w-full md:w-56" inputId="activite"
+                (onChange)="loadData()">
+      </p-select>
+      <label for="activite">Activité</label>
+    </p-floatlabel>
+
+    <p-floatlabel class="w-full md:w-56" variant="on">
+      <p-select [options]="availableCultures" [(ngModel)]="cultureFilter" optionLabel="nom" [filter]="true"
+                filterBy="nom"
+                [showClear]="true" class="w-full md:w-56" inputId="culture"
+                (onChange)="loadData()">
+      </p-select>
+      <label for="culture">Culture</label>
+    </p-floatlabel>
+
+    <p-floatlabel class="w-full md:w-56" variant="on">
+      <p-select [options]="availableParcelles" [(ngModel)]="parcelleFilter" optionLabel="nom" [filter]="true"
+                filterBy="nom"
+                [showClear]="true" class="w-full md:w-56" inputId="parcelle"
+                (onChange)="loadData()">
+      </p-select>
+      <label for="parcelle">Parcelle</label>
+    </p-floatlabel>
+  </div>
+
+  <div class="flex flex-row w-full h-40 justify-between text-brunFonce">
+
+    <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md">
+      <div class="text-lg font-semibold italic w-full">Temps de travail</div>
+      <div class="flex flex-row font-bold w-full items-end justify-between flex-grow-1">
+        <div class="p-2 text-brunTerre">
+          @if (tempsTravailComparaison) {
+            @let tempsTravailComparaisonValue = tempsTravailComparaison.toFixed(1);
+            @if (tempsTravailComparaison > 0) {
+              <i class="pi pi-arrow-up-right mr-2"></i>
+              +{{ tempsTravailComparaisonValue }} % (moyenne des utilisateurs)
+            } @else {
+              <i class="pi pi-arrow-down-right mr-2"></i>
+              {{ tempsTravailComparaisonValue }} % (moyenne des utilisateurs)
+            }
+          }
+        </div>
+        <div
+          class="p-2 text-gray50 text-2xl bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.temps_total_minutes) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md justify-between">
+      <div class="text-lg font-semibold">Activité</div>
+      <div class="flex flex-row justify-between">
+        <div class="flex text-sm font-semibold italic items-center">La plus chronophage</div>
+        <div class="flex text-md font-bold">
+          <div class="p-2 text-gray50 bg-brunTerre rounded-2xl">
+            @if (activiteFilter) {
+              --
+            } @else {
+              {{ dataCards?.activite_chronophage?.nom }}
+            }
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-row justify-between">
+        <div class="flex text-sm font-semibold italic items-center">La plus fréquente</div>
+        <div class="flex text-md font-bold">
+          <div
+            class="p-2 text-gray50 bg-brunTerre rounded-2xl">
+            @if (activiteFilter) {
+              --
+            } @else {
+              {{ dataCards?.activite_frequente?.nom }}
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md justify-between">
+      <div class="text-lg font-semibold">Culture</div>
+      <div class="flex flex-row justify-between">
+        <div class="flex text-sm font-semibold italic items-center">La plus chronophage</div>
+        <div class="flex text-md font-bold">
+          <div
+            class="p-2 text-gray50 bg-brunTerre rounded-2xl">
+            @if (cultureFilter) {
+              --
+            } @else {
+              {{ dataCards?.culture_chronophage?.nom }}
+            }
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-row justify-between">
+        <div class="flex text-sm font-semibold italic items-center">La plus fréquente</div>
+        <div class="flex text-md font-bold">
+          <div
+            class="p-2 text-gray50 bg-brunTerre rounded-2xl">
+            @if (cultureFilter) {
+              --
+            } @else {
+              {{ dataCards?.culture_frequente?.nom }}
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md justify-between">
+      <div class="text-lg font-semibold">Parcelle</div>
+      <div class="flex flex-row justify-between">
+        <div class="flex text-sm font-semibold italic items-center">La plus chronophage</div>
+        <div class="flex text-md font-bold">
+          <div
+            class="p-2 text-gray50 bg-brunTerre rounded-2xl">
+            @if (parcelleFilter) {
+              --
+            } @else {
+              {{ dataCards?.parcelle_chronophage?.nom }}
+            }
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-row justify-between">
+        <div class="flex text-sm font-semibold italic items-center">La plus fréquente</div>
+        <div class="flex text-md font-bold">
+          <div
+            class="p-2 text-gray50 bg-brunTerre rounded-2xl">
+            @if (parcelleFilter) {
+              --
+            } @else {
+              {{ dataCards?.parcelle_frequente?.nom }}
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="flex flex-col">
+
+    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Evolution du temps de travail</div>
+
+    <div class="flex w-full justify-center">
+      <div class="flex flex-col space-y-1 w-4/5">
+        <p-chart type="bar" [data]="dataEvolution" [options]="optionsEvolution" class="w-full"/>
+      </div>
+    </div>
+
+  </div>
+
+</div>

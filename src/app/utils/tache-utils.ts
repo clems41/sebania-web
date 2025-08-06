@@ -5,10 +5,13 @@ import {StatutJour} from '../models/statut-jour';
   providedIn: 'root'
 })
 export class TacheUtils {
-  getDureeFormatted(duree_minutes: number): string {
+  getDureeFormatted(duree_minutes: number, minutes_included: boolean = true): string {
     const hours: number = Math.floor(duree_minutes/60);
     const minutes: number = duree_minutes%60;
     let result: string = `${hours}h`
+    if (!minutes_included) {
+      return result;
+    }
     if (minutes > 0) {
       result += `${minutes}`;
     }

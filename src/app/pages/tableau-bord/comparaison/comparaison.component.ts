@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
+import {NgOptimizedImage} from "@angular/common";
 
 @Component({
   selector: 'app-comparaison',
-  imports: [],
+    imports: [
+        NgOptimizedImage
+    ],
   templateUrl: './comparaison.component.html',
   styleUrl: './comparaison.component.css'
 })

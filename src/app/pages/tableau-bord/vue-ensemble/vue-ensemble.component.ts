@@ -181,6 +181,10 @@ export class VueEnsembleComponent implements OnInit {
     return moment.months()[moment().month()]
   }
 
+  get currentYear(): number {
+    return moment().year();
+  }
+
   get previousYear(): number {
     return moment().subtract(1, 'year').year();
   }
@@ -193,8 +197,8 @@ export class VueEnsembleComponent implements OnInit {
       this.dataCards.temps_travail_mois_annee_precedente_en_minutes * 100;
   }
 
-  getFormattedDuree(duree_minutes: number | undefined): string {
-    return this.tacheUtils.getDureeFormatted(duree_minutes ?? 0);
+  getFormattedDuree(duree_minutes: number | undefined, minutes_included: boolean = true): string {
+    return this.tacheUtils.getDureeFormatted(duree_minutes ?? 0, minutes_included);
   }
 
 

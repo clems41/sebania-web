@@ -8,6 +8,8 @@ import {
   VueEnsembleRepartitionCulture, VueEnsembleRepartitionParcelle
 } from '../models/dashboard/vue-ensemble';
 import {NiveauComplexite} from '../models/niveau-complexite';
+import {TempsTravailCards, TempsTravailEvolution} from '../models/dashboard/temps-travail';
+import moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
@@ -120,6 +122,130 @@ export class DashboardService {
         {mois: 'Novembre', duree_minutes: 458, moyenne_duree_minutes: 410},
         {mois: 'Décembre', duree_minutes: 857, moyenne_duree_minutes: 865}
       ]
+    };
+    return of(mock);
+  }
+
+  getTempsTravailCards(dateDebut: Date, dateFin: Date, culture_id: number | undefined,
+                       activite_id: number | undefined, parcelle_id: number | undefined): Observable<TempsTravailCards> {
+    const mock: TempsTravailCards = {
+      temps_total_minutes: 6498,
+      temps_total_moyenne_minutes: 7986,
+      activite_chronophage: {
+        id: 0,
+        nom: 'Travail du sol',
+        categorie: '',
+        mots_cles: '',
+        niveau_complexite: NiveauComplexite.base,
+        unites: []
+      },
+      activite_frequente: {
+        id: 0,
+        nom: 'Récolte',
+        categorie: '',
+        mots_cles: '',
+        niveau_complexite: NiveauComplexite.base,
+        unites: []
+      },
+      culture_chronophage: {
+        id: 0,
+        nom: 'Tomate',
+        categorie: ''
+      },
+      culture_frequente: {
+        id: 0,
+        nom: 'Radis',
+        categorie: ''
+      },
+      parcelle_chronophage: {
+        id: 0,
+        nom: 'Ouest 4',
+        longueur: 0,
+        largeur: 0,
+        largeur_planche: 0,
+        nombre_planches: 0,
+        type: {
+          id: 0,
+          nom: ''
+        },
+        largeur_passe_pieds: 0,
+        superficie: 0,
+        superficie_cultivee: 0
+      },
+      parcelle_frequente: {
+        id: 0,
+        nom: 'Nord 3',
+        longueur: 0,
+        largeur: 0,
+        largeur_planche: 0,
+        nombre_planches: 0,
+        type: {
+          id: 0,
+          nom: ''
+        },
+        largeur_passe_pieds: 0,
+        superficie: 0,
+        superficie_cultivee: 0
+      },
+    };
+    return of(mock);
+  }
+
+  getTempsTravailEvolution(dateDebut: Date, dateFin: Date, culture_id: number | undefined,
+                       activite_id: number | undefined, parcelle_id: number | undefined): Observable<TempsTravailEvolution> {
+    const mock: TempsTravailEvolution = {
+      data: [
+        {
+          date: moment().subtract(10, 'week').toDate(),
+          total_minutes: 60*37,
+          total_minutes_moyenne: 60*37.8
+        },
+        {
+          date: moment().subtract(9, 'week').toDate(),
+          total_minutes: 60*32,
+          total_minutes_moyenne: 60*38.2
+        },
+        {
+          date: moment().subtract(8, 'week').toDate(),
+          total_minutes: 60*33,
+          total_minutes_moyenne: 60*37.8
+        },
+        {
+          date: moment().subtract(7, 'week').toDate(),
+          total_minutes: 60*37,
+          total_minutes_moyenne: 60*37.9
+        },
+        {
+          date: moment().subtract(6, 'week').toDate(),
+          total_minutes: 60*40,
+          total_minutes_moyenne: 60*38.2
+        },
+        {
+          date: moment().subtract(5, 'week').toDate(),
+          total_minutes: 60*37,
+          total_minutes_moyenne: 60*37.8
+        },
+        {
+          date: moment().subtract(4, 'week').toDate(),
+          total_minutes: 60*37,
+          total_minutes_moyenne: 60*37.8
+        },
+        {
+          date: moment().subtract(3, 'week').toDate(),
+          total_minutes: 60*42,
+          total_minutes_moyenne: 60*39.2
+        },
+        {
+          date: moment().subtract(2, 'week').toDate(),
+          total_minutes: 60*39.5,
+          total_minutes_moyenne: 60*38.5
+        },
+        {
+          date: moment().subtract(1, 'week').toDate(),
+          total_minutes: 60*40,
+          total_minutes_moyenne: 60*38.5
+        }
+      ],
     };
     return of(mock);
   }

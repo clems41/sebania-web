@@ -2,6 +2,8 @@
 
   <div class="flex text-md italic font-semibold w-full">Tableau de bord > Vue d'ensemble</div>
 
+  <div class="w-full flex text-2xl font-semibold justify-center">Données pour l'année {{ currentYear }}</div>
+
   <div class="flex flex-row w-full h-40 justify-between text-brunFonce">
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md">
@@ -20,7 +22,7 @@
           }
         </div>
         <div
-          class="p-2 text-gray50 text-2xl bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.temps_travail_mois_actuel_en_minutes) }}
+          class="p-2 text-gray50 text-2xl bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.temps_travail_mois_actuel_en_minutes, false) }}
         </div>
       </div>
     </div>
@@ -38,7 +40,7 @@
         <div class="flex text-lg font-semibold italic items-center">Temps moyen par mois</div>
         <div class="flex text-lg font-bold">
           <div
-            class="p-2 text-gray50 bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.temps_travail_moyen_par_mois_en_minutes) }}
+            class="p-2 text-gray50 bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.temps_travail_moyen_par_mois_en_minutes, false) }}
           </div>
         </div>
       </div>
@@ -62,8 +64,8 @@
 
   </div>
 
-  <div class="flex flex-col bg-gray50">
-    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Nombre d'heures travaillées</div>
+  <div class="flex flex-col">
+    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Nombre d'heures travaillées en {{ currentYear }}</div>
 
     <div class="flex flex-row w-full justify-between text-md">
 
@@ -90,7 +92,7 @@
 
     </div>
 
-    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Evolution du temps de travail</div>
+    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Evolution du temps de travail sur les 12 derniers mois</div>
 
     <div class="flex w-full justify-center">
       <div class="flex flex-col space-y-1 w-4/5">

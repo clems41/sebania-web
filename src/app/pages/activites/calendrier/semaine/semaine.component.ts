@@ -9,7 +9,7 @@ import {TacheUtils} from '../../../../utils/tache-utils';
 import {StatutJour} from '../../../../models/statut-jour';
 import {NgClass} from '@angular/common';
 import {DateUtils} from '../../../../utils/date-utils';
-import {Button} from 'primeng/button'; // important pour charger la locale fran√ßaise
+import {Button} from 'primeng/button';
 
 @Component({
   selector: 'app-semaine',
@@ -21,7 +21,7 @@ import {Button} from 'primeng/button'; // important pour charger la locale fran√
   styleUrl: './semaine.component.css'
 })
 export class SemaineComponent implements OnInit {
-  @Input() user: User | undefined = undefined;
+  currentUser: User | undefined;
   @Output() onClick: EventEmitter<moment.Moment> = new EventEmitter();
   currentDate: moment.Moment = moment().startOf('isoWeek');
   calendrier: Calendrier | undefined = undefined;
@@ -36,13 +36,21 @@ export class SemaineComponent implements OnInit {
     });
   }
 
+  @Input() set user(user: User) {
+    this.currentUser = user;
+    this.loadData();
+  }
+
+  get user(): User | undefined {
+    return this.currentUser
+  }
+
   ngOnInit(): void {
-    this.updateDate.emit(moment().startOf('isoWeek'));
   }
 
   loadData() {
-    if (this.user) {
-      this.tacheService.getCalendrierSemaine(this.year, this.week, this.user.id).subscribe((calendrier: Calendrier) => {
+    if (this.currentUser) {
+      this.tacheService.getCalendrierSemaine(this.year, this.week, this.currentUser.id).subscribe((calendrier: Calendrier) => {
         this.calendrier = calendrier;
       });
     }
@@ -55,7 +63,7 @@ export class SemaineComponent implements OnInit {
   getCalendrierJour(day: moment.Moment): CalendrierJour | undefined {
     if (this.calendrier) {
       return this.calendrier.jours.find(jour => {
-        return moment(jour.jour,"DD/MM/YYYY").isSame(day, 'day');
+        return moment(jour.jour, "DD/MM/YYYY").isSame(day, 'day');
       });
     }
     return undefined;

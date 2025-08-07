@@ -19,8 +19,8 @@ import {StatutJour} from '../../../../models/statut-jour';
   styleUrl: './mois.component.css'
 })
 export class MoisComponent implements OnInit {
-  @Input() user: User | undefined = undefined;
   @Output() onClick: EventEmitter<moment.Moment> = new EventEmitter();
+  currentUser: User | undefined;
   currentDate = moment(); // mois affiché
   days: moment.Moment[] = [];
   calendrier: Calendrier | undefined;
@@ -35,13 +35,24 @@ export class MoisComponent implements OnInit {
     });
   }
 
+  @Input() set user(user: User) {
+    this.currentUser = user;
+    if (this.days.length == 0) {
+      this.generateCalendar();
+    }
+    this.loadData();
+  }
+
+  get user(): User | undefined {
+    return this.currentUser
+  }
+
   ngOnInit() {
-    this.updateDate.emit(moment());
   }
 
   loadData() {
-    if (this.user) {
-      this.tacheService.getCalendrierMois(this.year, this.month, this.user.id).subscribe((calendrier: Calendrier) => {
+    if (this.currentUser) {
+      this.tacheService.getCalendrierMois(this.year, this.month, this.currentUser.id).subscribe((calendrier: Calendrier) => {
         this.calendrier = calendrier;
       });
     }

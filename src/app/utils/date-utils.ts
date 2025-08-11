@@ -10,6 +10,11 @@ export class DateUtils {
     return `${date.getDate()} ${month} ${date.getFullYear()}`;
   }
 
+  toFrenchStringSansJour(date: Date): string {
+    const month = date.toLocaleString('fr-FR', { month: 'long' });
+    return `${month} ${date.getFullYear()}`;
+  }
+
   toFrenchFormat(date: Date): string {
     return (moment(date)).format('DD/MM/YYYY');
   }

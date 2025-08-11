@@ -11,6 +11,7 @@ import {ChartModule} from 'primeng/chart';
 import {ChartUtils} from '../../../utils/chart-utils';
 import {RepartitionActivite, RepartitionCulture, RepartitionParcelle} from '../../../models/dashboard/global';
 import {TempsTravailEvolution} from '../../../models/dashboard/temps-travail';
+import {DateUtils} from '../../../utils/date-utils';
 
 @Component({
   selector: 'app-vue-ensemble',
@@ -30,7 +31,7 @@ export class VueEnsembleComponent implements OnInit {
   optionsEvolutionTempsTravail: any;
 
   constructor(private dashboardService: DashboardService, private stringUtils: StringUtils,
-              private tacheUtils: TacheUtils, private chartUtils: ChartUtils) {
+              private tacheUtils: TacheUtils, private chartUtils: ChartUtils, private dateUtils: DateUtils) {
     moment.locale('fr');
   }
 
@@ -67,7 +68,7 @@ export class VueEnsembleComponent implements OnInit {
       labels: data.data.map(item => item.categorie_nom),
       datasets: [
         {
-          data: data.data.map(item => Math.round(item.duree_minutes / 60)).sort(),
+          data: data.data.map(item => (item.duree_minutes / 60).toFixed(2)).sort(),
           backgroundColor: this.chartUtils.getRandomColors(data.data.length),
         }
       ]
@@ -91,7 +92,7 @@ export class VueEnsembleComponent implements OnInit {
       labels: data.data.map(item => item.culture_nom),
       datasets: [
         {
-          data: data.data.map(item => Math.round(item.duree_minutes / 60)),
+          data: data.data.map(item => (item.duree_minutes / 60).toFixed(2)),
           backgroundColor: this.chartUtils.getRandomColors(data.data.length),
         }
       ]
@@ -115,7 +116,7 @@ export class VueEnsembleComponent implements OnInit {
       labels: data.data.map(item => item.parcelle_nom),
       datasets: [
         {
-          data: data.data.map(item => Math.round(item.duree_minutes / 60)),
+          data: data.data.map(item => (item.duree_minutes / 60).toFixed(2)),
           backgroundColor: this.chartUtils.getRandomColors(data.data.length),
         }
       ]
@@ -164,20 +165,25 @@ export class VueEnsembleComponent implements OnInit {
       }
     };
     this.dataEvolutionTempsTravail = {
-      labels: data.data.map(item => item.date),
+      labels: data.data.map(item => this.stringUtils.capitalizeFirstLetter(
+          this.dateUtils.toFrenchStringSansJour(
+            this.dateUtils.fromFrenchFormat(item.date)
+          )
+        )
+      ),
       datasets: [
         {
           type: 'line',
           fill: false,
           label: "Moyenne des utilisateurs",
-          data: data.data.map(item => Math.round(item.duree_minutes / 60)),
+          data: data.data.map(item => (item.moyenne_duree_minutes / 60).toFixed(2)),
           backgroundColor: documentStyle.getPropertyValue('--color-intermediaire'),
           borderColor: documentStyle.getPropertyValue('--color-intermediaire-hover'),
         },
         {
           type: 'bar',
           label: "Mes heures de travail",
-          data: data.data.map(item => Math.round(item.moyenne_duree_minutes / 60)),
+          data: data.data.map(item => (item.duree_minutes / 60).toFixed(2)),
           backgroundColor: documentStyle.getPropertyValue('--color-vertFeuille'),
           borderColor: documentStyle.getPropertyValue('--color-vertFeuille-hover'),
         }

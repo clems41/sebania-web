@@ -13,7 +13,11 @@ export class TacheUtils {
       return result;
     }
     if (minutes > 0) {
-      result += `${minutes}`;
+      if (minutes < 10) {
+        result += `0${minutes}`;
+      } else {
+        result += `${minutes}`;
+      }
     }
     return result;
   }

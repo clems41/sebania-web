@@ -49,7 +49,7 @@ export class MotDePasseOublieComponent {
             this.messageService.add({
               severity: 'success',
               summary: 'Succès',
-              detail: "Votre mot de passe a été réinitialisé. Veuillez vérifier votre boîte mail."
+              detail: "Votre mot de passe a été réinitialisé. Veuillez vérifier votre boîte mail (y compris les spams)."
             });
             this.loading = false;
           },

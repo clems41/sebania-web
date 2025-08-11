@@ -1,9 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {
-  VueEnsembleCards, VueEnsembleEvolutionTempsTravail,
-  VueEnsembleRepartitionActivite,
-  VueEnsembleRepartitionCulture,
-  VueEnsembleRepartitionParcelle
+  VueEnsembleCards
 } from '../../../models/dashboard/vue-ensemble';
 import {DashboardService} from '../../../services/dashboard.service';
 import moment from 'moment';
@@ -12,6 +9,8 @@ import 'moment/locale/fr';
 import {TacheUtils} from '../../../utils/tache-utils';
 import {ChartModule} from 'primeng/chart';
 import {ChartUtils} from '../../../utils/chart-utils';
+import {RepartitionActivite, RepartitionCulture, RepartitionParcelle} from '../../../models/dashboard/global';
+import {TempsTravailEvolution} from '../../../models/dashboard/temps-travail';
 
 @Component({
   selector: 'app-vue-ensemble',
@@ -37,14 +36,21 @@ export class VueEnsembleComponent implements OnInit {
 
   ngOnInit(): void {
     const documentStyle = getComputedStyle(document.documentElement);
+    const today = moment();
+    const startPeriodTempsTravail = today.clone().subtract(1, 'year');
+    const startOfYear = today.clone().startOf('year');
     this.dashboardService.getVueEnsembleCards().subscribe(data => this.dataCards = data);
-    this.dashboardService.getVueEnsembleRepartitionActivite().subscribe((data) => this.initRepartitionActivite(documentStyle, data));
-    this.dashboardService.getVueEnsembleRepartitionCulture().subscribe((data) => this.initRepartitionCulture(documentStyle, data));
-    this.dashboardService.getVueEnsembleRepartitionParcelle().subscribe((data) => this.initRepartitionParcelle(documentStyle, data));
-    this.dashboardService.getVueEnsembleEvolutionTempsTravail().subscribe((data) => this.initEvolutionTempsTravail(documentStyle, data));
+    this.dashboardService.getRepartitionActivite(startOfYear.toDate(), today.toDate(), undefined, undefined, undefined)
+      .subscribe((data) => this.initRepartitionActivite(documentStyle, data));
+    this.dashboardService.getRepartitionCulture(startOfYear.toDate(), today.toDate(), undefined, undefined, undefined)
+      .subscribe((data) => this.initRepartitionCulture(documentStyle, data));
+    this.dashboardService.getRepartitionParcelle(startOfYear.toDate(), today.toDate(), undefined, undefined, undefined)
+      .subscribe((data) => this.initRepartitionParcelle(documentStyle, data));
+    this.dashboardService.getTempsTravailEvolution(startPeriodTempsTravail.toDate(), today.toDate(), 'mois', undefined, undefined, undefined)
+      .subscribe((data) => this.initEvolutionTempsTravail(documentStyle, data));
   }
 
-  initRepartitionActivite(documentStyle: CSSStyleDeclaration, data: VueEnsembleRepartitionActivite) {
+  initRepartitionActivite(documentStyle: CSSStyleDeclaration, data: RepartitionActivite) {
     const textColor = documentStyle.getPropertyValue('--text-color');
     this.optionsRepartitionActivite = {
       plugins: {
@@ -68,7 +74,7 @@ export class VueEnsembleComponent implements OnInit {
     };
   }
 
-  initRepartitionCulture(documentStyle: CSSStyleDeclaration, data: VueEnsembleRepartitionCulture) {
+  initRepartitionCulture(documentStyle: CSSStyleDeclaration, data: RepartitionCulture) {
     const textColor = documentStyle.getPropertyValue('--text-color');
     this.optionsRepartitionCulture = {
       plugins: {
@@ -92,7 +98,7 @@ export class VueEnsembleComponent implements OnInit {
     };
   }
 
-  initRepartitionParcelle(documentStyle: CSSStyleDeclaration, data: VueEnsembleRepartitionParcelle) {
+  initRepartitionParcelle(documentStyle: CSSStyleDeclaration, data: RepartitionParcelle) {
     const textColor = documentStyle.getPropertyValue('--text-color');
     this.optionsRepartitionParcelle = {
       plugins: {
@@ -116,7 +122,7 @@ export class VueEnsembleComponent implements OnInit {
     };
   }
 
-  initEvolutionTempsTravail(documentStyle: CSSStyleDeclaration, data: VueEnsembleEvolutionTempsTravail) {
+  initEvolutionTempsTravail(documentStyle: CSSStyleDeclaration, data: TempsTravailEvolution) {
     const textColor = documentStyle.getPropertyValue('--text-color');
     const surfaceBorder = documentStyle.getPropertyValue('--p-content-border-color');
     this.optionsEvolutionTempsTravail = {
@@ -137,7 +143,9 @@ export class VueEnsembleComponent implements OnInit {
             color: textColor,
             font: {
               weight: 500
-            }
+            },
+            autoSkip: true,
+            maxTicksLimit: 12
           },
           grid: {
             color: surfaceBorder,
@@ -156,20 +164,20 @@ export class VueEnsembleComponent implements OnInit {
       }
     };
     this.dataEvolutionTempsTravail = {
-      labels: data.data.map(item => item.mois),
+      labels: data.data.map(item => item.date),
       datasets: [
         {
           type: 'line',
           fill: false,
           label: "Moyenne des utilisateurs",
-          data: data.data.map(item => Math.round(item.moyenne_duree_minutes / 60)),
+          data: data.data.map(item => Math.round(item.duree_minutes / 60)),
           backgroundColor: documentStyle.getPropertyValue('--color-intermediaire'),
           borderColor: documentStyle.getPropertyValue('--color-intermediaire-hover'),
         },
         {
           type: 'bar',
           label: "Mes heures de travail",
-          data: data.data.map(item => Math.round(item.duree_minutes / 60)),
+          data: data.data.map(item => Math.round(item.moyenne_duree_minutes / 60)),
           backgroundColor: documentStyle.getPropertyValue('--color-vertFeuille'),
           borderColor: documentStyle.getPropertyValue('--color-vertFeuille-hover'),
         }
@@ -190,7 +198,7 @@ export class VueEnsembleComponent implements OnInit {
   }
 
   get tempsTravailComparaison(): number | undefined {
-    if (!this.dataCards) {
+    if (!this.dataCards || !this.dataCards.temps_travail_mois_annee_precedente_en_minutes || !this.dataCards.temps_travail_mois_actuel_en_minutes) {
       return undefined;
     }
     return (this.dataCards.temps_travail_mois_actuel_en_minutes - this.dataCards.temps_travail_mois_annee_precedente_en_minutes) /

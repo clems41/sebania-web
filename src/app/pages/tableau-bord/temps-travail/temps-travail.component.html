@@ -65,16 +65,16 @@
           }
         </div>
         <div
-          class="p-2 text-gray50 text-2xl bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.temps_total_minutes) }}
+          class="p-2 text-gray50 text-2xl bg-brunTerre rounded-2xl">{{ getFormattedDuree(dataCards?.duree_minutes) }}
         </div>
       </div>
     </div>
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md justify-between">
       <div class="text-lg font-semibold">Activité</div>
-      <div class="flex flex-row justify-between">
-        <div class="flex text-sm font-semibold italic items-center">La plus chronophage</div>
-        <div class="flex text-md font-bold">
+      <div class="flex text-sm flex-row justify-between">
+        <div class="flex font-semibold italic items-center">La plus chronophage</div>
+        <div class="flex font-bold">
           <div class="p-2 text-gray50 bg-brunTerre rounded-2xl">
             @if (activiteFilter) {
               --
@@ -84,9 +84,9 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-row justify-between">
-        <div class="flex text-sm font-semibold italic items-center">La plus fréquente</div>
-        <div class="flex text-md font-bold">
+      <div class="flex flex-row text-sm justify-between">
+        <div class="flex font-semibold italic items-center">La plus fréquente</div>
+        <div class="flex font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
             @if (activiteFilter) {
@@ -101,9 +101,9 @@
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md justify-between">
       <div class="text-lg font-semibold">Culture</div>
-      <div class="flex flex-row justify-between">
-        <div class="flex text-sm font-semibold italic items-center">La plus chronophage</div>
-        <div class="flex text-md font-bold">
+      <div class="flex text-sm flex-row justify-between">
+        <div class="flex font-semibold italic items-center">La plus chronophage</div>
+        <div class="flex font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
             @if (cultureFilter) {
@@ -114,9 +114,9 @@
           </div>
         </div>
       </div>
-      <div class="flex flex-row justify-between">
-        <div class="flex text-sm font-semibold italic items-center">La plus fréquente</div>
-        <div class="flex text-md font-bold">
+      <div class="flex text-sm flex-row justify-between">
+        <div class="flex font-semibold italic items-center">La plus fréquente</div>
+        <div class="flex font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
             @if (cultureFilter) {
@@ -131,9 +131,9 @@
 
     <div class="flex flex-col w-1/5 h-full bg-brun300 rounded-xl p-3 shadow-md justify-between">
       <div class="text-lg font-semibold">Parcelle</div>
-      <div class="flex flex-row justify-between">
-        <div class="flex text-sm font-semibold italic items-center">La plus chronophage</div>
-        <div class="flex text-md font-bold">
+      <div class="flex flex-row text-sm justify-between">
+        <div class="flex font-semibold italic items-center">La plus chronophage</div>
+        <div class="flex font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
             @if (parcelleFilter) {
@@ -163,7 +163,7 @@
 
   <div class="flex flex-col">
 
-    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Evolution du temps de travail</div>
+    <div class="w-full flex text-2xl font-semibold p-3 justify-center">Evolution du temps de travail (heures)</div>
 
     <div class="flex w-full justify-center">
       <div class="flex flex-col space-y-1 w-4/5">

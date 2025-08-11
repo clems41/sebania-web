@@ -3,8 +3,8 @@ import {Culture} from '../culture';
 import {Parcelle} from '../parcelle';
 
 export interface TempsTravailCards {
-  temps_total_minutes: number;
-  temps_total_moyenne_minutes: number;
+  duree_minutes: number;
+  moyenne_duree_minutes: number;
   activite_chronophage: Activite;
   activite_frequente: Activite;
   culture_chronophage: Culture;
@@ -18,7 +18,7 @@ export interface TempsTravailEvolution {
 }
 
 export interface TempsTravailEvolutionItem {
-  date: Date;
-  total_minutes: number;
-  total_minutes_moyenne: number;
+  date: string;
+  duree_minutes: number;
+  moyenne_duree_minutes: number;
 }

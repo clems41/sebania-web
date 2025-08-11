@@ -57,7 +57,7 @@ export class TempsTravailComponent implements OnInit {
     const documentStyle = getComputedStyle(document.documentElement);
     this.dashboardService.getTempsTravailCards(this.dateDebutFilter, this.dateFinFilter, this.cultureFilter?.id, this.activiteFilter?.id, this.parcelleFilter?.id)
       .subscribe(data => this.dataCards = data);
-    this.dashboardService.getTempsTravailEvolution(this.dateDebutFilter, this.dateFinFilter, this.cultureFilter?.id, this.activiteFilter?.id, this.parcelleFilter?.id)
+    this.dashboardService.getTempsTravailEvolution(this.dateDebutFilter, this.dateFinFilter, 'jour', this.cultureFilter?.id, this.activiteFilter?.id, this.parcelleFilter?.id)
       .subscribe(data => this.initEvolutionTempsTravail(documentStyle, data))
   }
 
@@ -66,11 +66,11 @@ export class TempsTravailComponent implements OnInit {
   }
 
   get tempsTravailComparaison(): number | undefined {
-    if (!this.dataCards) {
+    if (!this.dataCards || !this.dataCards.duree_minutes || !this.dataCards.moyenne_duree_minutes) {
       return undefined;
     }
-    return (this.dataCards.temps_total_minutes - this.dataCards.temps_total_moyenne_minutes) /
-      this.dataCards.temps_total_moyenne_minutes * 100;
+    return (this.dataCards.duree_minutes - this.dataCards.moyenne_duree_minutes) /
+      this.dataCards.moyenne_duree_minutes * 100;
   }
 
   initEvolutionTempsTravail(documentStyle: CSSStyleDeclaration, data: TempsTravailEvolution) {
@@ -94,7 +94,9 @@ export class TempsTravailComponent implements OnInit {
             color: textColor,
             font: {
               weight: 500
-            }
+            },
+            autoSkip: true,
+            maxTicksLimit: 12
           },
           grid: {
             color: surfaceBorder,
@@ -113,20 +115,20 @@ export class TempsTravailComponent implements OnInit {
       }
     };
     this.dataEvolution = {
-      labels: data.data.map(item => this.dateUtils.toFrenchString(item.date)),
+      labels: data.data.map(item => this.dateUtils.toFrenchString(this.dateUtils.fromFrenchFormat(item.date))),
       datasets: [
         {
           type: 'line',
           fill: false,
           label: "Moyenne des utilisateurs",
-          data: data.data.map(item => Math.round(item.total_minutes_moyenne / 60)),
+          data: data.data.map(item => (item.moyenne_duree_minutes / 60).toFixed(2)),
           backgroundColor: documentStyle.getPropertyValue('--color-intermediaire'),
           borderColor: documentStyle.getPropertyValue('--color-intermediaire-hover'),
         },
         {
           type: 'line',
           label: "Mon temps de travail",
-          data: data.data.map(item => Math.round(item.total_minutes / 60)),
+          data: data.data.map(item => (item.duree_minutes / 60).toFixed(2)),
           backgroundColor: documentStyle.getPropertyValue('--color-vertFeuille'),
           borderColor: documentStyle.getPropertyValue('--color-vertFeuille-hover'),
         }

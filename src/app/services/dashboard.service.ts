@@ -51,9 +51,7 @@ export class DashboardService {
 
   getTempsTravailEvolution(dateDebut: Date, dateFin: Date, periode: string, culture_id: number | undefined,
                            activite_id: number | undefined, parcelle_id: number | undefined): Observable<TempsTravailEvolution> {
-    console.log('periode', periode);
     const params = this.getParams(dateDebut, dateFin, periode, culture_id, activite_id, parcelle_id)
-    console.log('params', params);
     return this.httpService.get(`${this.prefix}${this.globalSuffix}/duree/`, {params: params}
         );
   }

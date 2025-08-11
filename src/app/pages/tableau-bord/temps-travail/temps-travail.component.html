@@ -76,7 +76,7 @@
         <div class="flex font-semibold italic items-center">La plus chronophage</div>
         <div class="flex font-bold">
           <div class="p-2 text-gray50 bg-brunTerre rounded-2xl">
-            @if (activiteFilter) {
+            @if (activiteFilter || !dataCards?.activite_chronophage) {
               --
             } @else {
               {{ dataCards?.activite_chronophage?.nom }}
@@ -89,7 +89,7 @@
         <div class="flex font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
-            @if (activiteFilter) {
+            @if (activiteFilter || !dataCards?.activite_frequente) {
               --
             } @else {
               {{ dataCards?.activite_frequente?.nom }}
@@ -106,7 +106,7 @@
         <div class="flex font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
-            @if (cultureFilter) {
+            @if (cultureFilter || !dataCards?.culture_chronophage) {
               --
             } @else {
               {{ dataCards?.culture_chronophage?.nom }}
@@ -119,7 +119,7 @@
         <div class="flex font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
-            @if (cultureFilter) {
+            @if (cultureFilter || !dataCards?.culture_frequente) {
               --
             } @else {
               {{ dataCards?.culture_frequente?.nom }}
@@ -136,7 +136,7 @@
         <div class="flex font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
-            @if (parcelleFilter) {
+            @if (parcelleFilter || !dataCards?.parcelle_chronophage) {
               --
             } @else {
               {{ dataCards?.parcelle_chronophage?.nom }}
@@ -149,7 +149,7 @@
         <div class="flex text-md font-bold">
           <div
             class="p-2 text-gray50 bg-brunTerre rounded-2xl">
-            @if (parcelleFilter) {
+            @if (parcelleFilter || !dataCards?.parcelle_frequente) {
               --
             } @else {
               {{ dataCards?.parcelle_frequente?.nom }}

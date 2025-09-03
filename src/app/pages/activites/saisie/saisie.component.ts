@@ -19,6 +19,7 @@ import {Calendar} from 'primeng/calendar';
 import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
 import {Select} from 'primeng/select';
 import {UserUtils} from '../../../utils/user-utils';
+import {DeviceDetectorService} from 'ngx-device-detector';
 import {FermeService} from '../../../services/ferme.service';
 import {InputText} from 'primeng/inputtext';
 import {IconField} from 'primeng/iconfield';
@@ -67,6 +68,7 @@ import {Tache} from '../../../models/tache';
 })
 export class SaisieComponent implements OnInit {
   form: FormGroup;
+  isMobile: boolean = false;
 
   availableUsers: User[] = [];
   availableActivites: Activite[] = [];
@@ -93,7 +95,9 @@ export class SaisieComponent implements OnInit {
               private tacheService: TacheService, private messageService: MessageService,
               private router: Router, private userUtils: UserUtils, private fermeService: FermeService,
               protected tacheUtils: TacheUtils, protected dateUtils: DateUtils,
-              private parcelleService: ParcelleService, private activatedRoute: ActivatedRoute) {
+              private parcelleService: ParcelleService, private activatedRoute: ActivatedRoute,
+              private deviceService: DeviceDetectorService) {
+    this.isMobile = this.deviceService.isMobile();
     this.form = this.formBuilder.group({
       activite_id: [null, [Validators.required]],
       date: [new Date(), [Validators.required]],

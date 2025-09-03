@@ -1,7 +1,7 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="h-full w-full">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="h-full w-full" [ngClass]="isMobile ? 'p-2' : ''">
   <ng-template #recapitulatif>
     <div>Récapitulatif de l'activité</div>
-    <div class="flex flex-row justify-between w-2/3 border-b border-brun400">
+    <div class="flex border-b border-brun400 flex-row justify-between" [ngClass]="isMobile ? 'w-full' : 'w-1/2'">
       <div class="h-full">
         <p-button icon="pi pi-arrow-circle-left"
                   (click)="onPrecedent()" [rounded]="true"
@@ -9,29 +9,33 @@
                   styleClass="bg-grisAnthra! border-grisAnthra!"
         />
       </div>
-      <div class="flex flex-col">
-        <div class="italic font-light text-md">Activité</div>
-        <div class="font-semibold text-lg">{{ selectedActivite?.nom }}</div>
-      </div>
-      <div class="flex flex-col">
-        <div class="italic font-light text-md">Durée</div>
-        <div class="font-semibold text-lg">{{ tacheUtils.getDureeFormatted(getSelectedDureeMinutes() ?? 0) }}</div>
-      </div>
-      <div class="flex flex-col">
-        <div class="italic font-light text-md">Utilisateur</div>
-        <div class="font-semibold text-lg">{{ getSelectedUser()?.first_name + ' ' + getSelectedUser()?.last_name }}
+      <div class="flex flex-col space-y-2">
+        <div class="flex flex-col">
+          <div class="italic font-light text-md">Activité</div>
+          <div class="font-semibold text-lg">{{ selectedActivite?.nom }}</div>
+        </div>
+        <div class="flex flex-col">
+          <div class="italic font-light text-md">Durée</div>
+          <div class="font-semibold text-lg">{{ tacheUtils.getDureeFormatted(getSelectedDureeMinutes() ?? 0) }}</div>
         </div>
       </div>
-      <div class="flex flex-col">
-        <div class="italic font-light text-md">Date</div>
-        <div class="">{{ dateUtils.toFrenchFormat(form.get('date')?.value) }}</div>
+      <div class="flex flex-col space-y-2">
+        <div class="flex flex-col">
+          <div class="italic font-light text-md">Utilisateur</div>
+          <div class="font-semibold text-lg">{{ getSelectedUser()?.first_name + ' ' + getSelectedUser()?.last_name }}
+          </div>
+        </div>
+        <div class="flex flex-col">
+          <div class="italic font-light text-md">Date</div>
+          <div class="">{{ dateUtils.toFrenchFormat(form.get('date')?.value) }}</div>
+        </div>
       </div>
     </div>
   </ng-template>
 
   <ng-template #recapitulatifCultures>
     <div class="flex flex-col w-2/3">
-      <div class="flex flex-row w-full border-b border-brun400 italic font-light text-md">
+      <div class="flex w-full border-b border-brun400 italic font-light text-md" [ngClass]="isMobile ? 'flex-col space-y-2' : 'flex-row'">
         <div class="w-1/6">Cultures</div>
         @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesParcelles ||
         selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
@@ -45,7 +49,7 @@
       </div>
       <div formArrayName="cultures">
         @for (culture of selectedCultures; track $index) {
-          <div class="flex flex-row w-full font-semibold text-lg m-2" [formGroupName]="$index">
+          <div class="flex w-full font-semibold m-2" [ngClass]="isMobile ? 'flex-col space-y-2 text-base' : 'flex-row text-lg'" [formGroupName]="$index">
             <div class="w-1/6">{{ culture.nom }}</div>
             @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesParcelles ||
             selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
@@ -83,8 +87,8 @@
 
   <ng-template #page1>
 
-    <div class="flex flex-row space-x-4">
-      <div class="w-60">
+    <div class="flex" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-60'">
         <p-floatlabel variant="on">
           <p-calendar [iconDisplay]="'input'" [showIcon]="true" dateFormat="dd/mm/yy" formControlName="date"
                       inputId="date">
@@ -92,7 +96,7 @@
           <label for="date">Date</label>
         </p-floatlabel>
       </div>
-      <div class="w-60">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-60'">
         <p-floatlabel class="w-full" variant="on">
           <p-select formControlName="user_id" optionValue="id" inputId="user" [options]="availableUsers"
                     styleClass="w-full">
@@ -112,8 +116,8 @@
       </div>
     </div>
 
-    <div class="flex flex-row space-x-4">
-      <div class="w-80">
+    <div class="flex" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-80'">
         <p-floatlabel variant="on">
           <p-iconfield>
             <p-inputicon styleClass="pi pi-search"/>
@@ -128,7 +132,7 @@
           </p-iconfield>
         </p-floatlabel>
       </div>
-      <div class="w-80">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-80'">
         <p-floatlabel class="w-full" variant="on">
           <p-select inputId="categorie" [options]="availableActiviteCategories"
                     styleClass="w-full" [formControl]="categorieActiviteControl">
@@ -137,8 +141,8 @@
         </p-floatlabel>
       </div>
     </div>
-    <div class="w-[50%]">
-      <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 300px)'}" class="w-full">
+    <div [ngClass]="isMobile ? 'w-full' : 'w-[50%]'">
+      <p-scrollpanel [style]="isMobile ? { width: '100%', height: 'calc(100vh - 460px)'} : { width: '100%', height: 'calc(100vh - 300px)'}" class="w-full">
         <div class="flex flex-col space-y-2 w-full p-2">
           @for (activite of filteredActivites; track activite.id) {
             <div class="rounded-2xl p-4 w-full font-semibold shadow-sm hover:cursor-pointer"
@@ -151,7 +155,7 @@
       </p-scrollpanel>
     </div>
 
-    <div class="flex flex-row space-x-4 items-center">
+    <div class="flex items-center" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
       <div>
         <p-floatlabel variant="on">
           <p-datepicker inputId="duree_minutes" formControlName="duree" [timeOnly]="true" [stepHour]="1"
@@ -161,7 +165,7 @@
         </p-floatlabel>
       </div>
 
-      <div class="w-70">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
         <p-button label="Suivant"
                   [disabled]="form.invalid"
                   [raised]="form.invalid"
@@ -175,8 +179,8 @@
   <ng-template #page2>
     <div *ngTemplateOutlet="recapitulatif"></div>
 
-    <div class="flex flex-row space-x-4">
-      <div class="w-80">
+    <div class="flex" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-80'">
         <p-floatlabel variant="on">
           <p-iconfield>
             <p-inputicon styleClass="pi pi-search"/>
@@ -191,7 +195,7 @@
           </p-iconfield>
         </p-floatlabel>
       </div>
-      <div class="w-80">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-80'">
         <p-floatlabel class="w-full" variant="on">
           <p-select inputId="culture" [options]="availableCultureCategories"
                     styleClass="w-full" [formControl]="categorieCultureControl">
@@ -201,12 +205,17 @@
       </div>
     </div>
     <div class="w-[50%]">
-      <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 380px)'}" class="w-full">
+      <p-scrollpanel [style]="isMobile ? { width: '100%', height: 'calc(100vh - 530px)'} : { width: '100%', height: 'calc(100vh - 300px)'}" class="w-full">
         <div class="flex flex-col space-y-2 w-full p-2">
           @for (culture of filteredCultures; track culture.id) {
             <div class="rounded-2xl p-4 w-full font-semibold shadow-sm hover:cursor-pointer"
                  (click)="onSelectCulture(culture)"
-                 [ngClass]="!isCultureSelected(culture.id) ? 'bg-brun300 text-grisAnthra' : 'bg-brunTerre text-gray50'">
+                 [ngClass]="{
+                 'bg-brun300 text-grisAnthra': !isCultureSelected(culture.id),
+                 'bg-brunTerre text-gray50': isCultureSelected(culture.id),
+                 'py-2': isMobile,
+                 'py-4': !isMobile
+                 }">
               <span>{{ culture.nom }}</span>
             </div>
           }
@@ -214,7 +223,7 @@
       </p-scrollpanel>
     </div>
 
-    <div class="flex flex-row space-x-4">
+    <div class="flex" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
       @for (selectedCulture of selectedCultures; track selectedCulture.id) {
         <div>
           <p-chip [label]="selectedCulture.nom" [removable]="true" (onRemove)="onRemoveSelectedCulture(selectedCulture)"
@@ -225,7 +234,7 @@
     </div>
 
     <div class="flex flex-row w-1/2 justify-between space-x-4">
-      <div class="w-70">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
         <p-button label="Annuler"
                   [raised]="true"
                   fluid
@@ -233,7 +242,7 @@
                   styleClass="bg-intermediaire! border-intermediaire! hover:bg-intermediaire-hover!"
         />
       </div>
-      <div class="w-70">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
         <p-button label="Suivant"
                   [disabled]="form.invalid || selectedCultures.length == 0"
                   [raised]="form.invalid"
@@ -293,14 +302,14 @@
     </div>
 
     <div class="flex flex-row w-1/2 justify-between space-x-4">
-      <div class="w-70">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
         <p-button label="Annuler"
                   fluid
                   (onClick)="onCancel()"
                   styleClass="bg-intermediaire! border-intermediaire! hover:bg-intermediaire-hover!"
         />
       </div>
-      <div class="w-70">
+      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
         <p-button label="Valider"
                   [disabled]="form.invalid"
                   [raised]="form.invalid"

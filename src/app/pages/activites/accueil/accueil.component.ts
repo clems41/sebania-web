@@ -51,7 +51,7 @@ export class AccueilComponent implements OnInit, OnDestroy {
   refreshVocauxSub: Subscription = new Subscription();
   refreshVocauxDelaySeconds: number = 60;
   loading: boolean = false;
-  isMobile: boolean | null = null;
+  isMobile: boolean = false;
 
   constructor(private authService: AuthService, private tacheService: TacheService,
               protected tacheUtils: TacheUtils, private fermeService: FermeService,
@@ -74,9 +74,7 @@ export class AccueilComponent implements OnInit, OnDestroy {
       if (date) {
         this.date = this.dateUtils.fromFrenchFormat(val['date']);
       }
-      if (!this.isMobile) {
-        this.loadDataOnInit(user_id);
-      }
+      this.loadDataOnInit(user_id);
     });
   }
 
@@ -153,6 +151,13 @@ export class AccueilComponent implements OnInit, OnDestroy {
         user_id: this.currentUser?.id,
       }
     });
+  }
+
+  getScrollPanelStyle() {
+    if (this.isMobile) {
+      return { width: '100%', height: 'calc(100vh - 250px)' };
+    }
+    return { width: '100%', height: 'calc(100vh - 150px)' };
   }
 
   protected readonly moment = moment;

@@ -1,10 +1,19 @@
 <div class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
   <div class="bg-brunTerre text-gray100 h-16 flex items-center justify-between px-4 shadow-lg">
-    <!-- Logo à gauche -->
-    <div class="flex items-center">
+    <!-- Bouton hamburger mobile + Logo -->
+    <div class="flex items-center space-x-3">
+      <!-- Bouton hamburger (mobile uniquement) -->
+      @if (isMobile) {
+        <button (click)="onToggleSidebar()" 
+                class="flex items-center justify-center p-2 rounded-lg hover:bg-grisAnthra active:bg-grisAnthra transition-all duration-200">
+          <i class="bi bi-list h-6 w-6"></i>
+        </button>
+      }
+      
+      <!-- Logo -->
       <a href="/public" class="flex items-center space-x-2 hover:opacity-80 transition-opacity duration-200">
         <img ngSrc="assets/images/logo.png" alt="Logo" height="50" width="50">
-        <span class="text-2xl font-semibold text-vertFeuille">Sebania</span>
+        <span [ngClass]="isMobile ? 'text-xl' : 'text-2xl'" class="font-semibold text-vertFeuille">Sebania</span>
       </a>
     </div>
 

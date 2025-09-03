@@ -1,24 +1,36 @@
-<div class="flex flex-row w-full">
-  <div class="w-[30%] flex flex-col items-center space-y-5">
+<!-- Layout Mobile : Colonnes empilées verticalement -->
+<div class="flex w-full" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row'">
+
+  <!-- Section des contrôles -->
+  <div class="flex flex-col items-center space-y-4" [ngClass]="isMobile ? 'w-full' : 'w-[30%]'">
+
+    <!-- Navigation de date -->
     <div class="flex flex-row justify-center space-x-3 items-center h-10 w-full">
       <div class="flex items-center h-full" (click)="onMinusOneDay()">
-        <i class="pi pi-chevron-left hover:scale-110 hover:cursor-pointer" style="font-size: 2rem"></i>
+        <i class="pi pi-chevron-left hover:scale-110 hover:cursor-pointer"
+           [style]="isMobile ? 'font-size: 1.5rem' : 'font-size: 2rem'"></i>
       </div>
-      <div class="flex items-center h-full font-semibold text-2xl">{{ dateUtils.toFrenchString(date) }}</div>
+      <div class="flex items-center h-full font-semibold"
+           [ngClass]="isMobile ? 'text-lg' : 'text-2xl'">{{ dateUtils.toFrenchString(date) }}
+      </div>
       <div class="flex items-center h-full" (click)="onAddOneDay()">
-        <i class="pi pi-chevron-right hover:scale-110 hover:cursor-pointer" style="font-size: 2rem"></i>
+        <i class="pi pi-chevron-right hover:scale-110 hover:cursor-pointer"
+           [style]="isMobile ? 'font-size: 1.5rem' : 'font-size: 2rem'"></i>
       </div>
     </div>
 
-    <div class="flex flex-row items-center justify-between w-56">
-      <div class="font-medium text-xl">Total du jour :</div>
+    <!-- Total du jour -->
+    <div class="flex items-center justify-between" [ngClass]="isMobile ? 'flex-col space-y-2 w-full' : 'flex-row w-56'">
+      <div class="font-medium" [ngClass]="isMobile ? 'text-lg text-center' : 'text-xl'">Total du jour :</div>
       <div class="rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium text-md shadow-md"
            [ngClass]="{'bg-vertFonce': statutJour == StatutJour.ok, 'bg-jauneSoleil': statutJour == StatutJour.warning, 'bg-suppression': statutJour == StatutJour.danger}">
         {{ tacheUtils.getDureeFormatted(totalMinutes) }}
       </div>
     </div>
-    <div>
-      <p-floatlabel class="w-full md:w-56" variant="on">
+
+    <!-- Sélection utilisateur -->
+    <div class="w-full" [ngClass]="!isMobile ? 'max-w-56' : ''">
+      <p-floatlabel class="w-full" variant="on">
         <p-select [(ngModel)]="currentUser" inputId="currentUser" [options]="availableUsers" styleClass="w-full"
                   (onClick)="loadTaches()">
           <ng-template #selectedItem let-selectedOption>
@@ -35,17 +47,23 @@
         <label for="currentUser">Utilisateur</label>
       </p-floatlabel>
     </div>
-    <div>
-      <p-floatlabel class="w-full md:w-56" variant="on">
+
+    <!-- Sélection de date -->
+    <div class="w-full" [ngClass]="!isMobile ? 'max-w-56' : ''">
+      <p-floatlabel variant="on">
         <p-datepicker [(ngModel)]="date" [iconDisplay]="'input'" [showIcon]="true" inputId="date"
                       dateFormat="dd/mm/yy"
-                      (onSelect)="loadTaches()">
+                      (onSelect)="loadTaches()"
+                      fluid=""
+        >
         </p-datepicker>
         <label for="date">Date</label>
       </p-floatlabel>
     </div>
+
+    <!-- Bouton ajouter (affiché seulement s'il y a des tâches) -->
     @if (taches.length > 0 || nbVocalInProgress > 0) {
-      <div class="w-full md:w-56">
+      <div class="w-full" [ngClass]="!isMobile ? 'max-w-56' : ''">
         <p-button label="Ajouter une tâche"
                   icon="bi-plus-circle-fill"
                   [raised]="true"
@@ -55,36 +73,46 @@
       </div>
     }
   </div>
-  <div class="w-[40%] flex flex-col">
+
+  <!-- Section du contenu principal -->
+  <div class="flex flex-col" [ngClass]="isMobile ? 'w-full' : 'w-[40%]'">
+    <!-- Messages vocaux en cours -->
     @if (nbVocalInProgress > 0) {
-      <div class="flex flex-row justify-center items-center space-x-5 border border-grisAnthra rounded-2xl p-4">
+      <div class="flex items-center border border-grisAnthra rounded-2xl p-4 mb-4"
+           [ngClass]="isMobile ? 'flex-col space-y-2 text-center' : 'flex-row justify-center space-x-5'">
         <div>
           <i class="pi pi-spin pi-spinner" style="font-size: 1.5rem"></i>
         </div>
-        <div class="font-semibold text-xl text-grisAnthra">Messages vocaux en cours de traitement
-          : {{ nbVocalInProgress }}
+        <div class="font-semibold text-grisAnthra" [ngClass]="isMobile ? 'text-lg' : 'text-xl'">
+          Messages vocaux en cours de traitement : {{ nbVocalInProgress }}
         </div>
       </div>
     }
-    <p-scrollpanel [style]="{ width: '100%', height: 'calc(100vh - 150px)'}">
+
+    <!-- Zone de contenu principale -->
+    <p-scrollpanel [style]="getScrollPanelStyle()">
       @if (loading) {
         <div class="w-full h-full flex flex-col items-center justify-center">
           <div>
-            <i class="pi pi-spin pi-spinner" style="font-size: 5rem; color: var(--color-brun300)"></i>
+            <i class="pi pi-spin pi-spinner"
+               [style]="isMobile ? 'font-size: 3rem; color: var(--color-brun300)' : 'font-size: 5rem; color: var(--color-brun300)'"></i>
           </div>
         </div>
       } @else {
         @if (taches.length == 0 && nbVocalInProgress == 0) {
+          <!-- État vide -->
           <div class="flex flex-col space-y-4">
-            <div
-              class="w-full flex flex-row items-center justify-center border border-grisAnthra rounded-2xl p-2 text-3xl space-x-3">
+            <div class="w-full flex items-center justify-center border border-grisAnthra rounded-2xl p-4"
+                 [ngClass]="isMobile ? 'flex-col space-y-3 text-center text-xl' : 'flex-row text-3xl space-x-3'">
               <div>
-                <i class="pi pi-search" style="font-size: 3rem; color: var(--color-grisAnthra)"></i>
+                <i class="pi pi-search"
+                   [style]="isMobile ? 'font-size: 2rem; color: var(--color-grisAnthra)' : 'font-size: 3rem; color: var(--color-grisAnthra)'"></i>
               </div>
               <span>Aucune tâche renseignée</span>
             </div>
-            <div class="flex flex-col w-full transition-all hover:scale-110 items-center">
-              <div class="w-full md:w-56">
+            <div class="flex flex-col w-full items-center"
+                 [ngClass]="!isMobile ? 'transition-all hover:scale-110' : ''">
+              <div class="w-full" [ngClass]="!isMobile ? 'max-w-56' : ''">
                 <p-button label="Ajouter une tâche"
                           icon="bi-plus-circle-fill"
                           [raised]="true"
@@ -95,9 +123,11 @@
             </div>
           </div>
         } @else {
-          <div class="flex-col">
+          <!-- Liste des tâches -->
+          <div class="flex flex-col space-y-3">
             @for (tache of taches; track tache.id) {
-              <app-card-activite [tache]="tache" (onDeleteEvent)="onDeleteTache()"></app-card-activite>
+              <app-card-activite [tache]="tache" [isMobile]="isMobile"
+                                 (onDeleteEvent)="onDeleteTache()"></app-card-activite>
             }
           </div>
         }

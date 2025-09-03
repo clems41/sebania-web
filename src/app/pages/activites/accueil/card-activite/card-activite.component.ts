@@ -24,6 +24,7 @@ import {ConfirmDialogModule} from 'primeng/confirmdialog';
 })
 export class CardActiviteComponent {
   @Input() tache: any;
+  @Input() isMobile: boolean = false;
   @Output() onDeleteEvent: EventEmitter<number> = new EventEmitter();
 
 

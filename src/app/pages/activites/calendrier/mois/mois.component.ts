@@ -19,6 +19,7 @@ import {StatutJour} from '../../../../models/statut-jour';
   styleUrl: './mois.component.css'
 })
 export class MoisComponent implements OnInit {
+  @Input() isMobile: boolean = false;
   @Output() onClick: EventEmitter<moment.Moment> = new EventEmitter();
   currentUser: User | undefined;
   currentDate = moment(); // mois affiché

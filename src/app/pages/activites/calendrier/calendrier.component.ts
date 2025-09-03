@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {FloatLabel} from "primeng/floatlabel";
-import {NgIf} from "@angular/common";
+import {NgIf, NgClass} from "@angular/common";
 import {Select} from "primeng/select";
 import {FormsModule} from '@angular/forms';
 import {User} from '../../../models/user';
@@ -11,6 +11,7 @@ import {SemaineComponent} from './semaine/semaine.component';
 import {MoisComponent} from './mois/mois.component';
 import {Router} from '@angular/router';
 import {DateUtils} from '../../../utils/date-utils';
+import {DeviceDetectorService} from 'ngx-device-detector';
 import moment from 'moment';
 
 @Component({
@@ -18,6 +19,7 @@ import moment from 'moment';
   imports: [
     FloatLabel,
     NgIf,
+    NgClass,
     Select,
     FormsModule,
     SemaineComponent,
@@ -32,10 +34,12 @@ export class CalendrierComponent implements OnInit {
   calendrierSelectorSemaine: string = "Semaine";
   calendrierSelectorMois: string = "Mois";
   calendrierSelector: string = this.calendrierSelectorSemaine;
+  isMobile: boolean = false;
 
   constructor(private authService: AuthService, private userUtils: UserUtils,
               private fermeService: FermeService, private router: Router,
-              private dateUtils: DateUtils) {
+              private dateUtils: DateUtils, private deviceService: DeviceDetectorService) {
+    this.isMobile = this.deviceService.isMobile();
   }
 
   ngOnInit(): void {

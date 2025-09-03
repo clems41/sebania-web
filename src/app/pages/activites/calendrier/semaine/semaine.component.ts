@@ -22,6 +22,7 @@ import {Button} from 'primeng/button';
 })
 export class SemaineComponent implements OnInit {
   currentUser: User | undefined;
+  @Input() isMobile: boolean = false;
   @Output() onClick: EventEmitter<moment.Moment> = new EventEmitter();
   currentDate: moment.Moment = moment().startOf('isoWeek');
   calendrier: Calendrier | undefined = undefined;

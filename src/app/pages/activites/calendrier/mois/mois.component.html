@@ -1,8 +1,8 @@
-<div class="p-4 bg-white rounded-lg shadow">
+<div class="p-4 bg-white rounded-lg shadow" [ngClass]="isMobile ? 'p-2' : 'p-4'">
   <!-- Header -->
   <div class="flex flex-col items-center">
-    <div class="flex justify-center items-center text-xl">
-      <div class="flex flex-row space-x-4 items-center">
+    <div class="flex justify-center items-center" [ngClass]="isMobile ? 'text-lg' : 'text-xl'">
+      <div class="flex flex-row items-center" [ngClass]="isMobile ? 'space-x-2' : 'space-x-4'">
         <!--      selecteur mois-->
         <div class="hover:cursor-pointer hover:scale-110" (click)="goToPreviousMonth()">
           <i class="pi pi-chevron-left" style="font-size: 1.5rem"></i>
@@ -26,18 +26,20 @@
   </div>
 
   <!-- Days of the week -->
-  <div class="grid grid-cols-7 text-center text-sm font-semibold text-gray-600 border-b pb-2 mb-2">
+  <div class="grid grid-cols-7 text-center font-semibold text-gray-600 border-b pb-2 mb-2" [ngClass]="isMobile ? 'text-xs' : 'text-sm'">
     <div *ngFor="let d of ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']">
       {{ d }}
     </div>
   </div>
 
   <!-- Calendar grid -->
-  <div class="grid grid-cols-7 gap-1 text-center text-md">
+  <div class="grid grid-cols-7 text-center" [ngClass]="isMobile ? 'gap-0.5 text-sm' : 'gap-1 text-md'">
     <div *ngFor="let day of days"
-         class="p-2 rounded-md h-20 w-20"
+         class="p-2 rounded-md"
          (click)="onClick.emit(day)"
          [ngClass]="{
+           'h-15 w-12': isMobile,
+           'h-20 w-20': !isMobile,
            'bg-gray200 text-grisAnthra': isToday(day),
            'text-grisAnthra border border-gray200 hover:cursor-pointer hover:scale-105': isCurrentMonth(day),
            'text-gray300': !isCurrentMonth(day)
@@ -47,26 +49,29 @@
         <div>
           {{ day.date() }}
         </div>
+        @let shouldDisplayWarning = (calendrierJour?.nb_taches_with_missing_fields ?? 0) > 0;
         @if (isCurrentMonth(day)) {
-          <div class="rounded-full w-3 h-3"
+          <div class="rounded-full"
                [ngClass]="{'bg-vertFonce': calendrierJour?.statut == StatutJour.ok && (calendrierJour?.total_jour_minutes ?? 0) > 0,
              'bg-jauneSoleil': calendrierJour?.statut == StatutJour.warning,
              'bg-suppression': calendrierJour?.statut == StatutJour.danger,
-             'border border-gray200': (calendrierJour?.total_jour_minutes ?? 0) == 0}">
+             'border border-gray200': (calendrierJour?.total_jour_minutes ?? 0) == 0,
+             'w-2 h-2': isMobile && !shouldDisplayWarning,
+             'w-3 h-3': !isMobile}">
           </div>
-          @if ((calendrierJour?.nb_taches_with_missing_fields ?? 0) > 0) {
+          @if (shouldDisplayWarning) {
             <i class="bi bi-exclamation-triangle-fill"
-               style="color: var(--color-jauneSoleil);font-size: 1.5rem"></i>
+               [style]="isMobile ? 'color: var(--color-jauneSoleil);font-size: 1rem' : 'color: var(--color-jauneSoleil);font-size: 1.5rem'"></i>
           }
         }
       </div>
     </div>
   </div>
-  <div class="mt-5 border-t pt-4 grid grid-cols-[auto_1fr] gap-x-2">
+  <div class="border-t pt-4 grid grid-cols-[auto_1fr]" [ngClass]="isMobile ? 'mt-3 gap-x-1 text-sm' : 'mt-5 gap-x-2'">
     <!-- Ligne 1 -->
     <div class="flex items-center justify-center">
       <i class="bi bi-exclamation-triangle-fill"
-         style="color: var(--color-jauneSoleil); font-size: 1.5rem"></i>
+         [style]="isMobile ? 'color: var(--color-jauneSoleil); font-size: 1rem' : 'color: var(--color-jauneSoleil); font-size: 1.5rem'"></i>
     </div>
     <div class="flex items-center">
       Des tâches restent incomplètes pour ce jour.
@@ -74,7 +79,7 @@
 
     <!-- Ligne 2 -->
     <div class="flex items-center justify-center">
-      <div class="rounded-full w-3 h-3 bg-vertFonce"></div>
+      <div class="rounded-full bg-vertFonce" [ngClass]="isMobile ? 'w-2 h-2' : 'w-3 h-3'"></div>
     </div>
     <div class="flex items-center">
       Total du jour supérieur à 0 et inférieur à 9 heures.
@@ -82,7 +87,7 @@
 
     <!-- Ligne 3 -->
     <div class="flex items-center justify-center">
-      <div class="rounded-full w-3 h-3 bg-jauneSoleil"></div>
+      <div class="rounded-full bg-jauneSoleil" [ngClass]="isMobile ? 'w-2 h-2' : 'w-3 h-3'"></div>
     </div>
     <div class="flex items-center">
       Total du jour supérieur à 9 heures et inférieur à 10 heures.
@@ -90,7 +95,7 @@
 
     <!-- Ligne 4 -->
     <div class="flex items-center justify-center">
-      <div class="rounded-full w-3 h-3 bg-suppression"></div>
+      <div class="rounded-full bg-suppression" [ngClass]="isMobile ? 'w-2 h-2' : 'w-3 h-3'"></div>
     </div>
     <div class="flex items-center">
       Total du jour supérieur à 10 heures.
@@ -98,7 +103,7 @@
 
     <!-- Ligne 5 -->
     <div class="flex items-center justify-center">
-      <div class="rounded-full w-3 h-3 border border-gray200"></div>
+      <div class="rounded-full border border-gray200" [ngClass]="isMobile ? 'w-2 h-2' : 'w-3 h-3'"></div>
     </div>
     <div class="flex items-center">
       Aucune tâche renseignée pour ce jour.

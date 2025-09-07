@@ -1,410 +1,327 @@
-import {Component, OnInit} from '@angular/core';
-import {
-  FormArray,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  FormsModule,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
-import {CultureTacheRequest, TacheRequest} from '../../../models/tache/tache-request';
-import {User} from '../../../models/user';
-import {CacheService} from '../../../services/cache.service';
-import {TacheService} from '../../../services/tache.service';
-import {MessageService} from 'primeng/api';
-import {ActivatedRoute, Router} from '@angular/router';
-import {FloatLabel} from 'primeng/floatlabel';
-import {Calendar} from 'primeng/calendar';
-import {NgClass, NgIf, NgTemplateOutlet} from '@angular/common';
-import {Select} from 'primeng/select';
-import {UserUtils} from '../../../utils/user-utils';
-import {DeviceDetectorService} from 'ngx-device-detector';
-import {FermeService} from '../../../services/ferme.service';
-import {InputText} from 'primeng/inputtext';
-import {IconField} from 'primeng/iconfield';
-import {InputIcon} from 'primeng/inputicon';
-import {Activite} from '../../../models/activite';
-import {debounceTime} from 'rxjs';
-import {ScrollPanelModule} from 'primeng/scrollpanel';
-import {Button} from 'primeng/button';
-import {TacheUtils} from '../../../utils/tache-utils';
-import {DateUtils} from '../../../utils/date-utils';
+import {Component, inject, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators} from '@angular/forms';
+import {Router} from '@angular/router';
+import {CommonModule} from '@angular/common';
+import {ButtonModule} from 'primeng/button';
+import {FloatLabelModule} from 'primeng/floatlabel';
 import {DatePickerModule} from 'primeng/datepicker';
-import {NiveauComplexite} from '../../../models/niveau-complexite';
-import {Textarea} from 'primeng/textarea';
+import {SelectModule} from 'primeng/select';
+import {MultiSelectModule} from 'primeng/multiselect';
 import {InputNumberModule} from 'primeng/inputnumber';
-import {MultiSelect} from 'primeng/multiselect';
-import {Parcelle} from '../../../models/parcelle';
+import {InputTextModule} from 'primeng/inputtext';
+import {FieldsetModule} from 'primeng/fieldset';
+import {MessageService} from 'primeng/api';
+import {TacheService} from '../../../services/tache.service';
+import {FermeService} from '../../../services/ferme.service';
 import {ParcelleService} from '../../../services/parcelle.service';
+import {CacheService} from '../../../services/cache.service';
+import {DateUtils} from '../../../utils/date-utils';
+import {lastValueFrom} from 'rxjs';
+import {TacheRequest} from '../../../models/tache/tache-request';
+import {Activite} from '../../../models/activite';
 import {Culture} from '../../../models/culture';
-import {Chip} from 'primeng/chip';
-import {Tache} from '../../../models/tache';
+import {Parcelle} from '../../../models/parcelle';
+import {Unite} from '../../../models/unite';
+import {User} from '../../../models/user';
+import {NiveauComplexite} from '../../../models/niveau-complexite';
 
 @Component({
   selector: 'app-saisie',
   imports: [
+    CommonModule,
     ReactiveFormsModule,
-    FloatLabel,
-    Calendar,
-    NgIf,
-    Select,
-    InputText,
     FormsModule,
-    IconField,
-    InputIcon,
-    ScrollPanelModule,
-    NgClass,
-    InputNumberModule,
-    Button,
-    NgTemplateOutlet,
+    ButtonModule,
+    FloatLabelModule,
     DatePickerModule,
-    Textarea,
-    MultiSelect,
-    Chip
+    SelectModule,
+    MultiSelectModule,
+    InputNumberModule,
+    InputTextModule,
+    FieldsetModule
   ],
-  templateUrl: './saisie.component.html',
-  styleUrl: './saisie.component.css'
+  templateUrl: './saisie.component.html'
 })
 export class SaisieComponent implements OnInit {
-  form: FormGroup;
-  isMobile: boolean = false;
+  private tacheService = inject(TacheService);
+  private fermeService = inject(FermeService);
+  private parcelleService = inject(ParcelleService);
+  private cacheService = inject(CacheService);
+  private messageService = inject(MessageService);
+  private dateUtils = inject(DateUtils);
+  private fb = inject(FormBuilder);
+  private router = inject(Router);
 
-  availableUsers: User[] = [];
-  availableActivites: Activite[] = [];
-  availableCultures: Culture[] = [];
-  availableParcelles: Parcelle[] = [];
-  availableActiviteCategories: string[] = [];
-  availableCultureCategories: string[] = [];
+  tacheForm!: FormGroup;
+  loading = false;
+  isMobile = false;
 
-  filteredActivites: Activite[] = [];
-  filteredCultures: Culture[] = [];
+  activites: Activite[] = [];
+  cultures: Culture[] = [];
+  parcelles: Parcelle[] = [];
+  unites: Unite[] = [];
+  currentUser: User;
+  selectedActivite: Activite | null = null;
 
-  selectedCultures: Culture[] = [];
-  selectedActivite: Activite | undefined = undefined;
+  NiveauComplexite = NiveauComplexite;
 
-  searchActiviteControl: FormControl;
-  categorieActiviteControl: FormControl;
-  searchCultureControl: FormControl;
-  categorieCultureControl: FormControl;
-  allCategoriesKey = 'Toutes les catégories';
-  currentPage: number = 1;
-  tache_id: number | null = null;
+  constructor() {
+    this.currentUser = this.cacheService.getCurentUser();
+    this.checkIsMobile();
+  }
 
-  constructor(private formBuilder: FormBuilder, private cacheService: CacheService,
-              private tacheService: TacheService, private messageService: MessageService,
-              private router: Router, private userUtils: UserUtils, private fermeService: FermeService,
-              protected tacheUtils: TacheUtils, protected dateUtils: DateUtils,
-              private parcelleService: ParcelleService, private activatedRoute: ActivatedRoute,
-              private deviceService: DeviceDetectorService) {
-    this.isMobile = this.deviceService.isMobile();
-    this.form = this.formBuilder.group({
-      activite_id: [null, [Validators.required]],
-      date: [new Date(), [Validators.required]],
-      user_id: [null, [Validators.required]],
-      duree: [new Date(1900, 1, 1, 1, 0), [Validators.required, Validators.min(1), Validators.max(1440)]],
-      parcelle_ids: [[], []],
-      quantite: [null, []],
-      unite_id: [null, []],
-      commentaire: [null, []],
-      cultures: this.formBuilder.array([]),
+  ngOnInit() {
+    this.initForm();
+    this.loadData();
+  }
+
+  private checkIsMobile() {
+    this.isMobile = window.innerWidth < 768;
+  }
+
+  private initForm() {
+    // Create default time value of 1 hour (01:00)
+    const defaultTime = new Date();
+    defaultTime.setHours(1, 0, 0, 0);
+
+    this.tacheForm = this.fb.group({
+      date: [new Date(), Validators.required],
+      user_id: [this.currentUser.id, Validators.required],
+      activite_id: [null, Validators.required],
+      duree_time: [defaultTime, Validators.required],
+      duree_minutes: [60, [Validators.required, Validators.min(1)]],
+      commentaire: [''],
+      parcelle_ids: [[]],
+      quantite: [null],
+      unite_id: [null],
+      cultures: this.fb.array([])
     });
 
-    this.searchActiviteControl = new FormControl();
-    this.searchActiviteControl.valueChanges.pipe(debounceTime(500)).subscribe(res => {
-      this.filterActivites(res);
+    this.tacheForm.get('activite_id')?.valueChanges.subscribe(activiteId => {
+      this.onActiviteChange(activiteId);
     });
 
-    this.searchCultureControl = new FormControl();
-    this.searchCultureControl.valueChanges.pipe(debounceTime(500)).subscribe(res => {
-      this.filterCultures(res);
-    });
-
-    this.categorieActiviteControl = new FormControl();
-    this.categorieActiviteControl.setValue(this.allCategoriesKey);
-    this.categorieActiviteControl.valueChanges.subscribe(() => {
-      this.filterActivites(this.searchActiviteControl.value);
-    });
-
-    this.categorieCultureControl = new FormControl();
-    this.categorieCultureControl.setValue(this.allCategoriesKey);
-    this.categorieCultureControl.valueChanges.subscribe(() => {
-      this.filterCultures(this.searchCultureControl.value);
+    // Listen to time changes to update total duration
+    this.tacheForm.get('duree_time')?.valueChanges.subscribe(timeValue => {
+      this.updateTotalDurationFromTime(timeValue);
     });
   }
 
-  ngOnInit(): void {
-    this.activatedRoute.queryParams.subscribe(val => {
-      const tache_id = val['tache_id'];
-      const page = val['page'];
-      const user_id = val['user_id'];
-      const date = val['date'];
-      if (date) {
-        this.form.patchValue({
-          date: this.dateUtils.fromFrenchFormat(date),
-        });
-      }
-      const currentUser = this.cacheService.getCurentUser();
-      if (currentUser) {
-        this.availableUsers = [currentUser];
-        if (this.userUtils.isResponsable(currentUser)) {
-          this.fermeService.getFerme().subscribe(ferme => {
-            this.availableUsers.push(...ferme.employes);
-            if (user_id) {
-              this.form.patchValue({
-                user_id: +user_id,
-              });
-            } else {
-              this.form.patchValue({
-                user_id: currentUser.id,
-              });
+  private async loadData() {
+    this.loading = true;
+
+    try {
+      const [activites, cultures, parcelles] = await Promise.all([
+        lastValueFrom(this.fermeService.getCustomActivites()),
+        lastValueFrom(this.fermeService.getCustomCultures()),
+        lastValueFrom(this.parcelleService.getAll())
+      ]);
+
+      this.activites = activites || [];
+      this.cultures = cultures || [];
+      this.parcelles = parcelles || [];
+      this.loading = false;
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: 'Impossible de charger les données nécessaires'
+      });
+      this.loading = false;
+    }
+  }
+
+  private onActiviteChange(activiteId: number) {
+    if (!activiteId) {
+      this.selectedActivite = null;
+      this.unites = [];
+      this.culturesFormArray.clear();
+      return;
+    }
+
+    this.selectedActivite = this.activites.find(a => a.id === activiteId) || null;
+    if (this.selectedActivite) {
+      this.unites = this.selectedActivite.unites || [];
+
+      // Reset fields based on complexity
+      this.resetFormBasedOnComplexity();
+    }
+  }
+
+  private resetFormBasedOnComplexity() {
+    if (!this.selectedActivite) return;
+
+    const complexity = this.selectedActivite.niveau_complexite;
+
+    // Reset optional fields
+    this.tacheForm.patchValue({
+      parcelle_ids: [],
+      quantite: null,
+      unite_id: null
+    });
+
+    // Clear cultures array
+    this.culturesFormArray.clear();
+
+    // Add initial culture form if needed (complexity 5-8)
+    if (complexity >= NiveauComplexite.cultures) {
+      this.addCultureForm();
+    }
+  }
+
+  get culturesFormArray(): FormArray {
+    return this.tacheForm.get('cultures') as FormArray;
+  }
+
+  private createCultureForm(): FormGroup {
+    return this.fb.group({
+      culture_id: [null, Validators.required],
+      parcelle_ids: [[]],
+      quantite: [null],
+      unite_id: [null]
+    });
+  }
+
+  // Methods for field visibility based on complexity level
+  shouldShowParcelleIds(): boolean {
+    if (!this.selectedActivite) return false;
+    const complexity = this.selectedActivite.niveau_complexite;
+    return complexity === NiveauComplexite.baseParcelles ||
+           complexity === NiveauComplexite.baseQuantiteParcelles;
+  }
+
+  shouldShowQuantite(): boolean {
+    if (!this.selectedActivite) return false;
+    const complexity = this.selectedActivite.niveau_complexite;
+    return complexity === NiveauComplexite.baseQuantite ||
+           complexity === NiveauComplexite.baseQuantiteParcelles;
+  }
+
+  shouldShowCultures(): boolean {
+    if (!this.selectedActivite) return false;
+    const complexity = this.selectedActivite.niveau_complexite;
+    return complexity >= NiveauComplexite.cultures;
+  }
+
+  shouldShowCultureParcelleIds(): boolean {
+    if (!this.selectedActivite) return false;
+    const complexity = this.selectedActivite.niveau_complexite;
+    return complexity === NiveauComplexite.culturesParcelles ||
+           complexity === NiveauComplexite.culturesQuantiteParcelles;
+  }
+
+  shouldShowCultureQuantite(): boolean {
+    if (!this.selectedActivite) return false;
+    const complexity = this.selectedActivite.niveau_complexite;
+    return complexity === NiveauComplexite.culturesQuantite ||
+           complexity === NiveauComplexite.culturesQuantiteParcelles;
+  }
+
+  // Culture management methods
+  addCultureForm() {
+    this.culturesFormArray.push(this.createCultureForm());
+  }
+
+  removeCultureForm(index: number) {
+    if (this.culturesFormArray.length > 1) {
+      this.culturesFormArray.removeAt(index);
+    }
+  }
+
+  canRemoveCulture(): boolean {
+    return this.culturesFormArray.length > 1;
+  }
+
+  // Validation and submission
+  onSubmit() {
+    if (this.tacheForm.valid) {
+      this.loading = true;
+
+      const formValue = this.tacheForm.value;
+      const request: TacheRequest = {
+        date: this.dateUtils.toFrenchFormat(formValue.date),
+        user_id: formValue.user_id,
+        activite_id: formValue.activite_id,
+        duree_minutes: formValue.duree_minutes,
+        commentaire: formValue.commentaire || '',
+        parcelle_ids: formValue.parcelle_ids || [],
+        quantite: formValue.quantite || null,
+        unite_id: formValue.unite_id || null,
+        cultures: formValue.cultures?.map((culture: any) => ({
+          culture_id: culture.culture_id,
+          parcelle_ids: culture.parcelle_ids || [],
+          quantite: culture.quantite || null,
+          unite_id: culture.unite_id || null
+        })) || []
+      };
+
+      this.tacheService.create(request).subscribe({
+        next: (tache) => {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Succès',
+            detail: 'Tâche créée avec succès'
+          });
+          this.router.navigate(['/activites/accueil'], {
+            queryParams: {
+              date: request.date,
+              user_id: this.currentUser?.id,
             }
           });
+        },
+        error: (error) => {
+          console.error('Erreur lors de la création de la tâche:', error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erreur',
+            detail: 'Impossible de créer la tâche'
+          });
+          this.loading = false;
         }
-      }
-      if (tache_id) {
-        this.tacheService.get(tache_id).subscribe(tache => this.patchForm(tache, page));
-      }
-    });
-    this.fermeService.getCustomActivites().subscribe(activites => {
-      this.availableActivites = activites;
-      this.filteredActivites = activites;
-      this.availableActiviteCategories = [this.allCategoriesKey, ...new Set(activites.map(activite => String(activite.categorie).charAt(0).toUpperCase() + String(activite.categorie).slice(1)))];
-    });
-    this.parcelleService.getAll().subscribe(parcelles => {
-      this.availableParcelles = parcelles;
-    });
-    this.fermeService.getCustomCultures().subscribe(cultures => {
-      this.availableCultures = cultures;
-      this.filteredCultures = cultures;
-      this.availableCultureCategories = [this.allCategoriesKey, ...new Set(cultures.map(culture => String(culture.categorie).charAt(0).toUpperCase() + String(culture.categorie).slice(1)))];
-    })
-  }
-
-  patchForm(tache: Tache, page: number | null) {
-    this.tache_id = tache.id;
-    if (page) {
-      this.currentPage = page;
-    }
-    this.form.patchValue({
-      activite_id: tache.activite.id,
-      date: this.dateUtils.fromFrenchFormat(tache.date),
-      user_id: tache.user.id,
-      duree: new Date(1900, 1, 1, Math.floor(tache.duree_minutes / 60), tache.duree_minutes % 60),
-      parcelle_ids: tache.parcelles ? tache.parcelles.map(parcelle => parcelle.id) : [],
-      quantite: tache.quantite,
-      unite_id: tache.unite?.id,
-      commentaire: tache.commentaire,
-    });
-    this.selectedActivite = tache.activite;
-    for (const culture of tache.cultures) {
-      const cultureForm = this.formBuilder.group({
-        culture_id: [culture.culture?.id, [Validators.required]],
-        parcelle_ids: [culture.parcelles ? culture.parcelles.map(parcelle => parcelle.id) : [], []],
-        quantite: [culture.quantite, []],
-        unite_id: [culture.unite?.id, []],
-      })
-      this.cultures.push(cultureForm);
-      this.selectedCultures = tache.cultures.map(culture_tache => culture_tache.culture);
-    }
-  }
-
-  getSelectedUser(): User | undefined {
-    const user_id = this.form.get('user_id')?.value;
-    if (user_id && user_id != 0) {
-      return this.availableUsers.find((user) => user.id == user_id)
-    }
-    return undefined;
-  }
-
-  getSelectedDureeMinutes(): number | undefined {
-    const duree = this.form.get('duree')?.value;
-    if (duree) {
-      return duree.getHours() * 60 + duree.getMinutes();
-    }
-    return undefined;
-  }
-
-  onSuivant() {
-    this.currentPage++;
-    if (this.selectedActivite && this.selectedActivite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles) {
-      this.currentPage++;
-    }
-  }
-
-  onPrecedent() {
-    this.currentPage--;
-    if (this.selectedActivite && this.selectedActivite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles) {
-      this.currentPage--;
-    }
-  }
-
-  filterActiviteByCategorie(categorie: string) {
-    if (categorie == "" || categorie == this.allCategoriesKey) {
-      return;
-    }
-    this.filteredActivites = this.filteredActivites.filter(activite => {
-      return activite.categorie.toLowerCase() == categorie.toLowerCase();
-    });
-  }
-
-  filterActivites(query: string) {
-    this.filteredActivites = this.availableActivites;
-    if (query) {
-      this.filteredActivites = this.availableActivites.filter(activite => {
-        return activite.nom.toLowerCase().includes(query.toLowerCase()) ||
-          activite.mots_cles.toLowerCase().includes(query.toLowerCase());
       });
-    }
-    const categorie: string = this.categorieActiviteControl.value;
-    this.filterActiviteByCategorie(categorie);
-    this.form.get('activite_id')?.reset();
-  }
-
-  onSelectActivite(activite: Activite) {
-    this.form.get('activite_id')?.setValue(activite.id);
-    this.selectedActivite = activite;
-  }
-
-  filterCultureByCategorie(categorie: string) {
-    if (categorie == "" || categorie == this.allCategoriesKey) {
-      return;
-    }
-    this.filteredCultures = this.filteredCultures.filter(culture => {
-      return culture.categorie.toLowerCase() == categorie.toLowerCase();
-    });
-  }
-
-  filterCultures(query: string) {
-    this.filteredCultures = this.availableCultures;
-    if (query) {
-      this.filteredCultures = this.filteredCultures.filter(culture => {
-        return culture.nom.toLowerCase().includes(query.toLowerCase());
-      });
-    }
-    const categorie: string = this.categorieCultureControl.value;
-    this.filterCultureByCategorie(categorie);
-  }
-
-  onSelectCulture(culture: Culture) {
-    const existingIndex = this.selectedCultures.findIndex(item => culture.id == item.id);
-    if (existingIndex == -1) {
-      this.selectedCultures.push(culture);
-      this.addCultureToForm(culture);
     } else {
-      this.selectedCultures.splice(existingIndex, 1);
-      this.removeCultureToForm(existingIndex);
+      this.markFormGroupTouched(this.tacheForm);
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Attention',
+        detail: 'Veuillez remplir tous les champs obligatoires'
+      });
     }
   }
 
-  onRemoveSelectedCulture(culture: Culture) {
-    const existingIndex = this.selectedCultures.findIndex(item => culture.id == item.id);
-    this.selectedCultures.splice(existingIndex, 1);
-    this.removeCultureToForm(existingIndex);
-  }
+  private markFormGroupTouched(formGroup: FormGroup) {
+    Object.keys(formGroup.controls).forEach(key => {
+      const control = formGroup.get(key);
+      control?.markAsTouched();
 
-  isCultureSelected(culture_id: number) {
-    return this.selectedCultures.findIndex(item => culture_id == item.id) != -1;
-  }
-
-  get cultures() {
-    return this.form.get('cultures') as FormArray;
-  }
-
-  addCultureToForm(culture: Culture) {
-    const cultureForm = this.formBuilder.group({
-      culture_id: [culture.id, []],
-      parcelle_ids: [[], []],
-      quantite: [null, []],
-      unite_id: [null, []],
-    })
-    this.cultures.push(cultureForm);
-  }
-
-  removeCultureToForm(index: number) {
-    this.cultures.removeAt(index);
+      if (control instanceof FormGroup) {
+        this.markFormGroupTouched(control);
+      } else if (control instanceof FormArray) {
+        control.controls.forEach(c => {
+          if (c instanceof FormGroup) {
+            this.markFormGroupTouched(c);
+          }
+        });
+      }
+    });
   }
 
   onCancel() {
-    this.router.navigate(['/activites/accueil'], {
-      queryParams: {
-        date: this.dateUtils.toFrenchFormat(this.form.get('date')?.value),
-        user_id: this.form.get('user_id')?.value
-      }
-    });
+    this.router.navigate(['/activites/accueil']);
   }
 
-  onSubmit() {
-    if (this.form.invalid) {
+  // Helper methods for template
+  private updateTotalDurationFromTime(timeValue: Date | null) {
+    if (!timeValue) {
+      this.tacheForm.patchValue({ duree_minutes: 0 }, { emitEvent: false });
       return;
     }
-    const date = this.dateUtils.toFrenchFormat(this.form.get('date')?.value)
-    const request: TacheRequest = {
-      activite_id: this.form.get('activite_id')?.value,
-      commentaire: this.form.get('commentaire')?.value,
-      cultures: [],
-      date: date,
-      duree_minutes: this.getSelectedDureeMinutes() ?? 0,
-      parcelle_ids: this.form.get('parcelle_ids')?.value,
-      quantite: this.form.get('quantite')?.value,
-      unite_id: this.form.get('unite_id')?.value,
-      user_id: this.form.get('user_id')?.value
-    }
-    for (const culture of this.cultures.value) {
-      const cultureRequest: CultureTacheRequest = {
-        culture_id: culture.culture_id,
-        parcelle_ids: culture.parcelle_ids,
-        quantite: culture.quantite,
-        unite_id: culture.unite_id,
-      }
-      request.cultures.push(cultureRequest);
-    }
-    if (this.tache_id) {
-      this.tacheService.update(this.tache_id, request).subscribe(
-        {
-          next: () => {
-            this.form.reset();
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Succès',
-              detail: `La tâche a été mise à jour avec succès.`
-            });
-            this.router.navigate(['/activites/accueil'], {
-              queryParams: {
-                date: date,
-                user_id: request.user_id
-              }
-            });
-          },
-          error: () => {
-            this.form.reset();
-          }
-        }
-      )
-    } else {
-      this.tacheService.create(request).subscribe(
-        {
-          next: () => {
-            this.form.reset();
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Succès',
-              detail: `La tâche a été créée avec succès.`
-            });
-            this.router.navigate(['/activites/accueil'], {
-              queryParams: {
-                date: date,
-                user_id: request.user_id
-              }
-            });
-          },
-          error: () => {
-            this.form.reset();
-          }
-        }
-      )
-    }
+    
+    const hours = timeValue.getHours();
+    const minutes = timeValue.getMinutes();
+    const totalMinutes = hours * 60 + minutes;
+    this.tacheForm.patchValue({ duree_minutes: totalMinutes }, { emitEvent: false });
   }
 
-  protected readonly NiveauComplexite = NiveauComplexite;
 }

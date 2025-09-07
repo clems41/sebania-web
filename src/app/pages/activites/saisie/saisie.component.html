@@ -1,338 +1,351 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="h-full w-full" [ngClass]="isMobile ? 'p-2' : ''">
-  <ng-template #recapitulatif>
-    <div>Récapitulatif de l'activité</div>
-    <div class="flex border-b border-brun400 flex-row justify-between" [ngClass]="isMobile ? 'w-full' : 'w-1/2'">
-      <div class="h-full">
-        <p-button icon="pi pi-arrow-circle-left"
-                  (click)="onPrecedent()" [rounded]="true"
-                  [raised]="true"
-                  styleClass="bg-grisAnthra! border-grisAnthra!"
-        />
-      </div>
-      <div class="flex flex-col space-y-2">
-        <div class="flex flex-col">
-          <div class="italic font-light text-md">Activité</div>
-          <div class="font-semibold text-lg">{{ selectedActivite?.nom }}</div>
+<div class="flex w-full min-h-screen">
+
+  <!-- Section titre et navigation -->
+  <div class="flex flex-col items-center space-y-6 w-full max-w-4xl mx-auto" [ngClass]="isMobile ? 'p-4' : 'p-6'">
+
+    <!-- En-tete -->
+    <div class="w-full">
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800">Saisie de tâche</h1>
+          <p class="text-gray-600 mt-2">Enregistrez une nouvelle activité agricole</p>
         </div>
-        <div class="flex flex-col">
-          <div class="italic font-light text-md">Durée</div>
-          <div class="font-semibold text-lg">{{ tacheUtils.getDureeFormatted(getSelectedDureeMinutes() ?? 0) }}</div>
+        <p-button
+          label="Retour"
+          icon="pi pi-arrow-left"
+          severity="secondary"
+          (onClick)="onCancel()"
+          [outlined]="true">
+        </p-button>
+      </div>
+    </div>
+
+    <!-- Loading indicator -->
+    @if (loading) {
+      <div class="w-full flex items-center justify-center py-12">
+        <div class="flex flex-col items-center space-y-4">
+          <i class="pi pi-spin pi-spinner" style="font-size: 3rem; color: var(--color-vertFeuille)"></i>
+          <p class="text-gray-600">Chargement...</p>
         </div>
       </div>
-      <div class="flex flex-col space-y-2">
-        <div class="flex flex-col">
-          <div class="italic font-light text-md">Utilisateur</div>
-          <div class="font-semibold text-lg">{{ getSelectedUser()?.first_name + ' ' + getSelectedUser()?.last_name }}
+    } @else {
+
+      <!-- Formulaire principal -->
+      <form [formGroup]="tacheForm" (ngSubmit)="onSubmit()" class="w-full space-y-6">
+
+        <!-- Section obligatoire - Toujours visible -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="pi pi-star-fill text-orange-500 mr-2"></i>
+            Informations obligatoires
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- Date -->
+            <div>
+              <p-floatlabel>
+                <p-datepicker
+                  formControlName="date"
+                  inputId="date"
+                  dateFormat="dd/mm/yy"
+                  [showIcon]="true"
+                  iconDisplay="input"
+                  fluid>
+                </p-datepicker>
+                <label for="date">Date</label>
+              </p-floatlabel>
+              @if (tacheForm.get('date')?.invalid && tacheForm.get('date')?.touched) {
+                <small class="text-red-500 mt-1 block">La date est obligatoire</small>
+              }
+            </div>
+
+            <!-- Durée -->
+            <div>
+              <p-floatlabel>
+                <p-datepicker
+                  formControlName="duree_time"
+                  inputId="duree_time"
+                  timeOnly
+                  [showIcon]="true"
+                  iconDisplay="input"
+                  hourFormat="24"
+                  fluid>
+                </p-datepicker>
+                <label for="duree_time">Durée de la tâche</label>
+              </p-floatlabel>
+              @if (tacheForm.get('duree_time')?.invalid && tacheForm.get('duree_time')?.touched) {
+                <small class="text-red-500 mt-1 block">La durée est obligatoire</small>
+              }
+              @if (tacheForm.get('duree_minutes')?.value === 0 && tacheForm.get('duree_time')?.value) {
+                <small class="text-orange-500 mt-1 block">La durée doit être supérieure à 0 minute</small>
+              }
+            </div>
+
+            <!-- Activité -->
+            <div>
+              <p-floatlabel>
+                <p-select
+                  formControlName="activite_id"
+                  inputId="activite_id"
+                  [options]="activites"
+                  optionLabel="nom"
+                  optionValue="id"
+                  [filter]="true"
+                  filterBy="nom,mots_cles,categorie"
+                  [filterMatchMode]="'contains'"
+                  [showClear]="true"
+                  fluid>
+                  <ng-template #selectedItem let-option>
+                    <div *ngIf="option">
+                      <div class="font-medium">{{ option.nom }}</div>
+                      <div class="text-sm text-gray-500">{{ option.categorie }}</div>
+                    </div>
+                  </ng-template>
+                  <ng-template let-activite #item>
+                    <div>
+                      <div class="font-medium">{{ activite.nom }}</div>
+                      <div class="text-sm text-gray-500">{{ activite.categorie }}</div>
+                    </div>
+                  </ng-template>
+                </p-select>
+                <label for="activite_id">Activité</label>
+              </p-floatlabel>
+              @if (tacheForm.get('activite_id')?.invalid && tacheForm.get('activite_id')?.touched) {
+                <small class="text-red-500 mt-1 block">L'activité est obligatoire</small>
+              }
+            </div>
+
           </div>
         </div>
-        <div class="flex flex-col">
-          <div class="italic font-light text-md">Date</div>
-          <div class="">{{ dateUtils.toFrenchFormat(form.get('date')?.value) }}</div>
-        </div>
-      </div>
-    </div>
-  </ng-template>
 
-  <ng-template #recapitulatifCultures>
-    <div class="flex flex-col w-2/3">
-      <div class="flex w-full border-b border-brun400 italic font-light text-md" [ngClass]="isMobile ? 'flex-col space-y-2' : 'flex-row'">
-        <div class="w-1/6">Cultures</div>
-        @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesParcelles ||
-        selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
-          <div class="w-3/6">Parcelles</div>
-        }
-        @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantite ||
-        selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
-          <div class="w-2/6">Quantité</div>
-          <div class="w-1/6">Unité</div>
-        }
-      </div>
-      <div formArrayName="cultures">
-        @for (culture of selectedCultures; track $index) {
-          <div class="flex w-full font-semibold m-2" [ngClass]="isMobile ? 'flex-col space-y-2 text-base' : 'flex-row text-lg'" [formGroupName]="$index">
-            <div class="w-1/6">{{ culture.nom }}</div>
-            @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesParcelles ||
-            selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
-              <div class="w-3/6">
-                <p-multiselect [options]="availableParcelles" formControlName="parcelle_ids" optionLabel="nom"
-                               optionValue="id" placeholder="Parcelles" styleClass="w-full md:w-80 text-sm">
-                </p-multiselect>
-              </div>
-            }
-            @if (selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantite ||
-            selectedActivite?.niveau_complexite == NiveauComplexite.culturesQuantiteParcelles) {
-              <div class="w-2/6">
-                <p-floatlabel class="w-1/3 text-sm" variant="on">
-                  <p-inputnumber formControlName="quantite" inputId="unite" mode="decimal" locale="fr-FR"
-                                 [useGrouping]="false" min="1" styleClass="w-1/3 text-sm">
-                  </p-inputnumber>
-                  <label for="unite">Quantité</label>
-                </p-floatlabel>
-              </div>
-              <div class="w-1/6">
-                <p-floatlabel class="text-sm" variant="on">
-                  <p-select formControlName="unite_id" inputId="unite" [options]="selectedActivite?.unites"
-                            optionLabel="nom" optionValue="id" styleClass="w-full text-sm"/>
-                  <label for="unite">Unité</label>
-                </p-floatlabel>
-              </div>
-            }
+        <!-- Section commentaire - Toujours disponible -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+            <i class="pi pi-comment text-blue-500 mr-2"></i>
+            Commentaire
+          </h2>
+
+          <div>
+              <textarea
+                formControlName="commentaire"
+                inputId="commentaire"
+                rows="3"
+                class="w-full"
+                placeholder="Ajoutez des détails sur cette tâche...">
+              </textarea>
+          </div>
+        </div>
+
+        <!-- Section parcelles et quantités - Conditionnelle -->
+        @if (shouldShowParcelleIds() || shouldShowQuantite()) {
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
+              <i class="pi pi-map text-green-600 mr-2"></i>
+              Parcelles et quantités
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+              <!-- Parcelles -->
+              @if (shouldShowParcelleIds()) {
+                <div class="md:col-span-2">
+                  <p-floatlabel>
+                    <p-multiselect
+                      formControlName="parcelle_ids"
+                      inputId="parcelle_ids"
+                      [options]="parcelles"
+                      optionLabel="nom"
+                      optionValue="id"
+                      fluid>
+                    </p-multiselect>
+                    <label for="parcelle_ids">Parcelles concernées</label>
+                  </p-floatlabel>
+                </div>
+              }
+
+              <!-- Quantité et unité -->
+              @if (shouldShowQuantite()) {
+                <div>
+                  <p-floatlabel>
+                    <p-inputnumber
+                      formControlName="quantite"
+                      inputId="quantite"
+                      [minFractionDigits]="0"
+                      [maxFractionDigits]="2"
+                      fluid>
+                    </p-inputnumber>
+                    <label for="quantite">Quantité</label>
+                  </p-floatlabel>
+                </div>
+
+                <div>
+                  <p-floatlabel>
+                    <p-select
+                      formControlName="unite_id"
+                      inputId="unite_id"
+                      [options]="unites"
+                      optionLabel="nom"
+                      optionValue="id"
+                      fluid>
+                    </p-select>
+                    <label for="unite_id">Unité</label>
+                  </p-floatlabel>
+                </div>
+              }
+
+            </div>
           </div>
         }
-      </div>
 
-    </div>
-
-  </ng-template>
-
-  <ng-template #page1>
-
-    <div class="flex" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
-      <div [ngClass]="isMobile ? 'w-full' : 'w-60'">
-        <p-floatlabel variant="on">
-          <p-calendar [iconDisplay]="'input'" [showIcon]="true" dateFormat="dd/mm/yy" formControlName="date"
-                      inputId="date">
-          </p-calendar>
-          <label for="date">Date</label>
-        </p-floatlabel>
-      </div>
-      <div [ngClass]="isMobile ? 'w-full' : 'w-60'">
-        <p-floatlabel class="w-full" variant="on">
-          <p-select formControlName="user_id" optionValue="id" inputId="user" [options]="availableUsers"
-                    styleClass="w-full">
-            <ng-template #selectedItem let-selectedOption>
-              <div class="flex items-center gap-2" *ngIf="selectedOption">
-                <div>{{ selectedOption.first_name + ' ' + selectedOption.last_name }}</div>
-              </div>
-            </ng-template>
-            <ng-template let-option #item>
-              <div class="flex items-center gap-2">
-                <div>{{ option.first_name + ' ' + option.last_name }}</div>
-              </div>
-            </ng-template>
-          </p-select>
-          <label for="user">Utilisateur</label>
-        </p-floatlabel>
-      </div>
-    </div>
-
-    <div class="flex" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
-      <div [ngClass]="isMobile ? 'w-full' : 'w-80'">
-        <p-floatlabel variant="on">
-          <p-iconfield>
-            <p-inputicon styleClass="pi pi-search"/>
-            <label for="recherche">Rechercher une activité</label>
-            <input pInputText type="text"
-                   id="recherche"
-                   name="recherche"
-                   [formControl]="searchActiviteControl"
-                   fluid>
-            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer"
-                         (click)="searchActiviteControl.setValue('')"/>
-          </p-iconfield>
-        </p-floatlabel>
-      </div>
-      <div [ngClass]="isMobile ? 'w-full' : 'w-80'">
-        <p-floatlabel class="w-full" variant="on">
-          <p-select inputId="categorie" [options]="availableActiviteCategories"
-                    styleClass="w-full" [formControl]="categorieActiviteControl">
-          </p-select>
-          <label for="categorie">Catégorie</label>
-        </p-floatlabel>
-      </div>
-    </div>
-    <div [ngClass]="isMobile ? 'w-full' : 'w-[50%]'">
-      <p-scrollpanel [style]="isMobile ? { width: '100%', height: 'calc(100vh - 460px)'} : { width: '100%', height: 'calc(100vh - 300px)'}" class="w-full">
-        <div class="flex flex-col space-y-2 w-full p-2">
-          @for (activite of filteredActivites; track activite.id) {
-            <div class="rounded-2xl p-4 w-full font-semibold shadow-sm hover:cursor-pointer"
-                 (click)="onSelectActivite(activite)"
-                 [ngClass]="form.get('activite_id')?.value != activite.id ? 'bg-brun300 text-grisAnthra' : 'bg-brunTerre text-gray50'">
-              <span>{{ activite.nom }}</span>
+        <!-- Section cultures - Conditionnelle -->
+        @if (shouldShowCultures()) {
+          <div class="bg-white rounded-lg shadow-md p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-xl font-semibold text-gray-800 flex items-center">
+                <i class="pi pi-leaf text-green-600 mr-2"></i>
+                Cultures concernées
+              </h2>
+              <p-button
+                label="Ajouter culture"
+                icon="pi pi-plus"
+                size="small"
+                (onClick)="addCultureForm()"
+                severity="success"
+                [outlined]="true">
+              </p-button>
             </div>
-          }
-        </div>
-      </p-scrollpanel>
-    </div>
 
-    <div class="flex items-center" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
-      <div>
-        <p-floatlabel variant="on">
-          <p-datepicker inputId="duree_minutes" formControlName="duree" [timeOnly]="true" [stepHour]="1"
-                        [stepMinute]="10" hourFormat="24">
-          </p-datepicker>
-          <label for="duree_minutes">Durée (h : min)</label>
-        </p-floatlabel>
-      </div>
+            <div formArrayName="cultures" class="space-y-4">
+              @for (cultureForm of culturesFormArray.controls; track $index; let i = $index) {
+                <div [formGroupName]="i" class="border border-gray-200 rounded-lg p-4">
 
-      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
-        <p-button label="Suivant"
-                  [disabled]="form.invalid"
-                  [raised]="form.invalid"
-                  fluid
-                  (onClick)="onSuivant()"
-        />
-      </div>
-    </div>
-  </ng-template>
+                  <div class="flex items-center justify-between mb-4">
+                    <h3 class="font-medium text-gray-700">Culture {{ i + 1 }}</h3>
+                    @if (canRemoveCulture()) {
+                      <p-button
+                        icon="pi pi-trash"
+                        size="small"
+                        severity="danger"
+                        [outlined]="true"
+                        (onClick)="removeCultureForm(i)">
+                      </p-button>
+                    }
+                  </div>
 
-  <ng-template #page2>
-    <div *ngTemplateOutlet="recapitulatif"></div>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-    <div class="flex" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
-      <div [ngClass]="isMobile ? 'w-full' : 'w-80'">
-        <p-floatlabel variant="on">
-          <p-iconfield>
-            <p-inputicon styleClass="pi pi-search"/>
-            <label for="recherche">Rechercher une culture</label>
-            <input pInputText type="text"
-                   id="recherche"
-                   name="recherche"
-                   [formControl]="searchCultureControl"
-                   fluid>
-            <p-inputicon styleClass="pi pi-times" class="hover:cursor-pointer"
-                         (click)="searchCultureControl.setValue('')"/>
-          </p-iconfield>
-        </p-floatlabel>
-      </div>
-      <div [ngClass]="isMobile ? 'w-full' : 'w-80'">
-        <p-floatlabel class="w-full" variant="on">
-          <p-select inputId="culture" [options]="availableCultureCategories"
-                    styleClass="w-full" [formControl]="categorieCultureControl">
-          </p-select>
-          <label for="culture">Cultures</label>
-        </p-floatlabel>
-      </div>
-    </div>
-    <div class="w-[50%]">
-      <p-scrollpanel [style]="isMobile ? { width: '100%', height: 'calc(100vh - 530px)'} : { width: '100%', height: 'calc(100vh - 300px)'}" class="w-full">
-        <div class="flex flex-col space-y-2 w-full p-2">
-          @for (culture of filteredCultures; track culture.id) {
-            <div class="rounded-2xl p-4 w-full font-semibold shadow-sm hover:cursor-pointer"
-                 (click)="onSelectCulture(culture)"
-                 [ngClass]="{
-                 'bg-brun300 text-grisAnthra': !isCultureSelected(culture.id),
-                 'bg-brunTerre text-gray50': isCultureSelected(culture.id),
-                 'py-2': isMobile,
-                 'py-4': !isMobile
-                 }">
-              <span>{{ culture.nom }}</span>
+                    <!-- Culture selection -->
+                    <div class="md:col-span-2">
+                      <p-floatlabel>
+                        <p-select
+                          formControlName="culture_id"
+                          [inputId]="'culture_id_' + i"
+                          [options]="cultures"
+                          optionLabel="nom"
+                          optionValue="id"
+                          [filter]="true"
+                          filterBy="nom,categorie"
+                          [filterMatchMode]="'contains'"
+                          [showClear]="true"
+                          fluid>
+                          <ng-template #selectedItem let-option>
+                            <div *ngIf="option">
+                              <div class="font-medium">{{ option.nom }}</div>
+                              <div class="text-sm text-gray-500">{{ option.categorie }}</div>
+                            </div>
+                          </ng-template>
+                          <ng-template let-culture #item>
+                            <div>
+                              <div class="font-medium">{{ culture.nom }}</div>
+                              <div class="text-sm text-gray-500">{{ culture.categorie }}</div>
+                            </div>
+                          </ng-template>
+                        </p-select>
+                        <label [for]="'culture_id_' + i">Culture</label>
+                      </p-floatlabel>
+                      @if (cultureForm.get('culture_id')?.invalid && cultureForm.get('culture_id')?.touched) {
+                        <small class="text-red-500 mt-1 block">La culture est obligatoire</small>
+                      }
+                    </div>
+
+                    <!-- Parcelles pour cette culture -->
+                    @if (shouldShowCultureParcelleIds()) {
+                      <div class="md:col-span-2">
+                        <p-floatlabel>
+                          <p-multiselect
+                            formControlName="parcelle_ids"
+                            [inputId]="'culture_parcelles_' + i"
+                            [options]="parcelles"
+                            optionLabel="nom"
+                            optionValue="id"
+                            fluid>
+                          </p-multiselect>
+                          <label [for]="'culture_parcelles_' + i">Parcelles pour cette culture</label>
+                        </p-floatlabel>
+                      </div>
+                    }
+
+                    <!-- Quantité et unité pour cette culture -->
+                    @if (shouldShowCultureQuantite()) {
+                      <div>
+                        <p-floatlabel>
+                          <p-inputnumber
+                            formControlName="quantite"
+                            [inputId]="'culture_quantite_' + i"
+                            [minFractionDigits]="0"
+                            [maxFractionDigits]="2"
+                            fluid>
+                          </p-inputnumber>
+                          <label [for]="'culture_quantite_' + i">Quantité</label>
+                        </p-floatlabel>
+                      </div>
+
+                      <div>
+                        <p-floatlabel>
+                          <p-select
+                            formControlName="unite_id"
+                            [inputId]="'culture_unite_' + i"
+                            [options]="unites"
+                            optionLabel="nom"
+                            optionValue="id"
+                            fluid>
+                          </p-select>
+                          <label [for]="'culture_unite_' + i">Unité</label>
+                        </p-floatlabel>
+                      </div>
+                    }
+
+                  </div>
+                </div>
+              }
             </div>
-          }
+          </div>
+        }
+
+        <!-- Boutons d'action -->
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex justify-end space-x-4">
+            <p-button
+              label="Annuler"
+              severity="secondary"
+              [outlined]="true"
+              (onClick)="onCancel()"
+              type="button">
+            </p-button>
+            <p-button
+              label="Créer la tâche"
+              icon="pi pi-check"
+              type="submit"
+              [loading]="loading"
+              [disabled]="tacheForm.invalid">
+            </p-button>
+          </div>
         </div>
-      </p-scrollpanel>
-    </div>
 
-    <div class="flex" [ngClass]="isMobile ? 'flex-col space-y-4' : 'flex-row space-x-4'">
-      @for (selectedCulture of selectedCultures; track selectedCulture.id) {
-        <div>
-          <p-chip [label]="selectedCulture.nom" [removable]="true" (onRemove)="onRemoveSelectedCulture(selectedCulture)"
-                  styleClass="bg-brun400!"/>
-        </div>
-      }
-
-    </div>
-
-    <div class="flex flex-row w-1/2 justify-between space-x-4">
-      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
-        <p-button label="Annuler"
-                  [raised]="true"
-                  fluid
-                  (onClick)="onCancel()"
-                  styleClass="bg-intermediaire! border-intermediaire! hover:bg-intermediaire-hover!"
-        />
-      </div>
-      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
-        <p-button label="Suivant"
-                  [disabled]="form.invalid || selectedCultures.length == 0"
-                  [raised]="form.invalid"
-                  fluid
-                  (onClick)="onSuivant()"
-        />
-      </div>
-    </div>
-  </ng-template>
-
-  <ng-template #page3>
-    <div *ngTemplateOutlet="recapitulatif"></div>
-    <div class="mb-6"></div>
-
-    @if ((selectedActivite?.niveau_complexite ?? 0) >= NiveauComplexite.cultures) {
-      <div>Récapitulatif des cultures</div>
-      <div *ngTemplateOutlet="recapitulatifCultures"></div>
-      <div class="mb-6"></div>
-    }
-
-    @if (selectedActivite?.niveau_complexite == NiveauComplexite.baseParcelles ||
-    selectedActivite?.niveau_complexite == NiveauComplexite.baseQuantiteParcelles) {
-      <div class="w-1/3">
-        <p-multiselect [options]="availableParcelles" formControlName="parcelle_ids" optionLabel="nom" optionValue="id"
-                       placeholder="Parcelles" styleClass="w-full">
-        </p-multiselect>
-      </div>
-    }
-
-    @if (selectedActivite?.niveau_complexite == NiveauComplexite.baseQuantite ||
-    selectedActivite?.niveau_complexite == NiveauComplexite.baseQuantiteParcelles) {
-      <div class="flex flex-row w-1/3 justify-between space-x-4">
-        <div>
-          <p-floatlabel variant="on">
-            <p-inputnumber formControlName="quantite" inputId="unite" mode="decimal" locale="fr-FR"
-                           [useGrouping]="false" min="1">
-            </p-inputnumber>
-            <label for="unite">Quantité</label>
-          </p-floatlabel>
-        </div>
-        <div class="w-full">
-          <p-floatlabel class="w-full" variant="on">
-            <p-select formControlName="unite_id" inputId="unite" [options]="selectedActivite?.unites" optionLabel="nom"
-                      optionValue="id" styleClass="w-full"/>
-            <label for="unite">Unité</label>
-          </p-floatlabel>
-        </div>
-      </div>
-    }
-
-    <div class="w-1/3">
-      <p-floatlabel variant="on">
-        <textarea pTextarea pSize="large" rows="2" formControlName="commentaire" id="commentaire" style="resize: none"
-                  class="w-full"></textarea>
-        <label for="commentaire">Commentaire</label>
-      </p-floatlabel>
-    </div>
-
-    <div class="flex flex-row w-1/2 justify-between space-x-4">
-      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
-        <p-button label="Annuler"
-                  fluid
-                  (onClick)="onCancel()"
-                  styleClass="bg-intermediaire! border-intermediaire! hover:bg-intermediaire-hover!"
-        />
-      </div>
-      <div [ngClass]="isMobile ? 'w-full' : 'w-70'">
-        <p-button label="Valider"
-                  [disabled]="form.invalid"
-                  [raised]="form.invalid"
-                  fluid
-                  type="submit"
-        />
-      </div>
-    </div>
-  </ng-template>
-
-  <div class="flex flex-col h-full space-y-4 items-center">
-
-    @if (currentPage == 1) {
-      <div *ngTemplateOutlet="page1"></div>
-    }
-
-    @if (currentPage == 2) {
-      <div *ngTemplateOutlet="page2"></div>
-    }
-
-    @if (currentPage == 3) {
-      <div *ngTemplateOutlet="page3"></div>
+      </form>
     }
 
   </div>
-</form>
+
+</div>

@@ -7,8 +7,8 @@
     <div class="w-full">
       <div class="flex items-center justify-between mb-6">
         <div>
-          <h1 class="text-3xl font-bold text-gray-800">Saisie de tâche</h1>
-          <p class="text-gray-600 mt-2">Enregistrez une nouvelle activité agricole</p>
+          <h1 class="text-3xl font-bold text-gray-800">{{ isEditMode ? 'Modification de tâche' : 'Saisie de tâche' }}</h1>
+          <p class="text-gray-600 mt-2">{{ isEditMode ? 'Modifiez cette activité existante' : 'Enregistrez une nouvelle activité' }}</p>
         </div>
         <p-button
           label="Retour"
@@ -44,7 +44,7 @@
 
             <!-- Date -->
             <div>
-              <p-floatlabel>
+              <p-floatlabel variant="on">
                 <p-datepicker
                   formControlName="date"
                   inputId="date"
@@ -62,7 +62,7 @@
 
             <!-- Durée -->
             <div>
-              <p-floatlabel>
+              <p-floatlabel variant="on">
                 <p-datepicker
                   formControlName="duree_time"
                   inputId="duree_time"
@@ -84,7 +84,7 @@
 
             <!-- Activité -->
             <div>
-              <p-floatlabel>
+              <p-floatlabel variant="on">
                 <p-select
                   formControlName="activite_id"
                   inputId="activite_id"
@@ -95,6 +95,7 @@
                   filterBy="nom,mots_cles,categorie"
                   [filterMatchMode]="'contains'"
                   [showClear]="true"
+                  scrollHeight="400px"
                   fluid>
                   <ng-template #selectedItem let-option>
                     <div *ngIf="option">
@@ -131,7 +132,7 @@
                 formControlName="commentaire"
                 inputId="commentaire"
                 rows="3"
-                class="w-full"
+                class="w-full p-2"
                 placeholder="Ajoutez des détails sur cette tâche...">
               </textarea>
           </div>
@@ -150,7 +151,7 @@
               <!-- Parcelles -->
               @if (shouldShowParcelleIds()) {
                 <div class="md:col-span-2">
-                  <p-floatlabel>
+                  <p-floatlabel variant="on">
                     <p-multiselect
                       formControlName="parcelle_ids"
                       inputId="parcelle_ids"
@@ -167,7 +168,7 @@
               <!-- Quantité et unité -->
               @if (shouldShowQuantite()) {
                 <div>
-                  <p-floatlabel>
+                  <p-floatlabel variant="on">
                     <p-inputnumber
                       formControlName="quantite"
                       inputId="quantite"
@@ -180,7 +181,7 @@
                 </div>
 
                 <div>
-                  <p-floatlabel>
+                  <p-floatlabel variant="on">
                     <p-select
                       formControlName="unite_id"
                       inputId="unite_id"
@@ -237,7 +238,7 @@
 
                     <!-- Culture selection -->
                     <div class="md:col-span-2">
-                      <p-floatlabel>
+                      <p-floatlabel variant="on">
                         <p-select
                           formControlName="culture_id"
                           [inputId]="'culture_id_' + i"
@@ -248,17 +249,16 @@
                           filterBy="nom,categorie"
                           [filterMatchMode]="'contains'"
                           [showClear]="true"
+                          scrollHeight="300px"
                           fluid>
                           <ng-template #selectedItem let-option>
                             <div *ngIf="option">
                               <div class="font-medium">{{ option.nom }}</div>
-                              <div class="text-sm text-gray-500">{{ option.categorie }}</div>
                             </div>
                           </ng-template>
                           <ng-template let-culture #item>
                             <div>
                               <div class="font-medium">{{ culture.nom }}</div>
-                              <div class="text-sm text-gray-500">{{ culture.categorie }}</div>
                             </div>
                           </ng-template>
                         </p-select>
@@ -272,7 +272,7 @@
                     <!-- Parcelles pour cette culture -->
                     @if (shouldShowCultureParcelleIds()) {
                       <div class="md:col-span-2">
-                        <p-floatlabel>
+                        <p-floatlabel variant="on">
                           <p-multiselect
                             formControlName="parcelle_ids"
                             [inputId]="'culture_parcelles_' + i"
@@ -289,7 +289,7 @@
                     <!-- Quantité et unité pour cette culture -->
                     @if (shouldShowCultureQuantite()) {
                       <div>
-                        <p-floatlabel>
+                        <p-floatlabel variant="on">
                           <p-inputnumber
                             formControlName="quantite"
                             [inputId]="'culture_quantite_' + i"
@@ -302,7 +302,7 @@
                       </div>
 
                       <div>
-                        <p-floatlabel>
+                        <p-floatlabel variant="on">
                           <p-select
                             formControlName="unite_id"
                             [inputId]="'culture_unite_' + i"
@@ -334,7 +334,7 @@
               type="button">
             </p-button>
             <p-button
-              label="Créer la tâche"
+              [label]="isEditMode ? 'Modifier la tâche' : 'Créer la tâche'"
               icon="pi pi-check"
               type="submit"
               [loading]="loading"

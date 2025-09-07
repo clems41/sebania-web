@@ -1,13 +1,12 @@
 <p-confirmdialog></p-confirmdialog>
-<div class="flex flex-col rounded-2xl pl-3 pr-3 min-w-xs shadow-sm m-2 space-y-2 bg-brun300">
+<div class="flex flex-col rounded-2xl pl-3 pr-3 min-w-xs shadow-sm m-2 space-y-2 bg-brun300 hover:cursor-pointer hover:scale-102" (click)="navigateToSaisie(tache.id)">
   <!-- header -->
   <div class="flex h-16 justify-between items-center" [ngClass]="isMobile ? 'flex-col space-y-2 h-auto py-3' : 'flex-row space-x-4'">
-    
+
     <!-- Titre de l'activité -->
     <div class="flex flex-row justify-between w-full h-full items-center" [ngClass]="isMobile ? 'justify-center' : ''">
-      <div class="font-semibold hover:cursor-pointer" 
-           [ngClass]="isMobile ? 'text-lg text-center' : 'text-xl hover:scale-110'"
-           (click)="navigateToSaisie(tache.id, 1)">
+      <div class="font-semibold"
+           [ngClass]="isMobile ? 'text-lg text-center' : 'text-xl'">
         {{ tache.activite.nom }}
       </div>
     </div>
@@ -16,26 +15,23 @@
     <div class="flex items-center" [ngClass]="isMobile ? 'flex-row space-x-3 justify-center w-full' : 'flex-row space-x-4'">
 
       <!-- Commentaire -->
-      <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:cursor-pointer"
-           [ngClass]="!isMobile ? 'hover:scale-110' : ''"
-           (click)="navigateToSaisie(tache.id, 3)"
+      <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md"
            pTooltip="{{tache.commentaire}}" tooltipPosition="bottom">
-        <i class="bi" style="color: var(--color-gray50);" 
+        <i class="bi" style="color: var(--color-gray50);"
            [style]="isMobile ? 'font-size: 1.25rem' : 'font-size: 1.5rem'"
            [ngClass]="tache.commentaire && tache.commentaire.length > 0 ? 'bi-chat-left-text-fill' : 'bi-chat-left-text'"></i>
       </div>
 
       <!-- Durée -->
-      <div class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium shadow-md hover:cursor-pointer"
-           [ngClass]="isMobile ? 'text-sm' : 'text-md hover:scale-110'"
-           (click)="navigateToSaisie(tache.id, 1)">
+      <div class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium shadow-md"
+           [ngClass]="isMobile ? 'text-sm' : 'text-md'">
         {{ tacheUtils.getDureeFormatted(tache.duree_minutes) }}
       </div>
 
       <!-- Bouton suppression -->
-      <div class="transition-all" [ngClass]="!isMobile ? 'hover:scale-110' : ''">
+      <div class="hover:scale-105">
         <p-button icon="pi pi-trash"
-                  (click)="onDelete($event, tache)" [rounded]="true"
+                  (click)="onDelete($event, tache); $event.stopPropagation()" [rounded]="true"
                   [raised]="true"
                   [size]="isMobile ? 'small' : 'large'"
                   styleClass="bg-suppression! border-suppression!"
@@ -49,7 +45,7 @@
     <div class="flex flex-col items-center justify-center" [ngClass]="isMobile ? 'space-y-2' : 'space-y-4'">
       @for (culture of tache.cultures; track culture.culture.id) {
         <div class="flex items-center justify-center w-full" [ngClass]="isMobile ? 'flex-col space-y-2' : 'flex-row space-x-5'">
-          
+
           <!-- Indicateur d'avertissement mobile -->
           @if (isMobile && culture.fields_are_missing) {
             <div class="flex justify-center">
@@ -57,7 +53,7 @@
                  style="color: var(--color-jauneSoleil);font-size: 1.5rem"></i>
             </div>
           }
-          
+
           <!-- Layout desktop -->
           @if (!isMobile) {
             <div class="w-1/10">
@@ -67,30 +63,25 @@
               }
             </div>
           }
-          
+
           <!-- Nom de la culture -->
-          <div class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium shadow-md hover:cursor-pointer"
-               [ngClass]="isMobile ? 'w-full text-sm' : 'w-1/2 text-md hover:scale-110'"
-               (click)="navigateToSaisie(tache.id, 2)">
+          <div class="bg-brunFonce rounded-full p-2 pl-4 pr-4 text-gray50 text-center font-medium shadow-md"
+               [ngClass]="isMobile ? 'w-full text-sm' : 'w-1/2 text-md'">
             {{ culture.culture.nom }}
           </div>
-          
+
           <!-- Actions pour la culture -->
           <div class="flex items-center justify-center" [ngClass]="isMobile ? 'space-x-3' : 'space-x-5'">
             <!-- Parcelles -->
-            <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:cursor-pointer"
-                 [ngClass]="!isMobile ? 'hover:scale-110' : ''"
-                 (click)="navigateToSaisie(tache.id, 3)"
+            <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md"
                  pTooltip="{{getParcelleNoms(culture.parcelles)}}" tooltipPosition="bottom">
               <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);"
                  [style]="isMobile ? 'font-size: 1.25rem' : 'font-size: 1.5rem'"
                  [ngClass]="culture.parcelles.length > 0 ? 'bi-grid-1x2-fill' : 'bi-grid-1x2'"></i>
             </div>
-            
+
             <!-- Quantité -->
-            <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:cursor-pointer"
-                 [ngClass]="!isMobile ? 'hover:scale-110' : ''"
-                 (click)="navigateToSaisie(tache.id, 3)"
+            <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md"
                  pTooltip="{{culture.quantite && culture.unite ? culture.quantite + ' ' + culture.unite.nom : ''}}"
                  tooltipPosition="bottom">
               <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);"
@@ -104,7 +95,7 @@
   }
   <!-- Actions globales de la tâche -->
   <div class="flex w-full mt-2 pb-3" [ngClass]="isMobile ? 'flex-col space-y-2 items-center' : 'flex-row'">
-    
+
     <!-- Indicateur d'avertissement -->
     @if (isMobile && tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles && tache.fields_are_missing) {
       <div class="flex justify-center">
@@ -112,7 +103,7 @@
            style="color: var(--color-jauneSoleil);font-size: 1.5rem"></i>
       </div>
     }
-    
+
     @if (!isMobile) {
       <div class="w-1/10">
         @if (tache.activite.niveau_complexite <= NiveauComplexite.baseQuantiteParcelles && tache.fields_are_missing) {
@@ -121,14 +112,12 @@
         }
       </div>
     }
-    
+
     <!-- Actions -->
     <div class="flex justify-center items-center" [ngClass]="isMobile ? 'space-x-4 w-full' : 'flex-row space-x-5 w-8/10'">
       @if (tache.activite.niveau_complexite == NiveauComplexite.baseQuantiteParcelles ||
       tache.activite.niveau_complexite == NiveauComplexite.baseParcelles) {
-        <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:cursor-pointer"
-             [ngClass]="!isMobile ? 'hover:scale-110' : ''"
-             (click)="navigateToSaisie(tache.id, 3)"
+        <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md"
              pTooltip="{{getParcelleNoms(tache.parcelles)}}" tooltipPosition="bottom">
           <i class="bi bi-grid-1x2-fill" style="color: var(--color-gray50);"
              [style]="isMobile ? 'font-size: 1.25rem' : 'font-size: 1.5rem'"
@@ -137,9 +126,7 @@
       }
       @if (tache.activite.niveau_complexite == NiveauComplexite.baseQuantiteParcelles ||
       tache.activite.niveau_complexite == NiveauComplexite.baseQuantite) {
-        <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md hover:cursor-pointer"
-             [ngClass]="!isMobile ? 'hover:scale-110' : ''"
-             (click)="navigateToSaisie(tache.id, 3)"
+        <div class="bg-brunFonce rounded-full p-1 pl-3 pr-3 shadow-md"
              pTooltip="{{tache.quantite && tache.unite ? tache.quantite + ' ' + tache.unite.nom : ''}}"
              tooltipPosition="bottom">
           <i class="bi bi-plus-circle-fill" style="color: var(--color-gray50);"

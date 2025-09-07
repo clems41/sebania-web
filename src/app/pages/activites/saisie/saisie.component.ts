@@ -1,6 +1,6 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import {CommonModule} from '@angular/common';
 import {ButtonModule} from 'primeng/button';
 import {FloatLabelModule} from 'primeng/floatlabel';
@@ -18,6 +18,7 @@ import {CacheService} from '../../../services/cache.service';
 import {DateUtils} from '../../../utils/date-utils';
 import {lastValueFrom} from 'rxjs';
 import {TacheRequest} from '../../../models/tache/tache-request';
+import {Tache} from '../../../models/tache';
 import {Activite} from '../../../models/activite';
 import {Culture} from '../../../models/culture';
 import {Parcelle} from '../../../models/parcelle';
@@ -51,10 +52,13 @@ export class SaisieComponent implements OnInit {
   private dateUtils = inject(DateUtils);
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   tacheForm!: FormGroup;
   loading = false;
   isMobile = false;
+  isEditMode = false;
+  editingTacheId: number | null = null;
 
   activites: Activite[] = [];
   cultures: Culture[] = [];
@@ -73,6 +77,16 @@ export class SaisieComponent implements OnInit {
   ngOnInit() {
     this.initForm();
     this.loadData();
+    
+    // Check for edit mode
+    this.route.queryParams.subscribe(params => {
+      const tacheId = params['tache_id'];
+      if (tacheId) {
+        this.isEditMode = true;
+        this.editingTacheId = +tacheId;
+        this.loadExistingTask(+tacheId);
+      }
+    });
   }
 
   private checkIsMobile() {
@@ -132,6 +146,70 @@ export class SaisieComponent implements OnInit {
     }
   }
 
+  private async loadExistingTask(tacheId: number) {
+    this.loading = true;
+
+    try {
+      const tache = await lastValueFrom(this.tacheService.get(tacheId));
+      this.populateFormWithTask(tache);
+    } catch (error) {
+      console.error('Erreur lors du chargement de la tâche:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erreur',
+        detail: 'Impossible de charger la tâche à modifier'
+      });
+      // Redirect to create mode if task not found
+      this.isEditMode = false;
+      this.editingTacheId = null;
+      this.router.navigate(['/activites/saisie']);
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  private populateFormWithTask(tache: Tache) {
+    // Convert duration to time object
+    const durationTime = new Date();
+    const hours = Math.floor(tache.duree_minutes / 60);
+    const minutes = tache.duree_minutes % 60;
+    durationTime.setHours(hours, minutes, 0, 0);
+
+    // Parse date from French format
+    const taskDate = this.dateUtils.fromFrenchFormat(tache.date);
+
+    // Populate main form fields
+    this.tacheForm.patchValue({
+      date: taskDate,
+      user_id: tache.user.id,
+      activite_id: tache.activite.id,
+      duree_time: durationTime,
+      duree_minutes: tache.duree_minutes,
+      commentaire: tache.commentaire || '',
+      parcelle_ids: tache.parcelles?.map(p => p.id) || [],
+      quantite: tache.quantite || null,
+      unite_id: tache.unite?.id || null
+    });
+
+    // Set selected activity to trigger visibility logic
+    this.selectedActivite = tache.activite;
+    this.unites = tache.activite.unites || [];
+
+    // Clear existing cultures and populate with task cultures
+    this.culturesFormArray.clear();
+    if (tache.cultures && tache.cultures.length > 0) {
+      tache.cultures.forEach(cultureTache => {
+        const cultureForm = this.fb.group({
+          culture_id: [cultureTache.culture.id, Validators.required],
+          parcelle_ids: [cultureTache.parcelles?.map(p => p.id) || []],
+          quantite: [cultureTache.quantite || null],
+          unite_id: [cultureTache.unite?.id || null]
+        });
+        this.culturesFormArray.push(cultureForm);
+      });
+    }
+  }
+
   private onActiviteChange(activiteId: number) {
     if (!activiteId) {
       this.selectedActivite = null;
@@ -152,8 +230,6 @@ export class SaisieComponent implements OnInit {
   private resetFormBasedOnComplexity() {
     if (!this.selectedActivite) return;
 
-    const complexity = this.selectedActivite.niveau_complexite;
-
     // Reset optional fields
     this.tacheForm.patchValue({
       parcelle_ids: [],
@@ -163,11 +239,6 @@ export class SaisieComponent implements OnInit {
 
     // Clear cultures array
     this.culturesFormArray.clear();
-
-    // Add initial culture form if needed (complexity 5-8)
-    if (complexity >= NiveauComplexite.cultures) {
-      this.addCultureForm();
-    }
   }
 
   get culturesFormArray(): FormArray {
@@ -224,13 +295,11 @@ export class SaisieComponent implements OnInit {
   }
 
   removeCultureForm(index: number) {
-    if (this.culturesFormArray.length > 1) {
-      this.culturesFormArray.removeAt(index);
-    }
+    this.culturesFormArray.removeAt(index);
   }
 
   canRemoveCulture(): boolean {
-    return this.culturesFormArray.length > 1;
+    return this.culturesFormArray.length > 0;
   }
 
   // Validation and submission
@@ -256,12 +325,19 @@ export class SaisieComponent implements OnInit {
         })) || []
       };
 
-      this.tacheService.create(request).subscribe({
+      const serviceCall = this.isEditMode && this.editingTacheId 
+        ? this.tacheService.update(this.editingTacheId, request)
+        : this.tacheService.create(request);
+
+      const successMessage = this.isEditMode ? 'Tâche modifiée avec succès' : 'Tâche créée avec succès';
+      const errorMessage = this.isEditMode ? 'Impossible de modifier la tâche' : 'Impossible de créer la tâche';
+
+      serviceCall.subscribe({
         next: (tache) => {
           this.messageService.add({
             severity: 'success',
             summary: 'Succès',
-            detail: 'Tâche créée avec succès'
+            detail: successMessage
           });
           this.router.navigate(['/activites/accueil'], {
             queryParams: {
@@ -271,11 +347,11 @@ export class SaisieComponent implements OnInit {
           });
         },
         error: (error) => {
-          console.error('Erreur lors de la création de la tâche:', error);
+          console.error(`Erreur lors de ${this.isEditMode ? 'la modification' : 'la création'} de la tâche:`, error);
           this.messageService.add({
             severity: 'error',
             summary: 'Erreur',
-            detail: 'Impossible de créer la tâche'
+            detail: errorMessage
           });
           this.loading = false;
         }
@@ -317,7 +393,7 @@ export class SaisieComponent implements OnInit {
       this.tacheForm.patchValue({ duree_minutes: 0 }, { emitEvent: false });
       return;
     }
-    
+
     const hours = timeValue.getHours();
     const minutes = timeValue.getMinutes();
     const totalMinutes = hours * 60 + minutes;

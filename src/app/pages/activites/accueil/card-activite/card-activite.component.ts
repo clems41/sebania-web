@@ -75,11 +75,10 @@ export class CardActiviteComponent {
     return null;
   }
 
-  navigateToSaisie(tache_id: number, page: number) {
+  navigateToSaisie(tache_id: number) {
     this.router.navigate(['/activites/saisie'], {
       queryParams: {
-        tache_id: tache_id,
-        page: page
+        tache_id: tache_id
       }
     });
   }

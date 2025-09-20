@@ -63,13 +63,14 @@
 
     <!-- Bouton ajouter (affiché seulement s'il y a des tâches) -->
     @if (taches.length > 0 || nbVocalInProgress > 0) {
-      <div class="w-full" [ngClass]="!isMobile ? 'max-w-56' : ''">
+      <div class="flex flex-col space-y-4 w-full" [ngClass]="!isMobile ? 'max-w-56' : ''">
         <p-button label="Ajouter une tâche"
                   icon="bi-plus-circle-fill"
                   [raised]="true"
-                  fluid
+                  fluid=""
                   (onClick)="navigateToSaisieForCurrentUserAndDate()"
         />
+        <app-vocal [date]="date" [vocalType]="VocalType.Taches" (onVocalSent)="onVocalSent()"></app-vocal>
       </div>
     }
   </div>
@@ -110,15 +111,15 @@
               </div>
               <span>Aucune tâche renseignée</span>
             </div>
-            <div class="flex flex-col w-full items-center"
-                 [ngClass]="!isMobile ? 'transition-all hover:scale-110' : ''">
-              <div class="w-full" [ngClass]="!isMobile ? 'max-w-56' : ''">
+            <div class="flex w-full justify-center">
+              <div class="flex flex-col space-y-4 w-full" [ngClass]="!isMobile ? 'max-w-56' : ''">
                 <p-button label="Ajouter une tâche"
                           icon="bi-plus-circle-fill"
                           [raised]="true"
                           fluid
                           (onClick)="navigateToSaisieForCurrentUserAndDate()"
                 />
+                <app-vocal [date]="date"></app-vocal>
               </div>
             </div>
           </div>

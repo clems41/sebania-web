@@ -22,6 +22,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {TooltipModule} from 'primeng/tooltip';
 import {CardActiviteComponent} from './card-activite/card-activite.component';
 import { DeviceDetectorService } from 'ngx-device-detector';
+import {VocalComponent} from '../../../components/vocal/vocal.component';
+import {VocalType} from '../../../models/vocal';
 
 @Component({
   selector: 'app-accueil',
@@ -35,7 +37,8 @@ import { DeviceDetectorService } from 'ngx-device-detector';
     NgClass,
     Button,
     TooltipModule,
-    CardActiviteComponent
+    CardActiviteComponent,
+    VocalComponent
   ],
   templateUrl: './accueil.component.html',
   styleUrl: './accueil.component.css'
@@ -49,7 +52,7 @@ export class AccueilComponent implements OnInit, OnDestroy {
   statutJour: StatutJour = StatutJour.ok;
   nbVocalInProgress: number = 0;
   refreshVocauxSub: Subscription = new Subscription();
-  refreshVocauxDelaySeconds: number = 60;
+  refreshVocauxDelaySeconds: number = 10;
   loading: boolean = false;
   isMobile: boolean = false;
 
@@ -76,6 +79,11 @@ export class AccueilComponent implements OnInit, OnDestroy {
       }
       this.loadDataOnInit(user_id);
     });
+  }
+
+  onVocalSent() {
+    this.loadVocaux();
+    this.loadTaches();
   }
 
   loadDataOnInit(user_id: number) {
@@ -108,6 +116,9 @@ export class AccueilComponent implements OnInit, OnDestroy {
   loadVocaux() {
     this.vocalService.getInProgressForTache(this.date).subscribe(
       (vocaux) => {
+        if(this.nbVocalInProgress != 0 && vocaux.length != this.nbVocalInProgress) {
+          this.loadTaches();
+        }
         this.nbVocalInProgress = vocaux.length;
       }
     )
@@ -162,4 +173,5 @@ export class AccueilComponent implements OnInit, OnDestroy {
 
   protected readonly moment = moment;
   protected readonly StatutJour = StatutJour;
+  protected readonly VocalType = VocalType;
 }

@@ -19,6 +19,10 @@ export class DateUtils {
     return (moment(date)).format('DD/MM/YYYY');
   }
 
+  toPathParameterFormat(date: Date): string {
+    return (moment(date)).format('DDMMYYYY');
+  }
+
   fromFrenchFormat(date: string): Date {
     return moment(date, 'DD/MM/YYYY').toDate();
   }

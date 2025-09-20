@@ -8,3 +8,8 @@ export interface Vocal {
   date: Date;
   origine: string;
 }
+
+export enum VocalType {
+  Taches,
+  Parcelles
+}

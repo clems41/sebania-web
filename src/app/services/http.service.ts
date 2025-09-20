@@ -181,9 +181,7 @@ export class HttpService {
   }
 
   private getHeaders(needAuth: boolean) {
-    let headers = new HttpHeaders({
-      'Content-Type': 'application/json',
-    });
+    let headers = new HttpHeaders();
     if (needAuth) {
       headers = headers.append('Authorization', `Bearer ${this.cacheService.getAccessToken()}`);
     }

@@ -1,0 +1,111 @@
+<p-button label="Envoyer un vocal"
+          icon="bi bi-voicemail"
+          [raised]="true"
+          fluid=""
+          styleClass="!bg-intermediaire !border-intermediaire hover:!bg-intermediaire-hover hover:!border-intermediaire"
+          (click)="visible = !visible"
+/>
+
+<p-dialog #dialog header="Envoyer un vocal" [modal]="true" [closable]="!isRecording" [(visible)]="visible">
+  <div class="flex flex-col w-full items-center text-gray-700 gap-4">
+    <span class="text-xl font-bold">{{ dateUtils.toFrenchString(date) }}</span>
+
+    <div class="rounded-lg bg-gray-200 flex flex-col p-3 text-sm">
+      <span class="font-semibold mb-2">{{vocalType === VocalType.Parcelles ? parcellesTitree : tachesTitree}}</span>
+      <span [innerHTML]="vocalType === VocalType.Parcelles ? parcellesDescription : tachesDescription"></span>
+    </div>
+
+    <!-- Section d'enregistrement -->
+    @if (!hasRecording) {
+      <div class="flex flex-col items-center gap-3">
+        <span class="text-sm italic">
+          {{ isRecording ? 'Enregistrement en cours...' : 'Démarrer votre compte rendu vocal' }}
+        </span>
+
+        <!-- Timer d'enregistrement -->
+        @if (isRecording) {
+          <div class="text-lg font-mono text-red-600">
+            {{ formatDuration(recordingDuration) }}
+          </div>
+        }
+
+        <!-- Bouton principal d'enregistrement -->
+        <p-button
+          [icon]="isRecording ? 'bi bi-stop-fill' : 'bi bi-mic-fill'"
+          fluid=""
+          [styleClass]="isRecording ?
+            '!text-2xl !w-16 !h-16 !rounded-full !bg-red-500 !border-red-500 hover:!bg-red-600 animate-pulse' :
+            '!text-2xl !w-16 !h-16 !rounded-full !bg-primary !border-primary hover:!bg-primary-hover'"
+          (onClick)="onAudioButtonClick()"
+          [loading]="isLoading"
+        >
+        </p-button>
+
+        @if (isRecording) {
+          <div class="text-xs text-gray-500 text-center">
+            Cliquez sur le bouton pour arrêter l'enregistrement<br>
+            <span class="text-xs">(Maximum {{ MAX_DURATION / 60 }} minutes)</span>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Section de contrôle après enregistrement -->
+    @if (hasRecording && !isSending) {
+      <div class="flex flex-col items-center gap-4 w-full">
+        <div class="flex items-center gap-2">
+          <i class="bi bi-check-circle-fill text-green-500 text-lg"></i>
+          <span class="text-sm font-semibold">Enregistrement terminé</span>
+        </div>
+
+        <div class="text-center">
+          <div class="text-lg font-mono">{{ formatDuration(recordingDuration) }}</div>
+          <div class="text-xs text-gray-500">Durée de l'enregistrement</div>
+        </div>
+
+        <!-- Contrôles de lecture -->
+        <div class="flex gap-2">
+          <p-button
+            [icon]="isPlaying ? 'bi bi-pause-fill' : 'bi bi-play-fill'"
+            [label]="isPlaying ? 'Pause' : 'Écouter'"
+            [outlined]="true"
+            size="small"
+            (onClick)="togglePlayback()">
+          </p-button>
+
+          <p-button
+            icon="bi bi-trash3-fill"
+            label="Supprimer"
+            severity="danger"
+            [outlined]="true"
+            size="small"
+            (onClick)="deleteRecording()">
+          </p-button>
+        </div>
+
+        <!-- Bouton d'envoi -->
+        <p-button
+          icon="bi bi-send-fill"
+          label="Envoyer le vocal"
+          [raised]="true"
+          fluid=""
+          styleClass="!bg-success !border-success hover:!bg-green-600"
+          (onClick)="sendRecording()">
+        </p-button>
+      </div>
+    }
+
+    <!-- Section d'envoi en cours -->
+    @if (isSending) {
+      <div class="flex flex-col items-center gap-3">
+        <div class="flex items-center gap-2">
+          <i class="pi pi-spin pi-spinner text-primary"></i>
+          <span class="text-sm">Envoi en cours...</span>
+        </div>
+        <div class="text-xs text-gray-500 text-center">
+          Veuillez patienter pendant l'envoi de votre message vocal
+        </div>
+      </div>
+    }
+  </div>
+</p-dialog>

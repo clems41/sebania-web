@@ -30,4 +30,10 @@ export class VocalService {
       .set('date', this.dateUtils.toFrenchFormat(date));
     return this.httpService.get(`${this.vocalPrefix}/`, {params: params});
   }
+
+  getInProgressForParcelles(): Observable<Vocal[]> {
+    const params: HttpParams = new HttpParams()
+      .set('origine', "parcelles");
+    return this.httpService.get(`${this.vocalPrefix}/`, {params: params});
+  }
 }

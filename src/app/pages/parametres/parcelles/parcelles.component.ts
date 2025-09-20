@@ -9,6 +9,10 @@ import {ParcelleDialogComponent} from './parcelle-dialog/parcelle-dialog.compone
 import {Button} from 'primeng/button';
 import {ConfirmDialogModule} from 'primeng/confirmdialog';
 import {InputText} from 'primeng/inputtext';
+import {VocalComponent} from '../../../components/vocal/vocal.component';
+import {VocalType} from '../../../models/vocal';
+import {Subscription, timer} from 'rxjs';
+import {VocalService} from '../../../services/vocal.service';
 
 @Component({
   selector: 'app-parcelles',
@@ -19,6 +23,7 @@ import {InputText} from 'primeng/inputtext';
     FormsModule,
     InputText,
     ReactiveFormsModule,
+    VocalComponent,
   ],
   templateUrl: './parcelles.component.html',
   styleUrl: './parcelles.component.css'
@@ -27,21 +32,40 @@ export class ParcellesComponent implements OnInit, OnDestroy {
   parcelles: Parcelle[] = [];
   filteredParcelles: Parcelle[] = [];
   filterValue: string = '';
+  nbVocalInProgress: number = 0;
+  refreshVocauxSub: Subscription = new Subscription();
+  refreshVocauxDelaySeconds: number = 10;
 
   ref: DynamicDialogRef | undefined;
 
   constructor(private parcelleService: ParcelleService, private messageService: MessageService,
-              private dialogService: DialogService, private confirmationService: ConfirmationService) {
+              private dialogService: DialogService, private confirmationService: ConfirmationService,
+              private vocalService: VocalService) {
   }
 
   ngOnInit(): void {
     this.refreshParcelles();
+    this.refreshVocauxSub = timer(0, 1000 * this.refreshVocauxDelaySeconds).subscribe(() => {
+      this.loadVocaux();
+    });
   }
 
   ngOnDestroy() {
     if (this.ref) {
       this.ref.close();
     }
+    this.refreshVocauxSub.unsubscribe();
+  }
+
+  loadVocaux() {
+    this.vocalService.getInProgressForParcelles().subscribe(
+      (vocaux) => {
+        if(this.nbVocalInProgress != 0 && vocaux.length != this.nbVocalInProgress) {
+          this.refreshParcelles();
+        }
+        this.nbVocalInProgress = vocaux.length;
+      }
+    )
   }
 
   showDialog(parcelle: Parcelle | null) {
@@ -137,4 +161,6 @@ export class ParcellesComponent implements OnInit, OnDestroy {
         this.refreshParcelles();
       });
   }
+
+  protected readonly VocalType = VocalType;
 }

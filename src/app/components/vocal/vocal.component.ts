@@ -56,6 +56,7 @@ export class VocalComponent implements OnDestroy {
   parcellesDescription = `
           Pour chaque parcelle, indiquez les informations suivantes :
         <ul class="mt-1 ml-4">
+          <li>• type de parcelle (plein champ, serre, chapelle, tunnel, etc)</li>
           <li>• longueur</li>
           <li>• largeur</li>
           <li>• largeur de chaque planche</li>

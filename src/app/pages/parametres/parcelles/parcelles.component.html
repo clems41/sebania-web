@@ -70,9 +70,10 @@
       </ng-template>
     </p-table>
   </div>
-  <div class=" m-2 bottom-10 w-full flex flex-col items-center">
+  <div class=" m-5 bottom-10 w-full flex flex-row justify-center gap-5">
     <p-button label="Ajouter une nouvelle parcelle" icon="pi pi-plus" (onClick)="showDialog(null)"
               styleClass="transition-all! hover:scale-105!"
     />
+    <app-vocal [vocalType]="VocalType.Parcelles" (onVocalSent)="loadVocaux()"></app-vocal>
   </div>
 </div>
